@@ -8,6 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		D583BBB22EEFA1BE006CDC9B /* Cue Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D58D5DF42EEFDF2B00E4D1DB /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */; };
+		D58D5DF62EEFDF2B00E4D1DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */; };
+		D58D5E002EEFE21800E4D1DB /* VariantManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */; };
+		D58D5E032EEFE63800E4D1DB /* VariantManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */; };
+		D58D5E0E2EF08D6200E4D1DB /* App Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */; };
+		D58D5E0F2EF08D6200E4D1DB /* App Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */; };
+		D58D5E112EF0903600E4D1DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */; };
+		D58D5E162EF093DF00E4D1DB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E152EF093DF00E4D1DB /* LoginView.swift */; };
+		D58D5E172EF093DF00E4D1DB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E152EF093DF00E4D1DB /* LoginView.swift */; };
+		D58D5E1C2EF0953400E4D1DB /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */; };
+		D58D5E2D2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */; };
+		D58D5E2E2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */; };
+		D58D5E302EF0D1C300E4D1DB /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */; };
+		D58D5E312EF0D1C300E4D1DB /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */; };
+		D58D5E332EF0DA0E00E4D1DB /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */; };
+		D58D5E342EF0DA0E00E4D1DB /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */; };
+		D58D5E362EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */; };
+		D58D5E372EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +55,15 @@
 /* Begin PBXFileReference section */
 		D583BBA42EEFA1BD006CDC9B /* Cue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cue Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariantManager.swift; sourceTree = "<group>"; };
+		D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "App Icon.icon"; sourceTree = "<group>"; };
+		D58D5E152EF093DF00E4D1DB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwirlingRing.swift; sourceTree = "<group>"; };
+		D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityManager.swift; sourceTree = "<group>"; };
+		D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
+		D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -73,6 +100,15 @@
 		D583BB9B2EEFA1BD006CDC9B = {
 			isa = PBXGroup;
 			children = (
+				D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */,
+				D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */,
+				D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */,
+				D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */,
+				D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */,
+				D58D5E152EF093DF00E4D1DB /* LoginView.swift */,
+				D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */,
+				D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */,
+				D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */,
 				D583BBA62EEFA1BD006CDC9B /* Cue */,
 				D583BBB52EEFA1BE006CDC9B /* Cue Watch App */,
 				D583BBA52EEFA1BD006CDC9B /* Products */,
@@ -180,6 +216,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D58D5E0F2EF08D6200E4D1DB /* App Icon.icon in Resources */,
+				D58D5DF62EEFDF2B00E4D1DB /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +225,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D58D5E112EF0903600E4D1DB /* Assets.xcassets in Resources */,
+				D58D5E0E2EF08D6200E4D1DB /* App Icon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +237,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D58D5E362EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */,
+				D58D5E2D2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */,
+				D58D5DF42EEFDF2B00E4D1DB /* OnboardingView.swift in Sources */,
+				D58D5E172EF093DF00E4D1DB /* LoginView.swift in Sources */,
+				D58D5E332EF0DA0E00E4D1DB /* WorkoutManager.swift in Sources */,
+				D58D5E312EF0D1C300E4D1DB /* WatchConnectivityManager.swift in Sources */,
+				D58D5E002EEFE21800E4D1DB /* VariantManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,6 +251,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D58D5E162EF093DF00E4D1DB /* LoginView.swift in Sources */,
+				D58D5E372EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */,
+				D58D5E1C2EF0953400E4D1DB /* OnboardingView.swift in Sources */,
+				D58D5E342EF0DA0E00E4D1DB /* WorkoutManager.swift in Sources */,
+				D58D5E302EF0D1C300E4D1DB /* WatchConnectivityManager.swift in Sources */,
+				D58D5E032EEFE63800E4D1DB /* VariantManager.swift in Sources */,
+				D58D5E2E2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,7 +391,7 @@
 		D583BBBF2EEFA1BF006CDC9B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Cue Watch App/Cue Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
@@ -345,7 +399,10 @@
 				DEVELOPMENT_TEAM = 723WRFQY27;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Cue-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = jacksonmoody.Cue;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -364,14 +421,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 26.2;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
 		D583BBC02EEFA1BF006CDC9B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Cue Watch App/Cue Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
@@ -379,7 +436,10 @@
 				DEVELOPMENT_TEAM = 723WRFQY27;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Cue-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = jacksonmoody.Cue;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -399,14 +459,14 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 26.2;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
 		D583BBC32EEFA1BF006CDC9B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Cue/Cue.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -415,12 +475,15 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -430,19 +493,23 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		D583BBC42EEFA1BF006CDC9B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Cue/Cue.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -451,12 +518,15 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -466,12 +536,16 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
