@@ -14,6 +14,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     
     @Published var isSessionActive: Bool = false
     @Published var isReachable: Bool = false
+    @Published var showError: Bool = false
     
     private var session: WCSession?
     private var cancellables = Set<AnyCancellable>()
@@ -38,6 +39,24 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     }
     
     func updateSessionState(_ active: Bool) {
+        #if os(iOS)
+        // If trying to start the session on iOS and Watch is not reachable, prevent it
+        guard let session = session, session.activationState == .activated else {
+            return
+        }
+        
+        if active && !session.isReachable {
+            print("Not starting session because Watch is unreachable.")
+            DispatchQueue.main.async {
+                self.showError = true            }
+            return
+        }
+        #endif
+
+        DispatchQueue.main.async {
+            self.showError = false
+        }
+        
         sendSessionState(active)
         
         DispatchQueue.main.async {
@@ -123,6 +142,8 @@ extension WatchConnectivityManager: WCSessionDelegate {
             self.isReachable = session.isReachable
             
             if session.isReachable {
+                // Clear any error messages when watch becomes reachable
+                self.showError = false
                 self.sendSessionState(self.isSessionActive)
             }
         }

@@ -13,6 +13,7 @@ import UserNotifications
 struct Cue_Watch_AppApp: App {
     @WKApplicationDelegateAdaptor(WatchDelegate.self) var delegate
     @StateObject private var workoutManager = WorkoutManager()
+    @StateObject private var variantManager = VariantManager()
     
     var body: some Scene {
         WindowGroup {
@@ -23,6 +24,7 @@ struct Cue_Watch_AppApp: App {
                     }
                 }
                 .environmentObject(workoutManager)
+                .environmentObject(variantManager)
         }
     }
 }

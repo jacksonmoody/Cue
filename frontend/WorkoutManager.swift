@@ -108,10 +108,12 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
             builder?.discardWorkout()
             session?.end()
             
-            self.builder = nil
-            self.session = nil
-            self.averageHeartRate = 0
-            self.heartRate = 0
+            DispatchQueue.main.async {
+                self.builder = nil
+                self.session = nil
+                self.averageHeartRate = 0
+                self.heartRate = 0
+            }
         }
     }
 

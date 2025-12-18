@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct AppView: View {
+    let variant: Int
     var body: some View {
         TabView {
             Tab("Manage", systemImage: "applewatch.side.right") {
-                ManageView()
+                ManageView(variant: variant)
             }
             Tab("Survey", systemImage: "pencil.and.list.clipboard") {
                 SurveyView()
@@ -24,5 +25,5 @@ struct AppView: View {
 }
 
 #Preview {
-    AppView()
+    AppView(variant: 3)
 }

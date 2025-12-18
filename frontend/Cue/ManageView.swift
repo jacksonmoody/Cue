@@ -8,6 +8,7 @@
 import SwiftUI
 struct ManageView: View {
     @ObservedObject private var connectivityManager = WatchConnectivityManager.shared
+    let variant: Int
     
     var body: some View {
         ZStack {
@@ -23,19 +24,15 @@ struct ManageView: View {
                         SwirlingRing(delay: 5.3, size: 120, isWatch: false)
                     }
                     Button(action: {
+                        let newState = !connectivityManager.isSessionActive
                         withAnimation {
-                            connectivityManager.updateSessionState(!connectivityManager.isSessionActive)
+                            connectivityManager.updateSessionState(newState)
                         }
                     }) {
                         ZStack {
                             Circle()
-                                .fill(Material.ultraThinMaterial)
                                 .frame(width: 120, height: 120)
-                                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
-                            
-                            Circle()
-                                .strokeBorder(.white.opacity(0.5), lineWidth: 1)
-                                .frame(width: 120, height: 120)
+                                .glassEffect(.regular.interactive())
                             
                             VStack(spacing: 4) {
                                 Image(systemName: connectivityManager.isSessionActive ? "stop.fill" : "play.fill")
@@ -54,17 +51,23 @@ struct ManageView: View {
                     .padding()
                 Spacer()
                 Group {
-                    Text("x 5 Hour Sessions Recorded")
+                    Text("x Sessions Recorded")
                     Text("x More Needed to Unlock Survey")
+                    Text("Variant: \(variant)")
                         .padding(.bottom, 45)
                 }
                 .foregroundStyle(.white)
                 .font(.callout.bold())
             }
         }
+        .alert("Apple Watch Not Reachable", isPresented: $connectivityManager.showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Please open the Cue app on your Apple Watch to start the session.")
+        }
     }
 }
 
 #Preview {
-    ManageView()
+    ManageView(variant: 3)
 }

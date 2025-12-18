@@ -11,11 +11,13 @@ import SwiftUI
 struct CueApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var workoutManager = WorkoutManager()
+    @StateObject private var variantManager = VariantManager()
     
     var body: some Scene {
         WindowGroup {
             OnboardingView()
                 .environmentObject(workoutManager)
+                .environmentObject(variantManager)
         }
     }
 }

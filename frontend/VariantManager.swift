@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import AuthenticationServices
+import Combine
 
 struct VariantResponse: Decodable {
     let userId: String
@@ -15,10 +16,10 @@ struct VariantResponse: Decodable {
     let assignedAt: String?
 }
 
-class VariantManager: Observable {
-    var variant: Int?
-    var errorMessage: String?
-    var isLoading: Bool = false
+class VariantManager: ObservableObject {
+    @Published var variant: Int?
+    @Published var errorMessage: String?
+    @Published var isLoading: Bool = false
 
     private let baseURL = URL(string: "https://cue-api.vercel.app")
     private let variantKey = "variantId"
@@ -43,7 +44,6 @@ class VariantManager: Observable {
     }
 
     private func fetchAndStoreVariant(userId: String) async {
-        print("fetching variant")
         guard let baseURL = baseURL else {
             errorMessage = "Backend URL is not configured."
             return
@@ -57,7 +57,6 @@ class VariantManager: Observable {
         defer { isLoading = false }
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
-            print(response)
             guard let httpResponse = response as? HTTPURLResponse,
                   200...299 ~= httpResponse.statusCode else {
                 errorMessage = "Server error."

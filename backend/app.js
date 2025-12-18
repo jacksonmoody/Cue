@@ -40,7 +40,6 @@ async function connectMongo() {
       await mongoClient.connect();
       mongoDb = mongoClient.db();
       app.locals.db = mongoDb;
-      console.log("Connected to MongoDB");
       return mongoDb;
     } catch (err) {
       console.error("Failed to connect to MongoDB", err);

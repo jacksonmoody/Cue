@@ -9,7 +9,7 @@ import SwiftUI
 import AuthenticationServices
 
 struct LoginView: View {
-    @State private var variantManager = VariantManager()
+    @EnvironmentObject var variantManager: VariantManager
     var body: some View {
         #if os(iOS)
         VStack(spacing: 5) {

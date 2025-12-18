@@ -9,14 +9,13 @@ import SwiftUI
 import AuthenticationServices
 
 struct OnboardingView: View {
-    @State private var variantManager = VariantManager()
+    @EnvironmentObject var variantManager: VariantManager
     @AppStorage("onboardingNeeded") private var onboardingNeeded = true
-    
     var body: some View {
         ZStack {
             LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
-            if variantManager.variant != nil {
-                AppView()
+            if let variant = variantManager.variant {
+                AppView(variant: variant)
                     .sheet(isPresented: $onboardingNeeded) {
                         InstructionsView(onboardingNeeded: $onboardingNeeded)
                             .toolbar(content: {
@@ -26,6 +25,8 @@ struct OnboardingView: View {
                             })
                             .interactiveDismissDisabled()
                     }
+            } else if variantManager.isLoading {
+                ProgressView()
             } else {
                 LoginView()
             }
