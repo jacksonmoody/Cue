@@ -18,6 +18,9 @@ struct CueApp: App {
             OnboardingView()
                 .environmentObject(workoutManager)
                 .environmentObject(variantManager)
+                .onAppear {
+                    workoutManager.variantManager = variantManager
+                }
         }
     }
 }

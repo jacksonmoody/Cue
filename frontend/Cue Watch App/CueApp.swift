@@ -19,6 +19,7 @@ struct Cue_Watch_AppApp: App {
         WindowGroup {
              OnboardingView()
                 .onAppear {
+                    workoutManager.variantManager = variantManager
                     if delegate.launchedFromNotification {
                         print("User launched app from local notification")
                     }

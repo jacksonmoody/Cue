@@ -21,12 +21,12 @@ class VariantManager: ObservableObject {
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
 
-    private let baseURL = URL(string: "https://cue-api.vercel.app")
     private let variantKey = "variantId"
     private let appleUserIdKey = "appleUserId"
     private let userDefaults = UserDefaults.standard
+    private let backendService = BackendService.shared
 
-    private var appleUserId: String? {
+    var appleUserId: String? {
         get { userDefaults.string(forKey: appleUserIdKey) }
         set { userDefaults.set(newValue, forKey: appleUserIdKey) }
     }
@@ -44,30 +44,20 @@ class VariantManager: ObservableObject {
     }
 
     private func fetchAndStoreVariant(userId: String) async {
-        guard let baseURL = baseURL else {
-            errorMessage = "Backend URL is not configured."
-            return
-        }
-
-        var request = URLRequest(url: baseURL.appendingPathComponent("/api/variant"))
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: ["userId": userId])
         isLoading = true
         defer { isLoading = false }
+        
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse,
-                  200...299 ~= httpResponse.statusCode else {
-                errorMessage = "Server error."
-                return
-            }
-            let decoded = try JSONDecoder().decode(VariantResponse.self, from: data)
-            userDefaults.set(decoded.variant, forKey: variantKey)
-            variant = decoded.variant
+            let response = try await backendService.post(
+                path: "/api/variant",
+                body: ["userId": userId],
+                responseType: VariantResponse.self
+            )
+            userDefaults.set(response.variant, forKey: variantKey)
+            variant = response.variant
             errorMessage = nil
-        } catch let error {
-            print(error.localizedDescription)
+        } catch {
+            print("Unexpected error: \(error.localizedDescription)")
             errorMessage = "Failed to fetch variant."
         }
     }
@@ -80,8 +70,13 @@ class VariantManager: ObservableObject {
                 errorMessage = "Missing Apple ID credential."
                 return
             }
-            let userId = credential.email ?? credential.user
-            appleUserId = userId
+            if let fullName = credential.fullName, let givenName = fullName.givenName, let familyName = fullName.familyName {
+                appleUserId = "\(givenName) \(familyName)"
+            } else if let email = credential.email {
+                appleUserId = email
+            } else {
+                appleUserId = credential.user
+            }
             Task { await loadVariant() }
         case .failure:
             errorMessage = "Sign in failed."

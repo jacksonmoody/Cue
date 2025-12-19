@@ -13,6 +13,8 @@ class WorkoutManager: NSObject, ObservableObject {
     let healthStore = HKHealthStore()
     var session: HKWorkoutSession?
     var builder: HKLiveWorkoutBuilder?
+    var variantManager: VariantManager?
+    private let backendService = BackendService.shared
 
     func startWorkout() {
         guard session == nil else {
@@ -105,6 +107,7 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
         }
         
         if toState == .stopped {
+            recordSession(duration: builder?.elapsedTime ?? 0)
             builder?.discardWorkout()
             session?.end()
             
@@ -139,6 +142,29 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
 
             let statistics = workoutBuilder.statistics(for: quantityType)
             updateForStatistics(statistics)
+        }
+    }
+    
+    // MARK: - Session Recording
+    private func recordSession(duration: TimeInterval) {
+        guard let userId = variantManager?.appleUserId else {
+            print("Cannot record session: userId not available")
+            return
+        }
+        
+        let sessionData: [String: Any] = [
+            "userId": userId,
+            "duration": duration,
+            "timestamp": ISO8601DateFormatter().string(from: Date())
+        ]
+        
+        backendService.post(path: "/api/sessions", body: sessionData) { result in
+            switch result {
+            case .success:
+                print("Session recorded successfully")
+            case .failure(let error):
+                print("Failed to record session: \(error.localizedDescription)")
+            }
         }
     }
 }

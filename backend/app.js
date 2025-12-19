@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var MongoClient = require("mongodb").MongoClient;
 var variantsRouter = require("./routes/variants");
+var sessionsRouter = require("./routes/sessions");
 require("dotenv").config();
 
 var app = express();
@@ -43,7 +44,7 @@ async function connectMongo() {
       return mongoDb;
     } catch (err) {
       console.error("Failed to connect to MongoDB", err);
-      connectionPromise = null; 
+      connectionPromise = null;
       throw err;
     }
   })();
@@ -71,6 +72,7 @@ app.use(async function (req, res, next) {
 });
 
 app.use("/api/variant", variantsRouter);
+app.use("/api/sessions", sessionsRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
