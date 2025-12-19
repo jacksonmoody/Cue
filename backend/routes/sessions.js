@@ -60,6 +60,33 @@ router.post("/", async function (req, res) {
   }
 });
 
+router.get("/:userId/count", async function (req, res) {
+  var db = getDb(req);
+  if (!db) {
+    return missingDb(res);
+  }
+
+  var userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).json({ error: "userId is required" });
+  }
+
+  try {
+    var sessions = db.collection("sessions");
+    // 5 hours = 5 * 60 * 60 = 18000 seconds
+    var fiveHoursInSeconds = 10;
+    var count = await sessions.countDocuments({
+      userId: userId,
+      duration: { $gte: fiveHoursInSeconds },
+    });
+
+    res.json({ count: count });
+  } catch (err) {
+    console.error("Error counting sessions", err);
+    res.status(500).json({ error: "Failed to count sessions" });
+  }
+});
+
 router.get("/:userId", async function (req, res) {
   var db = getDb(req);
   if (!db) {
@@ -86,4 +113,3 @@ router.get("/:userId", async function (req, res) {
 });
 
 module.exports = router;
-

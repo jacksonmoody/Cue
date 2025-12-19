@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+
 struct ManageView: View {
     @ObservedObject private var connectivityManager = WatchConnectivityManager.shared
-    let variant: Int
+    @EnvironmentObject var variantManager: VariantManager
+    @State private var sessionCount: Int = 0
+    @State private var isLoadingCount: Bool = false
+    let backendService = BackendService.shared
     
     var body: some View {
         ZStack {
@@ -51,13 +55,31 @@ struct ManageView: View {
                     .padding()
                 Spacer()
                 Group {
-                    Text("x Sessions Recorded")
-                    Text("x More Needed to Unlock Survey")
-                    Text("Variant: \(variant)")
+                    if isLoadingCount {
+                        Text("Loading...")
+                    } else {
+                        Text("\(sessionCount) Sessions Recorded")
+                        if sessionCount == 0 {
+                            Text("1 More Needed to Unlock Survey")
+                        } else {
+                            Text("Survey Unlocked!")
+                        }
+                    }
+                    Text("Variant: \(String(variantManager.variant ?? 0))")
                         .padding(.bottom, 45)
                 }
                 .foregroundStyle(.white)
                 .font(.callout.bold())
+            }
+        }
+        .task {
+            await loadSessionCount()
+        }
+        .onChange(of: connectivityManager.isSessionActive) { oldValue, newValue in
+            if !newValue {
+                Task {
+                    await loadSessionCount()
+                }
             }
         }
         .alert("Apple Watch Not Reachable", isPresented: $connectivityManager.showError) {
@@ -66,8 +88,31 @@ struct ManageView: View {
             Text("Please open the Cue app on your Apple Watch to start the session.")
         }
     }
+    
+    private func loadSessionCount() async {
+        guard let userId = variantManager.appleUserId else {
+            return
+        }
+        
+        isLoadingCount = true
+        defer { isLoadingCount = false }
+        
+        do {
+            let encodedUserId = userId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? userId
+            let response = try await backendService.get(
+                path: "/api/sessions/\(encodedUserId)/count",
+                responseType: SessionCountResponse.self
+            )
+            await MainActor.run {
+                sessionCount = response.count
+            }
+        } catch {
+            print("Failed to load session count: \(error.localizedDescription)")
+        }
+    }
 }
 
 #Preview {
-    ManageView(variant: 3)
+    ManageView()
+        .environmentObject(VariantManager())
 }

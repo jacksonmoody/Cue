@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct SessionCountResponse: Decodable {
+    let count: Int
+}
+
 enum BackendError: Error {
     case invalidURL
     case invalidResponse
