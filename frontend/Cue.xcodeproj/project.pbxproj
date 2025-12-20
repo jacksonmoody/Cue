@@ -10,6 +10,8 @@
 		D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D583BBB22EEFA1BE006CDC9B /* Cue Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D58A97A72EF60A950078459A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A97A62EF60A950078459A /* SessionManager.swift */; };
+		D58A97A82EF60A950078459A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A97A62EF60A950078459A /* SessionManager.swift */; };
 		D58D5DF42EEFDF2B00E4D1DB /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */; };
 		D58D5DF62EEFDF2B00E4D1DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */; };
 		D58D5E002EEFE21800E4D1DB /* VariantManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */; };
@@ -61,6 +63,7 @@
 		D55EB3852EF5FE520077F3B4 /* BackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendService.swift; sourceTree = "<group>"; };
 		D583BBA42EEFA1BD006CDC9B /* Cue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cue Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D58A97A62EF60A950078459A /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariantManager.swift; sourceTree = "<group>"; };
@@ -127,6 +130,7 @@
 				D55EB3852EF5FE520077F3B4 /* BackendService.swift */,
 				D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */,
 				D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */,
+				D58A97A62EF60A950078459A /* SessionManager.swift */,
 				D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */,
 				D58D5E152EF093DF00E4D1DB /* LoginView.swift */,
 				D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */,
@@ -270,6 +274,7 @@
 				D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */,
 				D58D5E332EF0DA0E00E4D1DB /* WorkoutManager.swift in Sources */,
 				D58D5E312EF0D1C300E4D1DB /* WatchConnectivityManager.swift in Sources */,
+				D58A97A82EF60A950078459A /* SessionManager.swift in Sources */,
 				D58D5E002EEFE21800E4D1DB /* VariantManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -280,6 +285,7 @@
 			files = (
 				D58D5E162EF093DF00E4D1DB /* LoginView.swift in Sources */,
 				D5A969772EF3AEE700782283 /* ElapsedTimeView.swift in Sources */,
+				D58A97A72EF60A950078459A /* SessionManager.swift in Sources */,
 				D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */,
 				D58D5E372EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */,
 				D58D5E1C2EF0953400E4D1DB /* OnboardingView.swift in Sources */,

@@ -48,11 +48,14 @@ struct AppView: View {
                         .buttonStyle(.plain)
                     }
                     .padding(.bottom)
-                    TimelineView(MetricsTimelineSchedule(from: workoutManager.builder?.startDate ?? Date())) { context in
-                        ElapsedTimeView(elapsedTime: workoutManager.builder?.elapsedTime ?? 0, showSubseconds: context.cadence == .live)
+                    if connectivityManager.isSessionActive {
+                        TimelineView(MetricsTimelineSchedule(from: workoutManager.builder?.startDate ?? Date())) { context in
+                            ElapsedTimeView(elapsedTime: workoutManager.builder?.elapsedTime ?? 0, showSubseconds: context.cadence == .live)
+                        }
                     }
                     Text("Variant: \(variant)")
                 }
+                .animation(.default, value: connectivityManager.isSessionActive)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Help", systemImage: "questionmark.circle") {
@@ -82,10 +85,6 @@ struct AppView: View {
             } else {
                 workoutManager.stopWorkout()
             }
-        }
-        
-        if connectivityManager.isSessionActive && !workoutManager.running {
-            workoutManager.startWorkout()
         }
     }
     

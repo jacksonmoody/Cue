@@ -8,6 +8,7 @@
 import SwiftUI
 import WatchKit
 import UserNotifications
+import HealthKit
 
 @main
 struct Cue_Watch_AppApp: App {
@@ -20,6 +21,7 @@ struct Cue_Watch_AppApp: App {
              OnboardingView()
                 .onAppear {
                     workoutManager.variantManager = variantManager
+                    delegate.workoutManager = workoutManager
                     if delegate.launchedFromNotification {
                         print("User launched app from local notification")
                     }
@@ -31,6 +33,7 @@ struct Cue_Watch_AppApp: App {
 }
 
 class WatchDelegate: NSObject, WKApplicationDelegate {
+    weak var workoutManager: WorkoutManager?
     var launchedFromNotification = false
 
     func applicationDidFinishLaunching() {
@@ -39,6 +42,11 @@ class WatchDelegate: NSObject, WKApplicationDelegate {
 
     func didReceive(_ notification: UNNotification) {
         launchedFromNotification = true
+    }
+    
+    func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
+        WatchConnectivityManager.shared.isSessionActive = true
+        workoutManager?.startWorkout()
     }
 }
 

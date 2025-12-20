@@ -8,16 +8,16 @@
 import Foundation
 import Combine
 
-enum Tab {
+enum TabItem {
     case manage
     case survey
     case help
 }
 
 class TabController: ObservableObject {
-    @Published var activeTab = Tab.manage
+    @Published var activeTab = TabItem.manage
 
-    func open(_ tab: Tab) {
+    func open(_ tab: TabItem) {
         activeTab = tab
     }
 }

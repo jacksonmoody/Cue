@@ -70,7 +70,7 @@ class WorkoutManager: NSObject, ObservableObject {
 
     func stopWorkout() {
         guard session != nil else { return }
-        session?.stopActivity(with: nil)
+        recordSession(duration: builder?.elapsedTime ?? 0)
     }
 
     // MARK: - Workout Metrics
@@ -107,7 +107,6 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
         }
         
         if toState == .stopped {
-            recordSession(duration: builder?.elapsedTime ?? 0)
             builder?.discardWorkout()
             session?.end()
             
@@ -145,7 +144,6 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
         }
     }
     
-    // MARK: - Session Recording
     private func recordSession(duration: TimeInterval) {
         guard let userId = variantManager?.appleUserId else {
             print("Cannot record session: userId not available")
@@ -161,9 +159,11 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
         backendService.post(path: "/api/sessions", body: sessionData) { result in
             switch result {
             case .success:
-                print("Session recorded successfully")
+                WatchConnectivityManager.shared.notifySessionRecorded()
+                self.session?.stopActivity(with: nil)
             case .failure(let error):
                 print("Failed to record session: \(error.localizedDescription)")
+                self.session?.stopActivity(with: nil)
             }
         }
     }

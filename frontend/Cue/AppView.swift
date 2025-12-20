@@ -9,31 +9,24 @@ import SwiftUI
 
 struct AppView: View {
     @StateObject private var tabController = TabController()
+    @EnvironmentObject var sessionManager: SessionManager
+    let variant: Int
     
     var body: some View {
         TabView(selection: $tabController.activeTab) {
-            ManageView()
-                .tabItem {
-                    Label("Manage", systemImage: "applewatch.side.right")
-                }
-                .tag(Tab.manage)
-            
-            SurveyView()
-                .tabItem {
-                    Label("Survey", systemImage: "pencil.and.list.clipboard")
-                }
-                .tag(Tab.survey)
-            
-            FeedbackView()
-                .tabItem {
-                    Label("Help", systemImage: "questionmark.circle")
-                }
-                .tag(Tab.help)
+            Tab("Manage", systemImage: "applewatch.side.right", value: TabItem.manage) {
+                ManageView(variant: variant)
+            }
+            Tab("Survey", systemImage: "pencil.and.list.clipboard", value: TabItem.survey) {
+                SurveyView()
+            }
+            Tab("Feedback", systemImage: "questionmark.circle", value: TabItem.help, role: .search) {
+                FeedbackView()
+            }
         }
         .environmentObject(tabController)
+        .task {
+            await sessionManager.loadSessionCount()
+        }
     }
-}
-
-#Preview {
-    AppView()
 }

@@ -8,9 +8,11 @@
 import Foundation
 import WatchConnectivity
 import Combine
+import HealthKit
 
 class WatchConnectivityManager: NSObject, ObservableObject {
     static let shared = WatchConnectivityManager()
+    let healthStore = HKHealthStore()
     
     @Published var isSessionActive: Bool = false
     @Published var isReachable: Bool = false
@@ -21,6 +23,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     
     // Callback for when session state changes (used by watch to control workout)
     var onSessionStateChanged: ((Bool) -> Void)?
+    
+    // Callback for when a session is recorded (used by iOS to update session count)
+    var onSessionRecorded: (() -> Void)?
     
     private override init() {
         super.init()
@@ -40,24 +45,18 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     
     func updateSessionState(_ active: Bool) {
         #if os(iOS)
-        // If trying to start the session on iOS and Watch is not reachable, prevent it
-        guard let session = session, session.activationState == .activated else {
-            return
+        // If trying to start the session on iOS and Watch is not reachable, open Watch app
+        if let session, !session.isReachable || session.activationState != .activated {
+            self.healthStore.startWatchApp(with: HKWorkoutConfiguration(), completion: { (success, error) in
+                print("Starting Watch App in background: \(success), error: \(String(describing: error))")
+            })
+        } else {
+            sendSessionState(active)
         }
-        
-        if active && !session.isReachable {
-            print("Not starting session because Watch is unreachable.")
-            DispatchQueue.main.async {
-                self.showError = true            }
-            return
-        }
-        #endif
-
-        DispatchQueue.main.async {
-            self.showError = false
-        }
-        
+        #else
+        // Always send session state on Watch
         sendSessionState(active)
+        #endif
         
         DispatchQueue.main.async {
             let previousState = self.isSessionActive
@@ -91,6 +90,36 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                 print("Error sending session state: \(error.localizedDescription)")
                 do {
                     try session.updateApplicationContext(["isSessionActive": active])
+                } catch {
+                    print("Error updating application context as fallback: \(error.localizedDescription)")
+                }
+            }
+        )
+    }
+    
+    func notifySessionRecorded() {
+        guard let session = session, session.activationState == .activated else {
+            return
+        }
+        
+        let message = ["sessionRecorded": true]
+        
+        guard session.isReachable else {
+            do {
+                try session.updateApplicationContext(message)
+            } catch {
+                print("Error updating application context: \(error.localizedDescription)")
+            }
+            return
+        }
+        
+        session.sendMessage(
+            message,
+            replyHandler: nil,
+            errorHandler: { error in
+                print("Error sending session recorded message: \(error.localizedDescription)")
+                do {
+                    try session.updateApplicationContext(message)
                 } catch {
                     print("Error updating application context as fallback: \(error.localizedDescription)")
                 }
@@ -140,12 +169,6 @@ extension WatchConnectivityManager: WCSessionDelegate {
     func sessionReachabilityDidChange(_ session: WCSession) {
         DispatchQueue.main.async {
             self.isReachable = session.isReachable
-            
-            if session.isReachable {
-                // Clear any error messages when watch becomes reachable
-                self.showError = false
-                self.sendSessionState(self.isSessionActive)
-            }
         }
     }
     
@@ -159,6 +182,12 @@ extension WatchConnectivityManager: WCSessionDelegate {
                 }
             }
         }
+        
+        if let _ = message["sessionRecorded"] as? Bool {
+            DispatchQueue.main.async {
+                self.onSessionRecorded?()
+            }
+        }
     }
     
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
@@ -169,6 +198,12 @@ extension WatchConnectivityManager: WCSessionDelegate {
                 if previousState != active {
                     self.onSessionStateChanged?(active)
                 }
+            }
+        }
+        
+        if let _ = applicationContext["sessionRecorded"] as? Bool {
+            DispatchQueue.main.async {
+                self.onSessionRecorded?()
             }
         }
     }

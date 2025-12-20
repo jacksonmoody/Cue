@@ -9,11 +9,10 @@ import SwiftUI
 
 struct ManageView: View {
     @ObservedObject private var connectivityManager = WatchConnectivityManager.shared
-    @EnvironmentObject var variantManager: VariantManager
-    @State private var sessionCount: Int = 0
-    @State private var isLoadingCount: Bool = false
-    let backendService = BackendService.shared
-    
+    @EnvironmentObject var sessionManager: SessionManager
+    @EnvironmentObject var tabController: TabController
+    let variant: Int
+
     var body: some View {
         ZStack {
             LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
@@ -54,32 +53,25 @@ struct ManageView: View {
                     .multilineTextAlignment(.center)
                     .padding()
                 Spacer()
-                Group {
-                    if isLoadingCount {
-                        Text("Loading...")
-                    } else {
-                        Text("\(sessionCount) Sessions Recorded")
-                        if sessionCount == 0 {
-                            Text("1 More Needed to Unlock Survey")
-                        } else {
-                            Text("Survey Unlocked!")
-                        }
+                VStack {
+                    Text("Variant: \(variant)")
+                    if let sessionsCount = sessionManager.sessionCount, let sessionsRemaining = sessionManager.sessionsRemaining, sessionsRemaining > 0 {
+                        Text("^[\(sessionsCount) Valid Sessions](inflect: true) Recorded")
+                        Text("\(sessionsRemaining) More Needed to Unlock Survey")
                     }
-                    Text("Variant: \(String(variantManager.variant ?? 0))")
-                        .padding(.bottom, 45)
+                    if let sessionsRemaining = sessionManager.sessionsRemaining, sessionsRemaining == 0 {
+                        Button("Take Survey") {
+                            tabController.open(.survey)
+                        }
+                        .fontWeight(.bold)
+                        .padding()
+                        .glassEffect(.regular.tint(.blue).interactive())
+                    }
                 }
+                .animation(.default, value: sessionManager.isLoading)
+                .padding(.bottom, 45)
                 .foregroundStyle(.white)
                 .font(.callout.bold())
-            }
-        }
-        .task {
-            await loadSessionCount()
-        }
-        .onChange(of: connectivityManager.isSessionActive) { oldValue, newValue in
-            if !newValue {
-                Task {
-                    await loadSessionCount()
-                }
             }
         }
         .alert("Apple Watch Not Reachable", isPresented: $connectivityManager.showError) {
@@ -88,31 +80,10 @@ struct ManageView: View {
             Text("Please open the Cue app on your Apple Watch to start the session.")
         }
     }
-    
-    private func loadSessionCount() async {
-        guard let userId = variantManager.appleUserId else {
-            return
-        }
-        
-        isLoadingCount = true
-        defer { isLoadingCount = false }
-        
-        do {
-            let encodedUserId = userId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? userId
-            let response = try await backendService.get(
-                path: "/api/sessions/\(encodedUserId)/count",
-                responseType: SessionCountResponse.self
-            )
-            await MainActor.run {
-                sessionCount = response.count
-            }
-        } catch {
-            print("Failed to load session count: \(error.localizedDescription)")
-        }
-    }
 }
 
 #Preview {
-    ManageView()
-        .environmentObject(VariantManager())
+    ManageView(variant: 3)
+        .environmentObject(SessionManager())
+        .environmentObject(TabController())
 }
