@@ -20,8 +20,14 @@ struct AppView: View {
             Tab("Survey", systemImage: "pencil.and.list.clipboard", value: TabItem.survey) {
                 SurveyView()
             }
-            Tab("Feedback", systemImage: "questionmark.circle", value: TabItem.help, role: .search) {
+            Tab("Feedback", systemImage: "megaphone.fill", value: TabItem.feedback) {
                 FeedbackView()
+            }
+            Tab("Help", systemImage: "questionmark.circle", value: TabItem.help, role: .search) {
+                ZStack {
+                    LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
+                    InstructionsView(onboardingNeeded: .constant(false), refresher: true)
+                }
             }
         }
         .environmentObject(tabController)

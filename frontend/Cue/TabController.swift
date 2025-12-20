@@ -12,6 +12,7 @@ enum TabItem {
     case manage
     case survey
     case help
+    case feedback
 }
 
 class TabController: ObservableObject {

@@ -17,7 +17,7 @@ struct OnboardingView: View {
             if let variant = variantManager.variant {
                 AppView(variant: variant)
                     .sheet(isPresented: $onboardingNeeded) {
-                        InstructionsView(onboardingNeeded: $onboardingNeeded)
+                        InstructionsView(onboardingNeeded: $onboardingNeeded, refresher: false)
                             .toolbar(content: {
                                ToolbarItem(placement: .cancellationAction) {
                                   Text("")

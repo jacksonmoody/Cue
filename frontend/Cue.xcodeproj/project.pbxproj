@@ -33,6 +33,12 @@
 		D591A8462EF12D25000E88F2 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D591A83E2EF12D25000E88F2 /* Launch Screen.storyboard */; };
 		D5A969762EF3AEE700782283 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A969752EF3AEE700782283 /* ElapsedTimeView.swift */; };
 		D5A969772EF3AEE700782283 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A969752EF3AEE700782283 /* ElapsedTimeView.swift */; };
+		D5B7ED402EF677AA00422DA2 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5CF98BF2EF66B9D008535C3 /* WidgetKit.framework */; };
+		D5B7ED412EF677AA00422DA2 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5CF98C12EF66B9D008535C3 /* SwiftUI.framework */; };
+		D5B7ED4E2EF677AB00422DA2 /* CueWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D5B7ED3F2EF677AA00422DA2 /* CueWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D5B7ED562EF67A3200422DA2 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */; };
+		D5B7ED572EF67A3200422DA2 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */; };
+		D5B7ED582EF67D6200422DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +48,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D583BBB02EEFA1BE006CDC9B;
 			remoteInfo = "Cue Watch App";
+		};
+		D5B7ED4C2EF677AB00422DA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D583BB9C2EEFA1BD006CDC9B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5B7ED3E2EF677AA00422DA2;
+			remoteInfo = CueWidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -57,6 +70,17 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D5CF98D02EF66B9E008535C3 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D5B7ED4E2EF677AB00422DA2 /* CueWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -64,7 +88,7 @@
 		D583BBA42EEFA1BD006CDC9B /* Cue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cue Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D58A97A62EF60A950078459A /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
-		D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = /Users/jacksonmoody/Documents/Programming/Cue/frontend/Assets.xcassets; sourceTree = "<absolute>"; };
 		D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariantManager.swift; sourceTree = "<group>"; };
 		D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "App Icon.icon"; sourceTree = "<group>"; };
@@ -75,6 +99,10 @@
 		D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
 		D591A83E2EF12D25000E88F2 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		D5A969752EF3AEE700782283 /* ElapsedTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeView.swift; sourceTree = "<group>"; };
+		D5B7ED3F2EF677AA00422DA2 /* CueWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CueWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		D5CF98BF2EF66B9D008535C3 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = /System/Library/Frameworks/WidgetKit.framework; sourceTree = "<absolute>"; };
+		D5CF98C12EF66B9D008535C3 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = /System/Library/Frameworks/SwiftUI.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -82,6 +110,20 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+			);
+			target = D583BBA32EEFA1BD006CDC9B /* Cue */;
+		};
+		D5B7ED522EF677AB00422DA2 /* Exceptions for "CueWidget" folder in "CueWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D5B7ED3E2EF677AA00422DA2 /* CueWidgetExtension */;
+		};
+		D5B7ED542EF6785800422DA2 /* Exceptions for "CueWidget" folder in "Cue" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CueWidgetLiveActivity.swift,
 			);
 			target = D583BBA32EEFA1BD006CDC9B /* Cue */;
 		};
@@ -101,6 +143,15 @@
 			path = "Cue Watch App";
 			sourceTree = "<group>";
 		};
+		D5B7ED422EF677AA00422DA2 /* CueWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D5B7ED542EF6785800422DA2 /* Exceptions for "CueWidget" folder in "Cue" target */,
+				D5B7ED522EF677AB00422DA2 /* Exceptions for "CueWidget" folder in "CueWidgetExtension" target */,
+			);
+			path = CueWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +169,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D5B7ED3C2EF677AA00422DA2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5B7ED412EF677AA00422DA2 /* SwiftUI.framework in Frameworks */,
+				D5B7ED402EF677AA00422DA2 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -132,6 +192,7 @@
 				D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */,
 				D58A97A62EF60A950078459A /* SessionManager.swift */,
 				D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */,
+				D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */,
 				D58D5E152EF093DF00E4D1DB /* LoginView.swift */,
 				D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */,
 				D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */,
@@ -139,6 +200,8 @@
 				D5A969752EF3AEE700782283 /* ElapsedTimeView.swift */,
 				D583BBA62EEFA1BD006CDC9B /* Cue */,
 				D583BBB52EEFA1BE006CDC9B /* Cue Watch App */,
+				D5B7ED422EF677AA00422DA2 /* CueWidget */,
+				D5CF98BE2EF66B9D008535C3 /* Frameworks */,
 				D583BBA52EEFA1BD006CDC9B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -148,8 +211,18 @@
 			children = (
 				D583BBA42EEFA1BD006CDC9B /* Cue.app */,
 				D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */,
+				D5B7ED3F2EF677AA00422DA2 /* CueWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D5CF98BE2EF66B9D008535C3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D5CF98BF2EF66B9D008535C3 /* WidgetKit.framework */,
+				D5CF98C12EF66B9D008535C3 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -163,11 +236,13 @@
 				D583BBA12EEFA1BD006CDC9B /* Frameworks */,
 				D583BBA22EEFA1BD006CDC9B /* Resources */,
 				D583BBC12EEFA1BF006CDC9B /* Embed Watch Content */,
+				D5CF98D02EF66B9E008535C3 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				D583BBB42EEFA1BE006CDC9B /* PBXTargetDependency */,
+				D5B7ED4D2EF677AB00422DA2 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D583BBA62EEFA1BD006CDC9B /* Cue */,
@@ -201,6 +276,28 @@
 			productReference = D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D5B7ED3E2EF677AA00422DA2 /* CueWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5B7ED4F2EF677AB00422DA2 /* Build configuration list for PBXNativeTarget "CueWidgetExtension" */;
+			buildPhases = (
+				D5B7ED3B2EF677AA00422DA2 /* Sources */,
+				D5B7ED3C2EF677AA00422DA2 /* Frameworks */,
+				D5B7ED3D2EF677AA00422DA2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D5B7ED422EF677AA00422DA2 /* CueWidget */,
+			);
+			name = CueWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = CueWidgetExtension;
+			productReference = D5B7ED3F2EF677AA00422DA2 /* CueWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -215,6 +312,9 @@
 						CreatedOnToolsVersion = 26.2;
 					};
 					D583BBB02EEFA1BE006CDC9B = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					D5B7ED3E2EF677AA00422DA2 = {
 						CreatedOnToolsVersion = 26.2;
 					};
 				};
@@ -235,6 +335,7 @@
 			targets = (
 				D583BBA32EEFA1BD006CDC9B /* Cue */,
 				D583BBB02EEFA1BE006CDC9B /* Cue Watch App */,
+				D5B7ED3E2EF677AA00422DA2 /* CueWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -259,6 +360,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D5B7ED3D2EF677AA00422DA2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5B7ED582EF67D6200422DA2 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -268,6 +377,7 @@
 			files = (
 				D58D5E362EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */,
 				D5A969762EF3AEE700782283 /* ElapsedTimeView.swift in Sources */,
+				D5B7ED562EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
 				D58D5E2D2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */,
 				D58D5DF42EEFDF2B00E4D1DB /* OnboardingView.swift in Sources */,
 				D58D5E172EF093DF00E4D1DB /* LoginView.swift in Sources */,
@@ -287,12 +397,20 @@
 				D5A969772EF3AEE700782283 /* ElapsedTimeView.swift in Sources */,
 				D58A97A72EF60A950078459A /* SessionManager.swift in Sources */,
 				D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */,
+				D5B7ED572EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
 				D58D5E372EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */,
 				D58D5E1C2EF0953400E4D1DB /* OnboardingView.swift in Sources */,
 				D58D5E342EF0DA0E00E4D1DB /* WorkoutManager.swift in Sources */,
 				D58D5E302EF0D1C300E4D1DB /* WatchConnectivityManager.swift in Sources */,
 				D58D5E032EEFE63800E4D1DB /* VariantManager.swift in Sources */,
 				D58D5E2E2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5B7ED3B2EF677AA00422DA2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +421,11 @@
 			isa = PBXTargetDependency;
 			target = D583BBB02EEFA1BE006CDC9B /* Cue Watch App */;
 			targetProxy = D583BBB32EEFA1BE006CDC9B /* PBXContainerItemProxy */;
+		};
+		D5B7ED4D2EF677AB00422DA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5B7ED3E2EF677AA00422DA2 /* CueWidgetExtension */;
+			targetProxy = D5B7ED4C2EF677AB00422DA2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -438,6 +561,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = jacksonmoody.Cue;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -475,6 +599,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = jacksonmoody.Cue;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -514,6 +639,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
@@ -559,6 +686,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
@@ -589,6 +718,71 @@
 			};
 			name = Release;
 		};
+		D5B7ED502EF677AB00422DA2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 723WRFQY27;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CueWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CueWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jacksonmoody.Cue.CueWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D5B7ED512EF677AB00422DA2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 723WRFQY27;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CueWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CueWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jacksonmoody.Cue.CueWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -615,6 +809,15 @@
 			buildConfigurations = (
 				D583BBC32EEFA1BF006CDC9B /* Debug */,
 				D583BBC42EEFA1BF006CDC9B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5B7ED4F2EF677AB00422DA2 /* Build configuration list for PBXNativeTarget "CueWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5B7ED502EF677AB00422DA2 /* Debug */,
+				D5B7ED512EF677AB00422DA2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

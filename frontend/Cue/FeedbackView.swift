@@ -10,44 +10,31 @@ import MessageUI
 
 struct FeedbackView: View {
     @State private var isShowingMailView = false
-    @State private var showingInstructions = false
     @Environment(\.openURL) private var openUrl
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
-                VStack(alignment: .leading, spacing: 30) {
-                    Text("Feedback")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    Text("Thank you for using Cue and for participating in this experiment! This thesis would not be possible without your help. If you are running into any issues, have any questions, or have any thoughts on how to improve the experience, please let me know.")
-                    Button("Submit Feedback") {
-                        if (MFMailComposeViewController.canSendMail()) {
-                            isShowingMailView = true
-                        } else {
-                            sendEmail(openUrl: openUrl)
-                        }
-                    }
+        ZStack {
+            LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
+            VStack(alignment: .leading, spacing: 30) {
+                Text("Feedback")
+                    .font(.largeTitle)
                     .fontWeight(.bold)
-                    .padding()
-                    .glassEffect(.regular.tint(.blue).interactive())
-                }
-                .foregroundStyle(.white)
-                .padding(30)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button("Help", systemImage: "questionmark.circle") {
-                            showingInstructions = true
-                        }
+                Text("Thank you for using Cue and for participating in this experiment! This thesis would not be possible without your help. If you are running into any issues, have any questions, or have any thoughts on how to improve the experience, please let me know.")
+                Button("Submit Feedback") {
+                    if (MFMailComposeViewController.canSendMail()) {
+                        isShowingMailView = true
+                    } else {
+                        sendEmail(openUrl: openUrl)
                     }
                 }
-                .sheet(isPresented: $isShowingMailView) {
-                    MailComposerViewController(recipients: ["jacksonmoody@college.harvard.edu"], subject: "Feedback on Cue")
-                }
-                .sheet(isPresented: $showingInstructions) {
-                    InstructionsView(onboardingNeeded: .constant(false))
-                }
+                .fontWeight(.bold)
+                .padding()
+                .glassEffect(.regular.tint(.blue).interactive())
+            }
+            .foregroundStyle(.white)
+            .padding(30)
+            .sheet(isPresented: $isShowingMailView) {
+                MailComposerViewController(recipients: ["jacksonmoody@college.harvard.edu"], subject: "Feedback on Cue")
             }
         }
     }

@@ -23,7 +23,7 @@ struct SurveyView: View {
                         .padding(.vertical, 20)
                         .padding(.horizontal)
                 } else {
-                    SurveyLocked()
+                    Survey()
                         .padding(30)
                 }
             }
@@ -50,6 +50,8 @@ struct Survey: View {
                     .font(.title)
                     .fontWeight(.bold)
                 Text("Please complete the following survey to the best of your ability. If you have any questions, please ask them via the \"Feedback\" tab.")
+                Text("Before beginning, please ensure that both your iOS Cue App and watchOS Cue App report that you are in Variant \(String(variantManager.variant ?? -1)). If they do not agree, report the issue via the \"Feedback\" tab and do not submit the survey.")
+                    .fontWeight(.bold)
             }
         }
     }

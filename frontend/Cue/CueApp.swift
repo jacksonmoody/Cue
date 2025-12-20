@@ -28,6 +28,9 @@ struct CueApp: App {
                             await sessionManager.loadSessionCount()
                         }
                     }
+                    WatchConnectivityManager.shared.onSessionStateChanged = { isActive in
+                        LiveActivityManager.shared.handleSessionStateChange(isActive)
+                    }
                 }
         }
     }
