@@ -49,15 +49,35 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         if let session, !session.isReachable || session.activationState != .activated {
             self.healthStore.startWatchApp(with: HKWorkoutConfiguration(), completion: { (success, error) in
                 print("Starting Watch App in background: \(success), error: \(String(describing: error))")
+                if !success {
+                    DispatchQueue.main.async {
+                        self.showError = true
+                        return
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        let previousState = self.isSessionActive
+                        self.isSessionActive = active
+                        if previousState != active {
+                            self.onSessionStateChanged?(active)
+                        }
+                    }
+                }
             })
         } else {
+            // Watch is reachable, send directly
             sendSessionState(active)
+            DispatchQueue.main.async {
+                let previousState = self.isSessionActive
+                self.isSessionActive = active
+                if previousState != active {
+                    self.onSessionStateChanged?(active)
+                }
+            }
         }
         #else
         // Always send session state on Watch
         sendSessionState(active)
-        #endif
-        
         DispatchQueue.main.async {
             let previousState = self.isSessionActive
             self.isSessionActive = active
@@ -65,6 +85,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                 self.onSessionStateChanged?(active)
             }
         }
+        #endif
     }
     
     private func sendSessionState(_ active: Bool) {

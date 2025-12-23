@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D51A5BF32EFA8496001AD612 /* breathe.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D51A5BF22EFA8496001AD612 /* breathe.mp3 */; };
 		D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D583BBB22EEFA1BE006CDC9B /* Cue Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -84,6 +85,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D51A5BF22EFA8496001AD612 /* breathe.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = breathe.mp3; sourceTree = "<group>"; };
 		D55EB3852EF5FE520077F3B4 /* BackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendService.swift; sourceTree = "<group>"; };
 		D583BBA42EEFA1BD006CDC9B /* Cue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cue Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -198,6 +200,7 @@
 				D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */,
 				D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */,
 				D5A969752EF3AEE700782283 /* ElapsedTimeView.swift */,
+				D51A5BF22EFA8496001AD612 /* breathe.mp3 */,
 				D583BBA62EEFA1BD006CDC9B /* Cue */,
 				D583BBB52EEFA1BE006CDC9B /* Cue Watch App */,
 				D5B7ED422EF677AA00422DA2 /* CueWidget */,
@@ -355,6 +358,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D51A5BF32EFA8496001AD612 /* breathe.mp3 in Resources */,
 				D58D5E112EF0903600E4D1DB /* Assets.xcassets in Resources */,
 				D58D5E0E2EF08D6200E4D1DB /* App Icon.icon in Resources */,
 			);

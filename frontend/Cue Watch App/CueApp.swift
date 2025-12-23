@@ -15,6 +15,7 @@ struct Cue_Watch_AppApp: App {
     @WKApplicationDelegateAdaptor(WatchDelegate.self) var delegate
     @StateObject private var workoutManager = WorkoutManager()
     @StateObject private var variantManager = VariantManager()
+    @State private var navigationRouter = NavigationRouter()
     
     var body: some Scene {
         WindowGroup {
@@ -24,10 +25,12 @@ struct Cue_Watch_AppApp: App {
                     delegate.workoutManager = workoutManager
                     if delegate.launchedFromNotification {
                         print("User launched app from local notification")
+                        navigationRouter.navigateToGear1()
                     }
                 }
                 .environmentObject(workoutManager)
                 .environmentObject(variantManager)
+                .environment(navigationRouter)
         }
     }
 }

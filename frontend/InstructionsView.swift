@@ -24,7 +24,7 @@ struct InstructionsView: View {
         } else if let variant = variantManager.variant, variant == 2 {
             return "You are in Variant 2, meaning that you will receive a reminder to reflect at a set time every day. You can adjust this time in the Watch app's settings. Feel free to accept or deny these reminders as you see fit, and remember that you will need to log at least 5 sessions of at least 5 hours each to complete the experiment."
         } else if let variant = variantManager.variant, variant == 3 {
-            return "You are in Variant 3, meaning that you will open the Cue app on your Watch to begin a reflection session. We encourage you to begin a session whenever you are feeling stressed or anxious, and you may complete as many or as few of these sessions as you wish. In addition to these reflective exercises, you will need to log at least 5 sessions of at least 5 hours each to complete the experiment."
+            return "You are in Variant 3. To begin a reflection session, press the icon in the upper-left corner of the Cue app on your Watch. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many or as few of these sessions as you wish. In addition to these reflective exercises, you will need to log at least 5 sessions of at least 5 hours each to complete the experiment."
         } else {
             return nil
         }

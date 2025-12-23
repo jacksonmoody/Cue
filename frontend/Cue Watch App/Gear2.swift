@@ -1,0 +1,123 @@
+//
+//  Gear2.swift
+//  Cue Watch App
+//
+//  Created by Jackson Moody on 12/22/25.
+
+// Gear 2: Disillusionment with the Reward
+// Brewer emphasizes felt experience over cognition.
+
+import SwiftUI
+import WatchKit
+
+struct Gear2: View {
+    @Environment(NavigationRouter.self) private var router
+    @State private var currentPhase: Int = 0
+    @State private var opacity: Double = 0
+    @State private var vibrationTimer: Timer?
+    private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
+        (fadeIn: 1.5, display: 3.0, fadeOut: 1.5),
+        (fadeIn: 1.5, display: 4.0, fadeOut: 1.5),
+        (fadeIn: 2.0, display: 0.0, fadeOut: 0.0)
+    ]
+    
+    var body: some View {
+        ZStack {
+            if currentPhase == 0 {
+                Text("Notice your body right now...")
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .opacity(opacity)
+            }
+            
+            if currentPhase == 1 {
+                Text("If you were to follow your body's usual response, what might happen here?")
+                    .fontWeight(.bold)
+                    .opacity(opacity)
+                    .multilineTextAlignment(.center)
+            }
+            
+            if currentPhase == 2 {
+                List {
+                    Button("  Heart Racing", systemImage: "heart"){
+                        router.navigateToGear3()
+                    }
+                    Button("  Muscle Tensing", systemImage: "dumbbell"){
+                        router.navigateToGear3()
+                    }
+                    Button("  Rapid Breathing", systemImage: "lungs"){
+                        router.navigateToGear3()
+                    }
+                    Button("  Feeling Heavy", systemImage: "scalemass"){
+                        router.navigateToGear3()
+                    }
+                    Button("  Other", systemImage: "questionmark"){
+                        router.navigateToGear3()
+                    }
+                    Button("  No Change", systemImage: "circle.slash"){
+                        router.navigateToGear3()
+                    }
+                }
+                .opacity(opacity)
+                .scrollIndicators(.hidden)
+            }
+        }
+        .onAppear {
+            startAnimation()
+        }
+    }
+    
+    private func startAnimation() {
+        animatePhase(phase: 0)
+    }
+    
+    private func animatePhase(phase: Int) {
+        currentPhase = phase
+        let timing = phaseTimings[phase]
+        
+        if phase == 0 {
+            startVibration()
+        }
+        
+        withAnimation(.easeInOut(duration: timing.fadeIn)) {
+            opacity = 1.0
+        }
+        
+        if phase == 2 {
+            return
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + timing.fadeIn + timing.display) {
+            if phase == 1 {
+                stopVibration()
+            }
+            
+            withAnimation(.easeInOut(duration: timing.fadeOut)) {
+                opacity = 0.0
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + timing.fadeOut) {
+                if phase < 2 {
+                    animatePhase(phase: phase + 1)
+                }
+            }
+        }
+    }
+    
+    private func startVibration() {
+        stopVibration()
+        vibrationTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+            WKInterfaceDevice.current().play(.click)
+        }
+    }
+    
+    private func stopVibration() {
+        vibrationTimer?.invalidate()
+        vibrationTimer = nil
+    }
+}
+
+#Preview {
+    Gear2()
+        .environment(NavigationRouter())
+}

@@ -12,20 +12,22 @@ import Combine
 struct AppView: View {
     @ObservedObject private var connectivityManager = WatchConnectivityManager.shared
     @EnvironmentObject var workoutManager: WorkoutManager
+    @Environment(NavigationRouter.self) private var router
     @State private var showingInstructions = false
     let variant: Int
     
     var body: some View {
-        NavigationStack {
+        @Bindable var router = router
+        NavigationStack(path: $router.path) {
             ZStack {
                 LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
                 
                 VStack {
                     ZStack {
                         if connectivityManager.isSessionActive {
-                            SwirlingRing(delay: 0.0, size: 110, isWatch: true)
-                            SwirlingRing(delay: 2.6, size: 110, isWatch: true)
-                            SwirlingRing(delay: 5.3, size: 110, isWatch: true)
+                            SwirlingRing(delay: 0.0, size: 130, isWatch: true)
+                            SwirlingRing(delay: 2.6, size: 130, isWatch: true)
+                            SwirlingRing(delay: 5.3, size: 130, isWatch: true)
                         }
                         Button(action: {
                             toggleSession()
@@ -34,13 +36,13 @@ struct AppView: View {
                             ZStack {
                                 Circle()
                                     .strokeBorder(.white.opacity(0.5), lineWidth: 1)
-                                    .frame(width: 100, height: 100)
+                                    .frame(width: 120, height: 120)
                                 
                                 VStack(spacing: 4) {
                                     Image(systemName: connectivityManager.isSessionActive ? "stop.fill" : "play.fill")
                                         .font(.system(size: 30))
-                                    Text(connectivityManager.isSessionActive ? "Stop" : "Start")
-                                        .font(.system(size: 14, weight: .semibold))
+                                    Text(connectivityManager.isSessionActive ? "Stop Monitoring" : "Start Monitoring")
+                                        .font(.system(size: 12, weight: .semibold))
                                 }
                                 .foregroundColor(.white)
                             }
@@ -62,6 +64,20 @@ struct AppView: View {
                             showingInstructions = true
                         }
                     }
+                    if variant == 2 {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button("Settings", systemImage: "gear") {
+                                router.navigateToSettings()
+                            }
+                        }
+                    }
+                    if variant == 3 {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button("Intervention", systemImage: "apple.meditate") {
+                                router.navigateToGear1()
+                            }
+                        }
+                    }
                 }
                 .sheet(isPresented: $showingInstructions) {
                     InstructionsView(onboardingNeeded: .constant(false), refresher: true)
@@ -70,6 +86,19 @@ struct AppView: View {
                     Button("OK", role: .cancel) {}
                 } message: {
                     Text("Please try again.")
+                }
+                .navigationDestination(for: Route.self) { route in
+                    switch route {
+                    case .gear1:
+                        Gear1()
+                            .navigationBarBackButtonHidden()
+                    case .gear2:
+                        Gear2()
+                    case .gear3:
+                        Gear3()
+                    case .settings:
+                        SettingsView()
+                    }
                 }
             }
         }
@@ -99,4 +128,5 @@ struct AppView: View {
 #Preview {
     AppView(variant: 3)
         .environmentObject(WorkoutManager())
+        .environment(NavigationRouter())
 }
