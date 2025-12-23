@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D51A5BF32EFA8496001AD612 /* breathe.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D51A5BF22EFA8496001AD612 /* breathe.mp3 */; };
+		D52A6D442EFB3E9F0092DE7E /* App Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */; };
 		D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D583BBB22EEFA1BE006CDC9B /* Cue Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -368,6 +369,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D52A6D442EFB3E9F0092DE7E /* App Icon.icon in Resources */,
 				D5B7ED582EF67D6200422DA2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

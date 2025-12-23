@@ -28,9 +28,7 @@ struct ManageView: View {
                     }
                     Button(action: {
                         let newState = !connectivityManager.isSessionActive
-                        withAnimation {
-                            connectivityManager.updateSessionState(newState)
-                        }
+                        connectivityManager.updateSessionState(newState)
                     }) {
                         ZStack {
                             Circle()
@@ -44,14 +42,16 @@ struct ManageView: View {
                                     .font(.system(size: 14, weight: .semibold))
                             }
                             .foregroundColor(.white)
+                            .animation(.default, value: connectivityManager.isSessionActive)
                         }
                     }
                 }
-                Text(connectivityManager.isSessionActive ? "Your session is running. Feel free to close the app." : "Press Start to Begin Monitoring")
+                Text(connectivityManager.isSessionActive ? "Your session is running. Feel free to leave the app." : "Press Start to Begin Monitoring")
                     .font(.title2.bold())
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     .padding()
+                    .animation(.default, value: connectivityManager.isSessionActive)
                 Spacer()
                 VStack {
                     Text("Variant: \(variant)")
@@ -77,7 +77,7 @@ struct ManageView: View {
         .alert("Apple Watch Not Reachable", isPresented: $connectivityManager.showError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Please open the Cue app on your Apple Watch to start the session.")
+            Text("Please open the Cue app on your Apple Watch to manage the session.")
         }
     }
 }

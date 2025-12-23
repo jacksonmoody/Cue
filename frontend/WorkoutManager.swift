@@ -17,11 +17,6 @@ class WorkoutManager: NSObject, ObservableObject {
     private let backendService = BackendService.shared
 
     func startWorkout() {
-        guard session == nil else {
-            print("Not starting workout due to existing session.")
-            return
-        }
-        
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .other
 
@@ -29,10 +24,14 @@ class WorkoutManager: NSObject, ObservableObject {
             session = try HKWorkoutSession(healthStore: healthStore, configuration: configuration)
             builder = session?.associatedWorkoutBuilder()
         } catch {
+            print("Failed to create workout session: \(error.localizedDescription)")
+            notifyWorkoutStartFailed()
             return
         }
 
         guard let session = session else {
+            print("Failed to create workout session: session is nil")
+            notifyWorkoutStartFailed()
             return
         }
         
@@ -46,8 +45,16 @@ class WorkoutManager: NSObject, ObservableObject {
         builder?.beginCollection(withStart: startDate) { (success, error) in
             if let error = error {
                 print("Failed to begin workout collection: \(error.localizedDescription)")
+                self.notifyWorkoutStartFailed()
+            } else if !success {
+                print("Failed to begin workout collection: unknown error")
+                self.notifyWorkoutStartFailed()
             }
         }
+    }
+    
+    private func notifyWorkoutStartFailed() {
+        WatchConnectivityManager.shared.updateSessionState(false)
     }
 
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
@@ -64,9 +71,6 @@ class WorkoutManager: NSObject, ObservableObject {
                 completion(success)
         }
     }
-
-    // MARK: - Session State Control
-    @Published var running = false
 
     func stopWorkout() {
         guard session != nil else { return }
@@ -102,11 +106,12 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState,
                         from fromState: HKWorkoutSessionState, date: Date) {
         let isRunning = toState == .running
-        DispatchQueue.main.async {
-            self.running = isRunning
+        if isRunning {
+            WatchConnectivityManager.shared.updateSessionState(true)
         }
         
         if toState == .stopped {
+            WatchConnectivityManager.shared.updateSessionState(false)
             builder?.discardWorkout()
             session?.end()
             
@@ -122,9 +127,9 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
         print("HKWorkoutSessionDelegate: workoutSession(_:didFailWithError:) \(error.localizedDescription)")
         DispatchQueue.main.async {
-            self.running = false
             self.builder = nil
             self.session = nil
+            WatchConnectivityManager.shared.updateSessionState(false)
         }
     }
 }

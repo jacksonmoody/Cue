@@ -48,8 +48,10 @@ class WatchDelegate: NSObject, WKApplicationDelegate {
     }
     
     func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
-        WatchConnectivityManager.shared.isSessionActive = true
-        workoutManager?.startWorkout()
+        Task {
+            try? await Task.sleep(for: .milliseconds(500))
+            workoutManager?.startWorkout()
+        }
     }
 }
 

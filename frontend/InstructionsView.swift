@@ -15,16 +15,22 @@ struct InstructionsView: View {
     @EnvironmentObject var tabController: TabController
     #endif
     @Binding var onboardingNeeded: Bool
+    @State private var selectedOccupation: Occupation = .student
     let refresher: Bool
     let center = UNUserNotificationCenter.current()
     
+    enum Occupation: String, CaseIterable, Identifiable {
+        case student, employed, unemployed, notworking, retired
+        var id: Self { self }
+    }
+    
     var instructionText: String? {
         if let variant = variantManager.variant, variant == 1 {
-            return "You are in Variant 1, meaning that you will automatically receive notifications to reflect (if a session is running). Feel free to accept or deny these notifications as you see fit, and remember that you will need to log at least 5 sessions of at least 5 hours each to complete the experiment."
+            return "You are in Variant 1, meaning that you will automatically receive notifications to reflect whenever a monitoring session is running. Feel free to accept or deny these notifications as you see fit, and remember that you will need to log at least 5 monitoring sessions of at least 5 hours each to complete the experiment."
         } else if let variant = variantManager.variant, variant == 2 {
-            return "You are in Variant 2, meaning that you will receive a reminder to reflect at a set time every day. You can adjust this time in the Watch app's settings. Feel free to accept or deny these reminders as you see fit, and remember that you will need to log at least 5 sessions of at least 5 hours each to complete the experiment."
+            return "You are in Variant 2, meaning that you will receive a reminder to reflect at a set time every day. You can adjust this time by clicking the gear icon in the upper-left corner of the Cue app on your Apple Watch. Feel free to accept or deny these reminders as you see fit, and remember that you will need to log at least 5 monitoring sessions of at least 5 hours each to complete the experiment."
         } else if let variant = variantManager.variant, variant == 3 {
-            return "You are in Variant 3. To begin a reflection session, press the icon in the upper-left corner of the Cue app on your Watch. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many or as few of these sessions as you wish. In addition to these reflective exercises, you will need to log at least 5 sessions of at least 5 hours each to complete the experiment."
+            return "You are in Variant 3. To begin a reflection session, press the leaf icon in the upper-left corner of the Cue app on your Apple Watch. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many or as few of these sessions as you wish. In addition to these reflective exercises, you will need to log at least 5 sessions of at least 5 hours each to complete the experiment."
         } else {
             return nil
         }
@@ -39,7 +45,14 @@ struct InstructionsView: View {
                     .fontWeight(.bold)
                     .padding(.top, 40)
                 #endif
-                Text("\(!refresher ? "Thank you for participating in this experiment! To get started, please accept all  requested permissions. Then, click the \"Get Started\" button to begin monitoring.\n\n" : "")\(instructionText ?? "")")
+                Text("\(!refresher ? "Thank you for participating in this experiment! To get started, please click the \"Get Started\" button and accept all  requested permissions.\n\n" : "")\(instructionText ?? "")")
+                Picker("Occupation", selection: $selectedOccupation) {
+                    Text("Student").tag(Occupation.student)
+                    Text("Employed").tag(Occupation.employed)
+                    Text("Unemployed / Seeking Work").tag(Occupation.unemployed)
+                    Text("Not Working").tag(Occupation.notworking)
+                    Text("Retired").tag(Occupation.retired)
+                }
                 if !refresher {
                     Button("Get Started") {
                         workoutManager.requestAuthorization { authorized in
@@ -79,8 +92,9 @@ struct InstructionsView: View {
                 }
             }
             #if os(iOS)
-            .padding(40)
-            .font(.title2)
+            .padding(refresher ? 30 : 40)
+            .font(!refresher ? .title2 : .default)
+            .foregroundStyle(refresher ? .white : .primary)
             #else
             .multilineTextAlignment(.center)
             .padding()

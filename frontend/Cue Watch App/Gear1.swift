@@ -12,8 +12,11 @@ import SwiftUI
 struct Gear1: View {
     @Environment(NavigationRouter.self) private var router
     var body: some View {
+        ProgressView()
         Text("What triggered this?")
-        Text("Location/calendar")
+        Text("Location")
+        Text("calendar events")
+        Text("also send time of day, day of week, occupation")
         Text("LLM call to personalize")
         Button("Next") {
             router.navigateToGear2()

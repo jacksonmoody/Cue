@@ -54,26 +54,11 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                         self.showError = true
                         return
                     }
-                } else {
-                    DispatchQueue.main.async {
-                        let previousState = self.isSessionActive
-                        self.isSessionActive = active
-                        if previousState != active {
-                            self.onSessionStateChanged?(active)
-                        }
-                    }
                 }
             })
         } else {
             // Watch is reachable, send directly
             sendSessionState(active)
-            DispatchQueue.main.async {
-                let previousState = self.isSessionActive
-                self.isSessionActive = active
-                if previousState != active {
-                    self.onSessionStateChanged?(active)
-                }
-            }
         }
         #else
         // Always send session state on Watch
