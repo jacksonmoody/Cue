@@ -16,7 +16,17 @@ class LiveActivityManager: ObservableObject {
     private var liveActivity: Activity<CueWidgetAttributes>?
     private var workoutStartDate: Date?
     
-    private init() {}
+    private init() {
+        recoverExistingActivity()
+    }
+    
+    private func recoverExistingActivity() {
+        let existingActivities = Activity<CueWidgetAttributes>.activities
+        if let existingActivity = existingActivities.first {
+            liveActivity = existingActivity
+            workoutStartDate = existingActivity.content.state.workoutStartDate
+        }
+    }
     
     func startLiveActivity() {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
@@ -24,9 +34,12 @@ class LiveActivityManager: ObservableObject {
             return
         }
         
-        // Don't start if already running
+        if liveActivity == nil {
+            recoverExistingActivity()
+        }
+        
+        // Don't start if live activity already running
         guard liveActivity == nil else {
-            print("Live Activity already running")
             return
         }
         

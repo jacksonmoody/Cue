@@ -17,6 +17,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     @Published var isSessionActive: Bool = false
     @Published var isReachable: Bool = false
     @Published var showError: Bool = false
+    @Published var isUpdatingSession: Bool = false
     
     private var session: WCSession?
     private var cancellables = Set<AnyCancellable>()
@@ -45,6 +46,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     
     func updateSessionState(_ active: Bool) {
         #if os(iOS)
+        DispatchQueue.main.async {
+            self.isUpdatingSession = true
+        }
         // If trying to start the session on iOS and Watch is not reachable, open Watch app
         if let session, !session.isReachable || session.activationState != .activated {
             self.healthStore.startWatchApp(with: HKWorkoutConfiguration(), completion: { (success, error) in
@@ -52,6 +56,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                 if !success {
                     DispatchQueue.main.async {
                         self.showError = true
+                        self.isUpdatingSession = false
                         return
                     }
                 }
@@ -76,6 +81,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     private func sendSessionState(_ active: Bool) {
         guard let session = session, session.activationState == .activated else {
             // Session not activated yet, will sync when activated
+            DispatchQueue.main.async {
+                self.isUpdatingSession = false
+            }
             return
         }
         
@@ -85,6 +93,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                 try session.updateApplicationContext(["isSessionActive": active])
             } catch {
                 print("Error updating application context: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.isUpdatingSession = false
+                }
             }
             return
         }
@@ -98,6 +109,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                     try session.updateApplicationContext(["isSessionActive": active])
                 } catch {
                     print("Error updating application context as fallback: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        self.isUpdatingSession = false
+                    }
                 }
             }
         )
@@ -132,6 +146,46 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             }
         )
     }
+    
+    private func requestCurrentSessionState() {
+        #if os(iOS)
+        guard let session = session, session.activationState == .activated, session.isReachable else {
+            // If watch is not reachable, default to false (session not active)
+            DispatchQueue.main.async {
+                if self.isSessionActive {
+                    self.isSessionActive = false
+                    self.onSessionStateChanged?(false)
+                }
+            }
+            return
+        }
+        
+        session.sendMessage(
+            ["requestSessionState": true],
+            replyHandler: { reply in
+                if let active = reply["isSessionActive"] as? Bool {
+                    DispatchQueue.main.async {
+                        let previousState = self.isSessionActive
+                        self.isSessionActive = active
+                        if previousState != active {
+                            self.onSessionStateChanged?(active)
+                        }
+                    }
+                }
+            },
+            errorHandler: { error in
+                print("Error requesting session state: \(error.localizedDescription)")
+                // On error, default to false (session not active)
+                DispatchQueue.main.async {
+                    if self.isSessionActive {
+                        self.isSessionActive = false
+                        self.onSessionStateChanged?(false)
+                    }
+                }
+            }
+        )
+        #endif
+    }
 }
 
 extension WatchConnectivityManager: WCSessionDelegate {
@@ -141,13 +195,22 @@ extension WatchConnectivityManager: WCSessionDelegate {
             return
         }
         
-        // Load from application context if available (to sync with other device)
-        let contextState = session.receivedApplicationContext["isSessionActive"] as? Bool
         let isReachable = session.isReachable
         
         DispatchQueue.main.async {
             self.isReachable = isReachable
             
+            #if os(iOS)
+            if isReachable {
+                self.requestCurrentSessionState()
+            } else {
+                if self.isSessionActive {
+                    self.isSessionActive = false
+                    self.onSessionStateChanged?(false)
+                }
+            }
+            #else
+            let contextState = session.receivedApplicationContext["isSessionActive"] as? Bool
             if let contextState = contextState {
                 let previousState = self.isSessionActive
                 self.isSessionActive = contextState
@@ -156,17 +219,16 @@ extension WatchConnectivityManager: WCSessionDelegate {
                 }
             }
             
-            // Sync current state on activation if reachable
             if isReachable {
                 self.sendSessionState(self.isSessionActive)
             }
+            #endif
         }
     }
     
     #if os(iOS)
     func sessionDidDeactivate(_ session: WCSession) {
         print("WCSession deactivated, reactivating...")
-        // Reactivate session (iOS only)
         session.activate()
     }
     func sessionDidBecomeInactive(_ session: WCSession) {}
@@ -174,7 +236,14 @@ extension WatchConnectivityManager: WCSessionDelegate {
     
     func sessionReachabilityDidChange(_ session: WCSession) {
         DispatchQueue.main.async {
+            let wasReachable = self.isReachable
             self.isReachable = session.isReachable
+            
+            #if os(iOS)
+            if !wasReachable && session.isReachable {
+                self.requestCurrentSessionState()
+            }
+            #endif
         }
     }
     
@@ -183,6 +252,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
             DispatchQueue.main.async {
                 let previousState = self.isSessionActive
                 self.isSessionActive = active
+                self.isUpdatingSession = false
                 if previousState != active {
                     self.onSessionStateChanged?(active)
                 }
@@ -196,11 +266,23 @@ extension WatchConnectivityManager: WCSessionDelegate {
         }
     }
     
+    #if os(watchOS)
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
+        if let _ = message["requestSessionState"] as? Bool {
+            let reply = ["isSessionActive": self.isSessionActive]
+            replyHandler(reply)
+            return
+        }
+        self.session(session, didReceiveMessage: message)
+    }
+    #endif
+    
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         if let active = applicationContext["isSessionActive"] as? Bool {
             DispatchQueue.main.async {
                 let previousState = self.isSessionActive
                 self.isSessionActive = active
+                self.isUpdatingSession = false
                 if previousState != active {
                     self.onSessionStateChanged?(active)
                 }

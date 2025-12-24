@@ -35,16 +35,24 @@ struct ManageView: View {
                                 .frame(width: 120, height: 120)
                                 .glassEffect(.regular.interactive())
                             
-                            VStack(spacing: 4) {
-                                Image(systemName: connectivityManager.isSessionActive ? "stop.fill" : "play.fill")
-                                    .font(.system(size: 30))
-                                Text(connectivityManager.isSessionActive ? "Stop" : "Start")
-                                    .font(.system(size: 14, weight: .semibold))
+                            if connectivityManager.isUpdatingSession {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    .scaleEffect(1.2)
+                            } else {
+                                VStack(spacing: 4) {
+                                    Image(systemName: connectivityManager.isSessionActive ? "stop.fill" : "play.fill")
+                                        .font(.system(size: 30))
+                                    Text(connectivityManager.isSessionActive ? "Stop" : "Start")
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
+                                .foregroundColor(.white)
                             }
-                            .foregroundColor(.white)
-                            .animation(.default, value: connectivityManager.isSessionActive)
                         }
                     }
+                    .disabled(connectivityManager.isUpdatingSession)
+                    .animation(.default, value: connectivityManager.isSessionActive)
+                    .animation(.default, value: connectivityManager.isUpdatingSession)
                 }
                 Text(connectivityManager.isSessionActive ? "Your session is running. Feel free to leave the app." : "Press Start to Begin Monitoring")
                     .font(.title2.bold())

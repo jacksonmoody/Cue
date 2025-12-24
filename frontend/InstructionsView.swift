@@ -15,12 +15,12 @@ struct InstructionsView: View {
     @EnvironmentObject var tabController: TabController
     #endif
     @Binding var onboardingNeeded: Bool
-    @State private var selectedOccupation: Occupation = .student
+    @AppStorage("occupation") var selectedOccupation: Occupation = .student
     let refresher: Bool
     let center = UNUserNotificationCenter.current()
     
     enum Occupation: String, CaseIterable, Identifiable {
-        case student, employed, unemployed, notworking, retired
+        case student, employed, unemployed, notworking
         var id: Self { self }
     }
     
@@ -45,13 +45,25 @@ struct InstructionsView: View {
                     .fontWeight(.bold)
                     .padding(.top, 40)
                 #endif
-                Text("\(!refresher ? "Thank you for participating in this experiment! To get started, please click the \"Get Started\" button and accept all  requested permissions.\n\n" : "")\(instructionText ?? "")")
-                Picker("Occupation", selection: $selectedOccupation) {
-                    Text("Student").tag(Occupation.student)
-                    Text("Employed").tag(Occupation.employed)
-                    Text("Unemployed / Seeking Work").tag(Occupation.unemployed)
-                    Text("Not Working").tag(Occupation.notworking)
-                    Text("Retired").tag(Occupation.retired)
+                Text("\(!refresher ? "Thank you for participating in this experiment! To get started, please select your occupational status, then click the \"Get Started\" button and accept all  requested permissions.\n\n" : "")\(instructionText ?? "")")
+                HStack {
+                    #if os(iOS)
+                    Text("Occupation Status:")
+                    #endif
+                    Picker("Occupation Status:", selection: $selectedOccupation) {
+                        Text("Student").tag(Occupation.student)
+                        Text("Employed").tag(Occupation.employed)
+                        Text("Unemployed").tag(Occupation.unemployed)
+                        Text("Not Working / Retired ").tag(Occupation.notworking)
+                    }
+                    #if os(iOS)
+                    .tint(.white)
+                    .background(.blue)
+                    .clipShape(.capsule)
+                    #else
+                    .frame(minHeight: 100)
+                    .padding(.top, -15)
+                    #endif
                 }
                 if !refresher {
                     Button("Get Started") {
@@ -100,5 +112,17 @@ struct InstructionsView: View {
             .padding()
             #endif
         }
+    }
+}
+
+#Preview {
+    ZStack {
+        LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
+        InstructionsView(onboardingNeeded: .constant(false), refresher: false)
+            .environmentObject(WorkoutManager())
+            .environmentObject(VariantManager())
+        #if os(iOS)
+            .environmentObject(TabController())
+        #endif
     }
 }
