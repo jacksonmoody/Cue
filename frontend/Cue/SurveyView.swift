@@ -23,7 +23,7 @@ struct SurveyView: View {
                         .padding(.vertical, 20)
                         .padding(.horizontal)
                 } else {
-                    Survey()
+                    SurveyLocked()
                         .padding(30)
                 }
             }
