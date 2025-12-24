@@ -74,7 +74,7 @@ router.get("/:userId/count", async function (req, res) {
   try {
     var sessions = db.collection("sessions");
     // 5 hours = 5 * 60 * 60 = 18000 seconds
-    var fiveHoursInSeconds = 10;
+    var fiveHoursInSeconds = 18000;
     var count = await sessions.countDocuments({
       userId: userId,
       duration: { $gte: fiveHoursInSeconds },

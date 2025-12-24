@@ -49,6 +49,7 @@ struct InstructionsView: View {
                 HStack {
                     #if os(iOS)
                     Text("Occupation Status:")
+                        .fontWeight(.bold)
                     #endif
                     Picker("Occupation Status:", selection: $selectedOccupation) {
                         Text("Student").tag(Occupation.student)
