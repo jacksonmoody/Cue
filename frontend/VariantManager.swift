@@ -70,12 +70,9 @@ class VariantManager: ObservableObject {
                 errorMessage = "Missing Apple ID credential."
                 return
             }
+            appleUserId = credential.user
             if let fullName = credential.fullName, let givenName = fullName.givenName, let familyName = fullName.familyName {
-                appleUserId = "\(givenName) \(familyName)"
-            } else if let email = credential.email {
-                appleUserId = email
-            } else {
-                appleUserId = credential.user
+               userDefaults.set("\(givenName) \(familyName)", forKey: "fullName")
             }
             Task { await loadVariant() }
         case .failure:

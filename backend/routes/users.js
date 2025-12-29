@@ -1,5 +1,6 @@
 var express = require("express");
 var { OAuth2Client } = require("google-auth-library");
+var { encryptObject, decryptObject } = require("../utils/encryption");
 
 var router = express.Router();
 
@@ -11,6 +12,29 @@ function missingDb(res) {
   return res.status(503).json({ error: "Database not available" });
 }
 
+async function getDecryptedTokens(db, userId) {
+  var encryptionKey = process.env.ENCRYPTION_KEY;
+  if (!encryptionKey) {
+    throw new Error("ENCRYPTION_KEY is not configured");
+  }
+
+  var users = db.collection("users");
+  var user = await users.findOne({ userId: userId });
+
+  if (!user || !user.tokens) {
+    return null;
+  }
+
+  // Decrypt the encrypted token fields
+  var decryptedTokens = decryptObject(
+    user.tokens,
+    ["access_token", "refresh_token"],
+    encryptionKey
+  );
+
+  return decryptedTokens;
+}
+
 router.post("/sign-in", async function (req, res) {
   var db = getDb(req);
   if (!db) {
@@ -19,6 +43,7 @@ router.post("/sign-in", async function (req, res) {
 
   var idToken = req.body && req.body.idToken;
   var authCode = req.body && req.body.authCode;
+  var appleIdToken = req.body && req.body.appleIdToken;
 
   var webClientId = process.env.GOOGLE_CLIENT_ID;
   var webClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -34,7 +59,6 @@ router.post("/sign-in", async function (req, res) {
   }
 
   try {
-    var userid;
     var email;
     var name;
     var tokens = null;
@@ -47,7 +71,6 @@ router.post("/sign-in", async function (req, res) {
       });
 
       var payload = ticket.getPayload();
-      userid = payload["sub"];
       email = payload["email"];
       name = payload["name"];
     } else {
@@ -63,6 +86,8 @@ router.post("/sign-in", async function (req, res) {
 
       var tokenResponse = await oauth2Client.getToken(authCode.trim());
       tokens = tokenResponse.tokens;
+    } else {
+      return res.status(400).json({ error: "authCode (string) is required" });
     }
 
     var users = db.collection("users");
@@ -78,29 +103,40 @@ router.post("/sign-in", async function (req, res) {
     };
 
     if (tokens) {
-      updateDoc.$set.tokens = {
+      var encryptionKey = process.env.ENCRYPTION_KEY;
+      if (!encryptionKey) {
+        return res.status(500).json({
+          error: "Server error: encryption key not set",
+        });
+      }
+
+      var tokensToStore = {
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
         expiry_date: tokens.expiry_date,
         token_type: tokens.token_type,
       };
+
+      var encryptedTokens = encryptObject(
+        tokensToStore,
+        ["access_token", "refresh_token"],
+        encryptionKey
+      );
+
+      updateDoc.$set.tokens = encryptedTokens;
     }
 
-    await users.updateOne({ userId: userid }, updateDoc, { upsert: true });
+    await users.updateOne({ userId: appleIdToken }, updateDoc, {
+      upsert: true,
+    });
 
-    var response = {
-      userId: userid,
-      email: email,
-      name: name,
-    };
-
-    if (tokens) {
-      response.calendarAuthorized = true;
+    if (encryptedTokens) {
+      res.json(true);
+    } else {
+      res.json(false);
     }
-
-    res.json(response);
   } catch (err) {
-    console.error("Error in sign-in", err);
+    console.error("Error in authentication", err);
     res.status(401).json({ error: "Failed to authenticate" });
   }
 });

@@ -69,7 +69,7 @@ struct PermissionsView: View {
                     PermissionCard(
                         title: "Health Permissions",
                         icon: "heart.fill",
-                        description: "Access to health data for activity tracking.",
+                        description: "Access to health data for biometric tracking.",
                         isAuthorized: isHealthAuthorized,
                         action: handleHealthPermissions
                     )
@@ -77,7 +77,7 @@ struct PermissionsView: View {
                     PermissionCard(
                         title: "Notification Permissions",
                         icon: "bell.fill",
-                        description: "May be used to send reminders to reflect.",
+                        description: "Used to send reminders to reflect.",
                         isAuthorized: isNotificationAuthorized,
                         action: handleNotificationPermissions
                     )
@@ -85,7 +85,7 @@ struct PermissionsView: View {
                     PermissionCard(
                         title: "Location Permissions",
                         icon: "location.fill",
-                        description: "Used to customize your reflection experience.",
+                        description: "Used to personalize your reflection experience.",
                         isAuthorized: isLocationAuthorized,
                         action: handleLocationPermissions
                     )
@@ -93,7 +93,7 @@ struct PermissionsView: View {
                     PermissionCard(
                         title: "Google Calendar",
                         icon: "calendar",
-                        description: "Used to customize your reflection experience. Please sign in with your most-used account for calendar events.",
+                        description: "Used to personalize your reflection experience. Please sign in with your most-used account for calendar events.",
                         isAuthorized: isCalendarAuthorized,
                         action: handleGoogleSignIn
                     )
@@ -192,7 +192,7 @@ struct PermissionsView: View {
                 let authCode = result1.serverAuthCode
                 let idToken = user.idToken?.tokenString
                 
-                guard let authData = try? JSONEncoder().encode(["idToken": idToken, "authCode": authCode]) else {
+                guard let authData = try? JSONEncoder().encode(["idToken": idToken, "authCode": authCode, "appleIdToken": variantManager.appleUserId]) else {
                     return
                 }
                 let url = URL(string: "https://cue-api.vercel.app/api/users/sign-in")!
@@ -201,12 +201,19 @@ struct PermissionsView: View {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
                 let task = URLSession.shared.uploadTask(with: request, from: authData) { data, response, error in
-                    // Handle response from your backend.
+                    guard let data = data else {
+                        return
+                    }
+                    do {
+                        let response = try JSONDecoder().decode(Bool.self, from: data)
+                        isCalendarAuthorized = response
+                    } catch {
+                        isCalendarAuthorized = false
+                    }
                 }
                 task.resume()
                 
             }
-            isCalendarAuthorized = true
         }
     }
     

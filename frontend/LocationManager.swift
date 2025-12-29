@@ -17,9 +17,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
     var onAuthorizationChange: ((CLAuthorizationStatus) -> Void)?
     
     func checkLocationAuthorization() {
-        
         manager.delegate = self
-        manager.startUpdatingLocation()
         
         switch manager.authorizationStatus {
         case .notDetermined:
@@ -31,15 +29,14 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
         case .denied:
             print("Location service denied")
             
-        case .authorizedAlways:
-            lastKnownLocation = manager.location?.coordinate
-            
-        case .authorizedWhenInUse:
-            lastKnownLocation = manager.location?.coordinate
+        case .authorizedAlways, .authorizedWhenInUse:
+            manager.startUpdatingLocation()
+            if let location = manager.location {
+                lastKnownLocation = location.coordinate
+            }
             
         @unknown default:
             print("Location service disabled")
-        
         }
     }
     
