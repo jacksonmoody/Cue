@@ -24,10 +24,7 @@ struct AppView: View {
                 FeedbackView()
             }
             Tab("Help", systemImage: "questionmark.circle", value: TabItem.help, role: .search) {
-                ZStack {
-                    LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
-                    InstructionsView(onboardingNeeded: .constant(false), refresher: true)
-                }
+                InstructionsView(onboardingNeeded: .constant(false), refresher: true)
             }
         }
         .environmentObject(tabController)
@@ -35,4 +32,10 @@ struct AppView: View {
             await sessionManager.loadSessionCount()
         }
     }
+}
+
+#Preview {
+    AppView(variant: 3)
+        .environmentObject(SessionManager())
+        .environmentObject(VariantManager())
 }

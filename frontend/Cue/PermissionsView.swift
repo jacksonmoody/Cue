@@ -237,7 +237,7 @@ struct PermissionsView: View {
             Task {
                 do {
                     let response = try await BackendService.shared.post(
-                        path: "/api/users/occupation",
+                        path: "/api/users/finish-onboarding",
                         body: [
                             "userId": userId,
                             "occupation": selectedOccupation.rawValue
@@ -248,11 +248,11 @@ struct PermissionsView: View {
                         onboardingNeeded = false
                         dismiss()
                     } else {
-                        print("Failed to update occupation")
+                        print("Failed to finish onboarding")
                         showError = true
                     }
                 } catch {
-                    print("Failed to update occupation: \(error.localizedDescription)")
+                    print("Failed to finish onboarding: \(error.localizedDescription)")
                     showError = true
                 }
             }

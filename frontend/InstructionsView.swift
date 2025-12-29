@@ -35,43 +35,50 @@ struct InstructionsView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment:.leading, spacing: 30) {
+            ZStack {
 #if os(iOS)
-                    Text("Instructions")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .padding(.top, 40)
+                if refresher {
+                    LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
+                }
 #endif
-                    Text("\(!refresher ? introText : "")\(instructionText ?? "")")
+                ScrollView {
+                    VStack(alignment:.leading, spacing: 30) {
 #if os(iOS)
-                    if !refresher {
-                        NavigationLink("Begin Setup") {
-                            PermissionsView(onboardingNeeded: $onboardingNeeded)
+                        Text("Instructions")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .padding(.top, 40)
+#endif
+                        Text("\(!refresher ? introText : "")\(instructionText ?? "")")
+#if os(iOS)
+                        if !refresher {
+                            NavigationLink("Begin Setup") {
+                                PermissionsView(onboardingNeeded: $onboardingNeeded)
+                            }
+                            .padding()
+                            .fontWeight(.bold)
+                            .glassEffect(.regular.tint(.blue).interactive())
+                            .foregroundStyle(.white)
+                        } else {
+                            Button("Log a Session") {
+                                tabController.open(.manage)
+                            }
+                            .padding()
+                            .fontWeight(.bold)
+                            .glassEffect(.regular.tint(.blue).interactive())
+                            .foregroundStyle(.white)
                         }
-                        .padding()
-                        .fontWeight(.bold)
-                        .glassEffect(.regular.tint(.blue).interactive())
-                        .foregroundStyle(.white)
-                    } else {
-                        Button("Log a Session") {
-                            tabController.open(.manage)
-                        }
-                        .padding()
-                        .fontWeight(.bold)
-                        .glassEffect(.regular.tint(.blue).interactive())
-                        .foregroundStyle(.white)
+#endif
                     }
+#if os(iOS)
+                    .padding(refresher ? 30 : 40)
+                    .font(!refresher ? .title2 : .default)
+                    .foregroundStyle(refresher ? .white : .primary)
+#else
+                    .multilineTextAlignment(.center)
+                    .padding()
 #endif
                 }
-#if os(iOS)
-                .padding(refresher ? 30 : 40)
-                .font(!refresher ? .title2 : .default)
-                .foregroundStyle(refresher ? .white : .primary)
-#else
-                .multilineTextAlignment(.center)
-                .padding()
-#endif
             }
         }
     }

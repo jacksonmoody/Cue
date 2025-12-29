@@ -141,7 +141,7 @@ router.post("/sign-in", async function (req, res) {
   }
 });
 
-router.post("/occupation", async function(req, res) {
+router.post("/finish-onboarding", async function(req, res) {
   var db = getDb(req);
   if (!db) {
     return missingDb(res);
@@ -163,13 +163,14 @@ router.post("/occupation", async function(req, res) {
     var updateDoc = {
       $set: {
         occupation: occupation,
+        onboarded: true,
       },
     };
     await users.updateOne({ userId: userId }, updateDoc);
     res.json(true);
   } catch (err) {
-    console.error("Error updating occupation", err);
-    res.status(500).json({ error: "Failed to update occupation" });
+    console.error("Error updating onboarding", err);
+    res.status(500).json({ error: "Failed to update onboarding" });
   }
 });
 
