@@ -6,6 +6,7 @@ var logger = require("morgan");
 var MongoClient = require("mongodb").MongoClient;
 var variantsRouter = require("./routes/variants");
 var sessionsRouter = require("./routes/sessions");
+var usersRouter = require("./routes/users");
 require("dotenv").config();
 
 var app = express();
@@ -73,6 +74,7 @@ app.use(async function (req, res, next) {
 
 app.use("/api/variant", variantsRouter);
 app.use("/api/sessions", sessionsRouter);
+app.use("/api/users", usersRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));

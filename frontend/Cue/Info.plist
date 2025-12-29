@@ -2,7 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.716669605174-0fs9j7fnc8ph2t7htagrugg3pic22m7l</string>
+			</array>
+		</dict>
+	</array>
+	<key>GIDClientID</key>
+	<string>716669605174-0fs9j7fnc8ph2t7htagrugg3pic22m7l.apps.googleusercontent.com</string>
+	<key>GIDServerClientID</key>
+	<string>716669605174-6q0nerfcjg019mp5bkhhiegcspui97vl.apps.googleusercontent.com</string>
 </dict>
 </plist>

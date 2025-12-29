@@ -10,6 +10,8 @@
     "debug": "latest",
     "dotenv": "^17.2.3",
     "express": "latest",
+    "google-auth-library": "^10.5.0",
+    "googleapis": "latest",
     "http-errors": "latest",
     "mongodb": "latest",
     "morgan": "latest"

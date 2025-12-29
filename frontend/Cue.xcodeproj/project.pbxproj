@@ -11,6 +11,10 @@
 		D52A6D442EFB3E9F0092DE7E /* App Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */; };
 		D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
+		D57A47B82F020E74002722F6 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D57A47B72F020E74002722F6 /* GoogleSignIn */; };
+		D57A47BA2F020E74002722F6 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D57A47B92F020E74002722F6 /* GoogleSignInSwift */; };
+		D57A498B2F02254D002722F6 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57A498A2F02254D002722F6 /* LocationManager.swift */; };
+		D57A498C2F02254D002722F6 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57A498A2F02254D002722F6 /* LocationManager.swift */; };
 		D583BBB22EEFA1BE006CDC9B /* Cue Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D58A97A72EF60A950078459A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A97A62EF60A950078459A /* SessionManager.swift */; };
 		D58A97A82EF60A950078459A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A97A62EF60A950078459A /* SessionManager.swift */; };
@@ -88,6 +92,8 @@
 /* Begin PBXFileReference section */
 		D51A5BF22EFA8496001AD612 /* breathe.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = breathe.mp3; sourceTree = "<group>"; };
 		D55EB3852EF5FE520077F3B4 /* BackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendService.swift; sourceTree = "<group>"; };
+		D57A47BD2F0212F9002722F6 /* Cue-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Cue-Watch-App-Info.plist"; sourceTree = "<group>"; };
+		D57A498A2F02254D002722F6 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		D583BBA42EEFA1BD006CDC9B /* Cue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cue Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D58A97A62EF60A950078459A /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
@@ -162,6 +168,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D57A47B82F020E74002722F6 /* GoogleSignIn in Frameworks */,
+				D57A47BA2F020E74002722F6 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +202,7 @@
 				D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */,
 				D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */,
 				D58A97A62EF60A950078459A /* SessionManager.swift */,
+				D57A498A2F02254D002722F6 /* LocationManager.swift */,
 				D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */,
 				D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */,
 				D58D5E152EF093DF00E4D1DB /* LoginView.swift */,
@@ -202,6 +211,7 @@
 				D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */,
 				D5A969752EF3AEE700782283 /* ElapsedTimeView.swift */,
 				D51A5BF22EFA8496001AD612 /* breathe.mp3 */,
+				D57A47BD2F0212F9002722F6 /* Cue-Watch-App-Info.plist */,
 				D583BBA62EEFA1BD006CDC9B /* Cue */,
 				D583BBB52EEFA1BE006CDC9B /* Cue Watch App */,
 				D5B7ED422EF677AA00422DA2 /* CueWidget */,
@@ -253,6 +263,8 @@
 			);
 			name = Cue;
 			packageProductDependencies = (
+				D57A47B72F020E74002722F6 /* GoogleSignIn */,
+				D57A47B92F020E74002722F6 /* GoogleSignInSwift */,
 			);
 			productName = Cue;
 			productReference = D583BBA42EEFA1BD006CDC9B /* Cue.app */;
@@ -332,6 +344,9 @@
 			);
 			mainGroup = D583BB9B2EEFA1BD006CDC9B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D57A47B62F020E74002722F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D583BBA52EEFA1BD006CDC9B /* Products */;
 			projectDirPath = "";
@@ -385,6 +400,7 @@
 				D5A969762EF3AEE700782283 /* ElapsedTimeView.swift in Sources */,
 				D5B7ED562EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
 				D58D5E2D2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */,
+				D57A498C2F02254D002722F6 /* LocationManager.swift in Sources */,
 				D58D5DF42EEFDF2B00E4D1DB /* OnboardingView.swift in Sources */,
 				D58D5E172EF093DF00E4D1DB /* LoginView.swift in Sources */,
 				D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */,
@@ -403,6 +419,7 @@
 				D5A969772EF3AEE700782283 /* ElapsedTimeView.swift in Sources */,
 				D58A97A72EF60A950078459A /* SessionManager.swift in Sources */,
 				D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */,
+				D57A498B2F02254D002722F6 /* LocationManager.swift in Sources */,
 				D5B7ED572EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
 				D58D5E372EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */,
 				D58D5E1C2EF0953400E4D1DB /* OnboardingView.swift in Sources */,
@@ -495,6 +512,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -549,6 +567,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -567,15 +586,17 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to read your location in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app needs to read your location in order to function properly.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = jacksonmoody.Cue;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.jacksonmoody.Cue;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jacksonmoody.Cue.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacksonmoody.Cue.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -605,15 +626,17 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to read your location in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app needs to read your location in order to function properly.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = jacksonmoody.Cue;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.jacksonmoody.Cue;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jacksonmoody.Cue.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacksonmoody.Cue.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -645,6 +668,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to read your location in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app needs to read your location in order to function properly.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -653,13 +678,14 @@
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jacksonmoody.Cue;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacksonmoody.Cue;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -673,6 +699,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -692,6 +719,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to read your location in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app needs to read your location in order to function properly.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -700,13 +729,14 @@
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jacksonmoody.Cue;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacksonmoody.Cue;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -721,6 +751,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -736,14 +767,14 @@
 				INFOPLIST_FILE = CueWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CueWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jacksonmoody.Cue.CueWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacksonmoody.Cue.CueWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -753,6 +784,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -768,14 +800,14 @@
 				INFOPLIST_FILE = CueWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CueWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jacksonmoody.Cue.CueWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacksonmoody.Cue.CueWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -786,6 +818,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -829,6 +862,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D57A47B62F020E74002722F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = exactVersion;
+				version = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D57A47B72F020E74002722F6 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D57A47B62F020E74002722F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		D57A47B92F020E74002722F6 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D57A47B62F020E74002722F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D583BB9C2EEFA1BD006CDC9B /* Project object */;
 }

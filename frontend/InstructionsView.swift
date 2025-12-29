@@ -8,21 +8,18 @@
 import SwiftUI
 
 struct InstructionsView: View {
-    @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var workoutManager: WorkoutManager
     @EnvironmentObject var variantManager: VariantManager
     #if os(iOS)
     @EnvironmentObject var tabController: TabController
     #endif
     @Binding var onboardingNeeded: Bool
-    @AppStorage("occupation") var selectedOccupation: Occupation = .student
     let refresher: Bool
-    let center = UNUserNotificationCenter.current()
     
-    enum Occupation: String, CaseIterable, Identifiable {
-        case student, employed, unemployed, notworking
-        var id: Self { self }
-    }
+    #if os(iOS)
+    let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions, then click the \"Get Started\" button and accept all  requested permissions.\n\n"
+    #else
+    let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions:\n\n"
+    #endif
     
     var instructionText: String? {
         if let variant = variantManager.variant, variant == 1 {
@@ -37,81 +34,45 @@ struct InstructionsView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment:.leading, spacing: 30) {
-                #if os(iOS)
-                Text("Instructions")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.top, 40)
-                #endif
-                Text("\(!refresher ? "Thank you for participating in this experiment! To get started, please select your occupational status, then click the \"Get Started\" button and accept all  requested permissions.\n\n" : "")\(instructionText ?? "")")
-                HStack {
-                    #if os(iOS)
-                    Text("Occupation Status:")
+        NavigationStack {
+            ScrollView {
+                VStack(alignment:.leading, spacing: 30) {
+#if os(iOS)
+                    Text("Instructions")
+                        .font(.largeTitle)
                         .fontWeight(.bold)
-                    #endif
-                    Picker("Occupation Status:", selection: $selectedOccupation) {
-                        Text("Student").tag(Occupation.student)
-                        Text("Employed").tag(Occupation.employed)
-                        Text("Unemployed").tag(Occupation.unemployed)
-                        Text("Not Working / Retired ").tag(Occupation.notworking)
-                    }
-                    #if os(iOS)
-                    .tint(.white)
-                    .background(.blue)
-                    .clipShape(.capsule)
-                    #else
-                    .frame(minHeight: 100)
-                    .padding(.top, -15)
-                    #endif
-                }
-                if !refresher {
-                    Button("Get Started") {
-                        workoutManager.requestAuthorization { authorized in
-                            if authorized {
-                                Task {
-                                    do {
-                                        let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
-                                        if granted {
-                                            onboardingNeeded = false
-                                            dismiss()
-                                        }
-                                    } catch {
-                                    }
-                                }
-                            } else {
-                            }
+                        .padding(.top, 40)
+#endif
+                    Text("\(!refresher ? introText : "")\(instructionText ?? "")")
+#if os(iOS)
+                    if !refresher {
+                        NavigationLink("Get Started") {
+                            PermissionsView(onboardingNeeded: $onboardingNeeded)
                         }
+                        .padding()
+                        .fontWeight(.bold)
+                        .glassEffect(.regular.tint(.blue).interactive())
+                        .foregroundStyle(.white)
+                    } else {
+                        Button("Log a Session") {
+                            tabController.open(.manage)
+                        }
+                        .padding()
+                        .fontWeight(.bold)
+                        .glassEffect(.regular.tint(.blue).interactive())
+                        .foregroundStyle(.white)
                     }
-                #if os(iOS)
-                .padding()
-                .fontWeight(.bold)
-                .glassEffect(.regular.tint(.blue).interactive())
-                .foregroundStyle(.white)
-                #else
-                .frame(maxWidth: .infinity)
-                #endif
-                } else {
-                    #if os(iOS)
-                    Button("Log a Session") {
-                        tabController.open(.manage)
-                    }
-                    .padding()
-                    .fontWeight(.bold)
-                    .glassEffect(.regular.tint(.blue).interactive())
-                    .foregroundStyle(.white)
-                    #endif
+#endif
                 }
+#if os(iOS)
+                .padding(refresher ? 30 : 40)
+                .font(!refresher ? .title2 : .default)
+                .foregroundStyle(refresher ? .white : .primary)
+#else
+                .multilineTextAlignment(.center)
+                .padding()
+#endif
             }
-            #if os(iOS)
-            .padding(refresher ? 30 : 40)
-            .font(!refresher ? .title2 : .default)
-            .foregroundStyle(refresher ? .white : .primary)
-            #else
-            .multilineTextAlignment(.center)
-            .padding()
-            #endif
         }
     }
 }
@@ -120,7 +81,6 @@ struct InstructionsView: View {
     ZStack {
         LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
         InstructionsView(onboardingNeeded: .constant(false), refresher: false)
-            .environmentObject(WorkoutManager())
             .environmentObject(VariantManager())
         #if os(iOS)
             .environmentObject(TabController())

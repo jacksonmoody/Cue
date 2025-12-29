@@ -40,4 +40,5 @@ struct OnboardingView: View {
 
 #Preview {
     OnboardingView()
+        .environmentObject(VariantManager())
 }
