@@ -16,7 +16,7 @@ struct InstructionsView: View {
     let refresher: Bool
     
     #if os(iOS)
-    let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions, then click the \"Get Started\" button and accept all  requested permissions.\n\n"
+    let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions, then click the \"Get Started\" button and accept all required permissions.\n\n"
     #else
     let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions:\n\n"
     #endif
@@ -27,7 +27,7 @@ struct InstructionsView: View {
         } else if let variant = variantManager.variant, variant == 2 {
             return "You are in Variant 2, meaning that you will receive a reminder to reflect at a set time every day. You can adjust this time by clicking the gear icon in the upper-left corner of the Cue app on your Apple Watch. Feel free to accept or deny these reminders as you see fit, and remember that you will need to log at least 5 monitoring sessions of at least 5 hours each to complete the experiment."
         } else if let variant = variantManager.variant, variant == 3 {
-            return "You are in Variant 3. To begin a reflection session, press the leaf icon in the upper-left corner of the Cue app on your Apple Watch. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many or as few of these sessions as you wish. In addition to these reflective exercises, you will need to log at least 5 sessions of at least 5 hours each to complete the experiment."
+            return "You are in Variant 3. To begin a reflection session, press the leaf icon in the upper-left corner of the Cue app on your Apple Watch. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many or as few of these sessions as you wish. In addition to these reflective exercises, you will need to log at least 5 monitoring sessions of at least 5 hours each to complete the experiment."
         } else {
             return nil
         }
@@ -46,7 +46,7 @@ struct InstructionsView: View {
                     Text("\(!refresher ? introText : "")\(instructionText ?? "")")
 #if os(iOS)
                     if !refresher {
-                        NavigationLink("Get Started") {
+                        NavigationLink("Begin Setup") {
                             PermissionsView(onboardingNeeded: $onboardingNeeded)
                         }
                         .padding()

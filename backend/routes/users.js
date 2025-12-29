@@ -141,4 +141,36 @@ router.post("/sign-in", async function (req, res) {
   }
 });
 
+router.post("/occupation", async function(req, res) {
+  var db = getDb(req);
+  if (!db) {
+    return missingDb(res);
+  }
+
+  var userId = req.body && req.body.userId;
+  var occupation = req.body && req.body.occupation;
+
+  if (!userId || typeof userId !== "string" || !userId.trim()) {
+    return res.status(400).json({ error: "userId (string) is required" });
+  }
+
+  if (!occupation || typeof occupation !== "string" || !occupation.trim()) {
+    return res.status(400).json({ error: "occupation (string) is required" });
+  }
+
+  try {
+    var users = db.collection("users");
+    var updateDoc = {
+      $set: {
+        occupation: occupation,
+      },
+    };
+    await users.updateOne({ userId: userId }, updateDoc);
+    res.json(true);
+  } catch (err) {
+    console.error("Error updating occupation", err);
+    res.status(500).json({ error: "Failed to update occupation" });
+  }
+});
+
 module.exports = router;

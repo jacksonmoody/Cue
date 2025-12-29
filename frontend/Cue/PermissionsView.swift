@@ -11,14 +11,17 @@ import GoogleSignIn
 internal import CoreLocation
 
 enum Occupation: String, CaseIterable, Identifiable {
-    case student, employed, unemployed, retired
+    case student = "student"
+    case employed = "employed"
+    case unemployed = "unemployed"
+    case retired = "retired"
     var id: Self { self }
 }
 
 struct PermissionsView: View {
     @AppStorage("occupation") var selectedOccupation: Occupation = .student
     @EnvironmentObject var workoutManager: WorkoutManager
-    @EnvironmentObject var locationManager: LocationManager
+    @EnvironmentObject var locationService: LocationService
     @EnvironmentObject var variantManager: VariantManager
     @Environment(\.dismiss) private var dismiss
     @Binding var onboardingNeeded: Bool
@@ -27,6 +30,8 @@ struct PermissionsView: View {
     @State private var isNotificationAuthorized: Bool = false
     @State private var isCalendarAuthorized: Bool = false
     @State private var isLocationAuthorized: Bool = false
+    
+    @State private var showError: Bool = false
     
     var canContinue: Bool {
         isHealthAuthorized && isNotificationAuthorized && isCalendarAuthorized && isLocationAuthorized
@@ -101,7 +106,7 @@ struct PermissionsView: View {
                 
                 Button(action: handleNext) {
                     HStack {
-                        Text("Continue")
+                        Text("Get Started")
                             .fontWeight(.semibold)
                         if canContinue {
                             Image(systemName: "checkmark.circle.fill")
@@ -120,9 +125,14 @@ struct PermissionsView: View {
             .padding()
         }
         .navigationTitle("App Setup")
+        .alert("Unable to Set Up Cue", isPresented: $showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Please ensure that you are connected to the Internet and try again.")
+        }
         .onAppear {
             checkLocationStatus()
-            locationManager.onAuthorizationChange = { status in
+            locationService.onAuthorizationChange = { status in
                 DispatchQueue.main.async {
                     checkLocationStatus()
                 }
@@ -131,8 +141,8 @@ struct PermissionsView: View {
     }
     
     func checkLocationStatus() {
-        let status = locationManager.manager.authorizationStatus
-        isLocationAuthorized = (status == .authorizedWhenInUse || status == .authorizedAlways) && locationManager.lastKnownLocation != nil
+        let status = locationService.locationManager.authorizationStatus
+        isLocationAuthorized = (status == .authorizedAlways)
     }
     
     func handleHealthPermissions() {
@@ -142,7 +152,7 @@ struct PermissionsView: View {
     }
     
     func handleLocationPermissions() {
-        locationManager.checkLocationAuthorization()
+        locationService.start()
     }
     
     func handleNotificationPermissions() {
@@ -192,34 +202,61 @@ struct PermissionsView: View {
                 let authCode = result1.serverAuthCode
                 let idToken = user.idToken?.tokenString
                 
-                guard let authData = try? JSONEncoder().encode(["idToken": idToken, "authCode": authCode, "appleIdToken": variantManager.appleUserId]) else {
+                guard let idToken = idToken, let authCode = authCode, let appleIdToken = variantManager.appleUserId else {
+                    isCalendarAuthorized = false
                     return
                 }
-                let url = URL(string: "https://cue-api.vercel.app/api/users/sign-in")!
-                var request = URLRequest(url: url)
-                request.httpMethod = "POST"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-                let task = URLSession.shared.uploadTask(with: request, from: authData) { data, response, error in
-                    guard let data = data else {
-                        return
-                    }
+                
+                Task {
                     do {
-                        let response = try JSONDecoder().decode(Bool.self, from: data)
-                        isCalendarAuthorized = response
+                        let response = try await BackendService.shared.post(
+                            path: "/api/users/sign-in",
+                            body: [
+                                "idToken": idToken,
+                                "authCode": authCode,
+                                "appleIdToken": appleIdToken
+                            ],
+                            responseType: Bool.self
+                        )
+                        await MainActor.run {
+                            isCalendarAuthorized = response
+                        }
                     } catch {
-                        isCalendarAuthorized = false
+                        await MainActor.run {
+                            isCalendarAuthorized = false
+                        }
                     }
                 }
-                task.resume()
                 
             }
         }
     }
     
     func handleNext() {
-        onboardingNeeded = false
-        dismiss()
+        if let userId = variantManager.appleUserId {
+            Task {
+                do {
+                    let response = try await BackendService.shared.post(
+                        path: "/api/users/occupation",
+                        body: [
+                            "userId": userId,
+                            "occupation": selectedOccupation.rawValue
+                        ],
+                        responseType: Bool.self
+                    )
+                    if (response) {
+                        onboardingNeeded = false
+                        dismiss()
+                    } else {
+                        print("Failed to update occupation")
+                        showError = true
+                    }
+                } catch {
+                    print("Failed to update occupation: \(error.localizedDescription)")
+                    showError = true
+                }
+            }
+        }
     }
 }
 
@@ -300,6 +337,6 @@ struct PermissionCard: View {
 #Preview {
     PermissionsView(onboardingNeeded: .constant(false))
         .environmentObject(WorkoutManager())
-        .environmentObject(LocationManager())
+        .environmentObject(LocationService())
         .environmentObject(VariantManager())
 }

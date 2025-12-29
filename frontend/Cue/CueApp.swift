@@ -14,7 +14,7 @@ struct CueApp: App {
     @StateObject private var workoutManager = WorkoutManager()
     @StateObject private var variantManager = VariantManager()
     @StateObject private var sessionManager = SessionManager()
-    @StateObject private var locationManager = LocationManager()
+    @StateObject private var locationService = LocationService()
     
     var body: some Scene {
         WindowGroup {
@@ -22,7 +22,7 @@ struct CueApp: App {
                 .environmentObject(workoutManager)
                 .environmentObject(variantManager)
                 .environmentObject(sessionManager)
-                .environmentObject(locationManager)
+                .environmentObject(locationService)
                 .onAppear {
                     workoutManager.variantManager = variantManager
                     sessionManager.variantManager = variantManager

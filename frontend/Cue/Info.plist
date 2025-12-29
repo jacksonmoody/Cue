@@ -15,5 +15,11 @@
 	<string>716669605174-0fs9j7fnc8ph2t7htagrugg3pic22m7l.apps.googleusercontent.com</string>
 	<key>GIDServerClientID</key>
 	<string>716669605174-6q0nerfcjg019mp5bkhhiegcspui97vl.apps.googleusercontent.com</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>processing</string>
+		<string>fetch</string>
+	</array>
 </dict>
 </plist>

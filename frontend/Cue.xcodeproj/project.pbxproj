@@ -668,8 +668,10 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to read your location in order to function properly.";
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app needs to read your location in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
+				INFOPLIST_KEY_NSLocationUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -719,8 +721,10 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cue;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs to read your health data in order to function properly.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to read your location in order to function properly.";
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app needs to read your location in order to function properly.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
+				INFOPLIST_KEY_NSLocationUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
