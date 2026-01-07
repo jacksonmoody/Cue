@@ -24,10 +24,11 @@ struct Gear2: View {
     var body: some View {
         ZStack {
             if currentPhase == 0 {
-                Text("Notice your body right now...")
+                Text("Now, shift your attention to your body...")
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .opacity(opacity)
+                    .padding()
             }
             
             if currentPhase == 1 {
@@ -35,6 +36,7 @@ struct Gear2: View {
                     .fontWeight(.bold)
                     .opacity(opacity)
                     .multilineTextAlignment(.center)
+                    .padding()
             }
             
             if currentPhase == 2 {
@@ -60,6 +62,7 @@ struct Gear2: View {
                 }
                 .opacity(opacity)
                 .scrollIndicators(.hidden)
+                .padding()
             }
         }
         .onAppear {

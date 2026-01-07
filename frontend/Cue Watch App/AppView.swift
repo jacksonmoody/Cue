@@ -91,7 +91,6 @@ struct AppView: View {
                     switch route {
                     case .gear1:
                         Gear1()
-                            .navigationBarBackButtonHidden()
                     case .gear2:
                         Gear2()
                     case .gear3:

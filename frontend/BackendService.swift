@@ -23,7 +23,7 @@ enum BackendError: Error {
 class BackendService {
     static let shared = BackendService()
     
-    private let baseURLString = "https://cue-api.vercel.app"
+    private let baseURLString = "https://api.cue-experiment.me"
     
     private init() {}
     

@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #96d8ef;
+  --secondary: #5499F7;
+  --tertiary: #9EB0FF;
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+
+  --font-sans: var(--font-roboto);
+}
+
+body {
+  background: #0f172a;
+  color: white;
+  overflow-x: hidden;
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, #96d8ef, #9EB0FF);
+}
+
+.bg-gradient-main {
+  background: linear-gradient(135deg, #5499F7 0%, #9EB0FF 100%);
+}
+
+.link {
+  @apply text-primary;
+  border-bottom-width: 0;
+  background-image: linear-gradient(transparent, transparent), linear-gradient(#72cff4, #72cff4);
+  background-size: 0 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size .25s ease-in-out;
+}
+
+.link:hover {
+  background-size: 100% 1px;
+  background-position: 0 100%
+}

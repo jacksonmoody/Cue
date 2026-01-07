@@ -25,6 +25,7 @@ struct Gear3: View {
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .opacity(opacity)
+                    .padding()
             }
             
             if currentPhase == 1 {
