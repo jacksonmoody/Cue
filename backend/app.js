@@ -7,11 +7,12 @@ var MongoClient = require("mongodb").MongoClient;
 var variantsRouter = require("./routes/variants");
 var sessionsRouter = require("./routes/sessions");
 var usersRouter = require("./routes/users");
+var gear1Router = require("./routes/gear1");
+
 require("dotenv").config();
 
 var app = express();
 
-// MongoDB connection (shared across routes)
 var mongoUri = process.env.MONGODB_URI;
 var mongoClient;
 var mongoDb;
@@ -25,17 +26,14 @@ async function connectMongo() {
     return null;
   }
 
-  // If already connected, return the existing connection
   if (mongoDb) {
     return mongoDb;
   }
 
-  // If connection is in progress, wait for it
   if (connectionPromise) {
     return connectionPromise;
   }
 
-  // Start new connection
   connectionPromise = (async function () {
     try {
       mongoClient = new MongoClient(mongoUri);
@@ -72,9 +70,10 @@ app.use(async function (req, res, next) {
   next();
 });
 
-app.use("/api/variant", variantsRouter);
-app.use("/api/sessions", sessionsRouter);
-app.use("/api/users", usersRouter);
+app.use("/variant", variantsRouter);
+app.use("/sessions", sessionsRouter);
+app.use("/users", usersRouter);
+app.use("/gear1", gear1Router);
 
 app.use(function (req, res, next) {
   next(createError(404));

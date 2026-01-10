@@ -1,18 +1,12 @@
 var express = require("express");
 var { OAuth2Client } = require("google-auth-library");
 var { encryptObject, decryptObject } = require("../utils/encryption");
+var requireDb = require("../middleware/db");
 
 var router = express.Router();
+router.use(requireDb);
 
-function getDb(req) {
-  return req.db || (req.app && req.app.locals && req.app.locals.db);
-}
-
-function missingDb(res) {
-  return res.status(503).json({ error: "Database not available" });
-}
-
-async function getDecryptedTokens(db, userId) {
+export async function getDecryptedTokens(db, userId) {
   var encryptionKey = process.env.ENCRYPTION_KEY;
   if (!encryptionKey) {
     throw new Error("ENCRYPTION_KEY is not configured");
@@ -25,7 +19,6 @@ async function getDecryptedTokens(db, userId) {
     return null;
   }
 
-  // Decrypt the encrypted token fields
   var decryptedTokens = decryptObject(
     user.tokens,
     ["access_token", "refresh_token"],
@@ -36,11 +29,7 @@ async function getDecryptedTokens(db, userId) {
 }
 
 router.post("/sign-in", async function (req, res) {
-  var db = getDb(req);
-  if (!db) {
-    return missingDb(res);
-  }
-
+  var db = req.db;
   var idToken = req.body && req.body.idToken;
   var authCode = req.body && req.body.authCode;
   var appleIdToken = req.body && req.body.appleIdToken;
@@ -141,12 +130,8 @@ router.post("/sign-in", async function (req, res) {
   }
 });
 
-router.post("/finish-onboarding", async function(req, res) {
-  var db = getDb(req);
-  if (!db) {
-    return missingDb(res);
-  }
-
+router.post("/finish-onboarding", async function (req, res) {
+  var db = req.db;
   var userId = req.body && req.body.userId;
   var occupation = req.body && req.body.occupation;
 

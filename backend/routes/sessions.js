@@ -1,21 +1,11 @@
 var express = require("express");
+var requireDb = require("../middleware/db");
 
 var router = express.Router();
-
-function getDb(req) {
-  return req.db || (req.app && req.app.locals && req.app.locals.db);
-}
-
-function missingDb(res) {
-  return res.status(503).json({ error: "Database not available" });
-}
+router.use(requireDb);
 
 router.post("/", async function (req, res) {
-  var db = getDb(req);
-  if (!db) {
-    return missingDb(res);
-  }
-
+  var db = req.db;
   var userId = req.body && req.body.userId;
   var duration = req.body && req.body.duration;
   var timestamp = req.body && req.body.timestamp;
@@ -61,11 +51,7 @@ router.post("/", async function (req, res) {
 });
 
 router.get("/:userId/count", async function (req, res) {
-  var db = getDb(req);
-  if (!db) {
-    return missingDb(res);
-  }
-
+  var db = req.db;
   var userId = req.params.userId;
   if (!userId) {
     return res.status(400).json({ error: "userId is required" });
@@ -88,11 +74,7 @@ router.get("/:userId/count", async function (req, res) {
 });
 
 router.get("/:userId", async function (req, res) {
-  var db = getDb(req);
-  if (!db) {
-    return missingDb(res);
-  }
-
+  var db = req.db;
   var userId = req.params.userId;
   if (!userId) {
     return res.status(400).json({ error: "userId is required" });
