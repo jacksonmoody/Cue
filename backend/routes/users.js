@@ -1,12 +1,10 @@
 var express = require("express");
 var { OAuth2Client } = require("google-auth-library");
 var { encryptObject, decryptObject } = require("../utils/encryption");
-var requireDb = require("../middleware/db");
 
 var router = express.Router();
-router.use(requireDb);
 
-export async function getDecryptedTokens(db, userId) {
+async function getDecryptedTokens(db, userId) {
   var encryptionKey = process.env.ENCRYPTION_KEY;
   if (!encryptionKey) {
     throw new Error("ENCRYPTION_KEY is not configured");
@@ -159,4 +157,7 @@ router.post("/finish-onboarding", async function (req, res) {
   }
 });
 
-module.exports = router;
+module.exports = {
+  getDecryptedTokens: getDecryptedTokens,
+  router: router,
+};

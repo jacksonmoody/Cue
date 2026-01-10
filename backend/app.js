@@ -6,7 +6,7 @@ var logger = require("morgan");
 var MongoClient = require("mongodb").MongoClient;
 var variantsRouter = require("./routes/variants");
 var sessionsRouter = require("./routes/sessions");
-var usersRouter = require("./routes/users");
+var usersRouter = require("./routes/users").router;
 var gear1Router = require("./routes/gear1");
 
 require("dotenv").config();
@@ -80,10 +80,11 @@ app.use(function (req, res, next) {
 });
 
 app.use(function (err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
-  res.render("error");
+  res.json({
+    error: err.message,
+    details: req.app.get("env") === "development" ? err.stack : undefined,
+  });
 });
 
 module.exports = app;

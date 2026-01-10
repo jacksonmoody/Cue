@@ -1,8 +1,6 @@
 var express = require('express');
-var requireDb = require('../middleware/db');
 
 var router = express.Router();
-router.use(requireDb);
 
 router.post('/', async function(req, res) {
   var db = req.db;
