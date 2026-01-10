@@ -8,7 +8,6 @@ interface GearCardProps {
   description: string;
   Icon: LucideIcon;
   step: number;
-  delay?: number;
 }
 
 export default function GearCard({
@@ -19,9 +18,10 @@ export default function GearCard({
 }: GearCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: step * 0.4, ease: "easeInOut" }}
       className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl flex flex-col items-center text-center relative overflow-hidden hover:border-primary transition-all duration-300"
     >
       <div className="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl text-white">

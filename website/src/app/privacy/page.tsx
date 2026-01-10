@@ -1,7 +1,26 @@
-export default function Privacy() {
+import { readFileSync } from "fs";
+import { join } from "path";
+import { remark } from "remark";
+import remarkGfm from "remark-gfm";
+import remarkRehype from "remark-rehype";
+import rehypeSlug from "rehype-slug";
+import rehypeStringify from "rehype-stringify";
+
+export default async function Privacy() {
+  const filePath = join(process.cwd(), "src", "lib", "privacy.md");
+  const fileContents = readFileSync(filePath, "utf8");
+  const processedContent = await remark()
+    .use(remarkGfm)
+    .use(remarkRehype)
+    .use(rehypeSlug)
+    .use(rehypeStringify)
+    .process(fileContents);
+  const contentHtml = processedContent.toString();
+
   return (
-    <div>
-      <h1>Privacy Policy</h1>
-    </div>
+    <div
+      className="max-w-4xl mx-auto px-4 py-8 markdown-content"
+      dangerouslySetInnerHTML={{ __html: contentHtml }}
+    />
   );
 }

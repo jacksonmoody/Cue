@@ -23,11 +23,14 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0f172a] text-white selection:bg-[#96d8ef] selection:text-[#0f172a]">
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4">
-        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#5499F7] opacity-20 blur-[100px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-[#9EB0FF] opacity-20 blur-[100px]" />
+    <main className="min-h-screen text-white selection:bg-[#96d8ef] selection:text-[#0f172a] relative overflow-hidden">
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#5499F7] opacity-20 blur-[100px] animate-pulse pointer-events-none" />
+      <div className="absolute top-[20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-[#9EB0FF] opacity-20 blur-[100px] animate-pulse pointer-events-none" />
+      <div className="absolute top-[50%] left-[-20%] w-[400px] h-[400px] rounded-full bg-[#5499F7] opacity-20 blur-[100px] animate-pulse pointer-events-none" />
+      <div className="absolute top-[70%] right-[-20%] w-[400px] h-[400px] rounded-full bg-[#9EB0FF] opacity-20 blur-[100px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#5499F7] opacity-20 blur-[100px] animate-pulse pointer-events-none" />
 
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4">
         <div className="container mx-auto text-center z-10 max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -88,42 +91,42 @@ export default function Home() {
             <GearCard
               step={1}
               title="Awareness"
-              description="Identify the habit loop. Become aware of triggers and your immediate reactions."
+              description="Identify the habit loop and become aware of its triggers."
               Icon={Brain}
             />
             <GearCard
               step={2}
               title="Disillusionment"
-              description="Shift attention to the body. Grow disillusionment with the old reward."
+              description="Shift attention to the body. Foster disillusionment with the old reward."
               Icon={BrainCircuit}
             />
             <GearCard
               step={3}
               title="Substitution"
-              description="Find a better reward. Use breathing exercises to restore balance and calm."
+              description="Substitute a better reward. Use breathing exercises to restore balance and calm."
               Icon={Wind}
             />
           </div>
         </div>
       </section>
 
-      <section className="py-12 bg-white/5 relative overflow-hidden">
+      <section className="py-12 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <AnimatedSection className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1">
               <h3 className="text-3xl md:text-4xl font-bold mb-4">
-                Seamless Apple Watch Integration
+                Apple Watch Integration
               </h3>
               <p className="text-lg text-blue-100 mb-6">
-                Cue lives on your wrist, ready when you need it. Discreet
-                notifications prompt you to check in without pulling out your
-                phone.
+                Cue lives on your wrist, ready when you need it. Smart
+                notifications prompt you to reflect without pulling out your
+                phone or opening an app.
               </p>
               <ul className="space-y-4">
                 {[
-                  "Custom reminders based on your physiological state",
-                  "Quick, 60 second reflection flows",
-                  "Personalized prompts based on your usage",
+                  "Smart reminders based on your physiological state",
+                  "Quick, 60 second reflection exercises",
+                  "Personalized prompts based on your background",
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-[#96d8ef] flex items-center justify-center text-[#0f172a]">
@@ -144,14 +147,13 @@ export default function Home() {
       </section>
 
       <section className="px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-b from-[#0f172a] to-[#1e293b]" />
         <div className="container mx-auto relative z-10 text-center">
           <AnimatedSection>
             <h2 className="text-4xl md:text-6xl font-bold mb-8 mt-24">
               Ready to Cue in?
             </h2>
             <p className="text-xl text-blue-200 mb-10 max-w-2xl mx-auto">
-              Join the experiment and start your journey towards greater
+              Join the experiment and start your journey toward greater
               emotional regulation today.
             </p>
             <motion.button
