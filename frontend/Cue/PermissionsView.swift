@@ -210,7 +210,7 @@ struct PermissionsView: View {
                 Task {
                     do {
                         let response = try await BackendService.shared.post(
-                            path: "/api/users/sign-in",
+                            path: "/users/sign-in",
                             body: [
                                 "idToken": idToken,
                                 "authCode": authCode,
@@ -237,7 +237,7 @@ struct PermissionsView: View {
             Task {
                 do {
                     let response = try await BackendService.shared.post(
-                        path: "/api/users/finish-onboarding",
+                        path: "/users/finish-onboarding",
                         body: [
                             "userId": userId,
                             "occupation": selectedOccupation.rawValue

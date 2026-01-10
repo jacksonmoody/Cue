@@ -49,7 +49,7 @@ class VariantManager: ObservableObject {
         
         do {
             let response = try await backendService.post(
-                path: "/api/variant",
+                path: "/variant",
                 body: ["userId": userId],
                 responseType: VariantResponse.self
             )

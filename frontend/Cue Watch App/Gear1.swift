@@ -10,7 +10,6 @@
 import SwiftUI
 
 struct Gear1: View {
-    @Environment(NavigationRouter.self) private var router
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
@@ -33,30 +32,17 @@ struct Gear1: View {
             if currentPhase == 1 {
                 List {
                     Section(header: Text("What may have triggered this response?").padding(.leading, -5).padding(.bottom, 10)) {
-                        Button("  11am Meeting", systemImage: "calendar"){
-                            router.navigateToGear2()
-                        }
-                        Button("  Morning Routine", systemImage: "sun.horizon") {
-                            router.navigateToGear2()
-                        }
-                        Button("  Student Stress", systemImage: "graduationcap"){
-                            router.navigateToGear2()
-                        }
-                        Button("  Home Stress", systemImage: "house"){
-                            router.navigateToGear2()
-                        }
-                        Button("  Not Sure", systemImage: "questionmark"){
-                            router.navigateToGear2()
-                        }
-                        Button("  Other", systemImage: "ellipsis.circle"){
-                            router.navigateToGear2()
-                        }
+                        ListButton("11am Thesis Meeting", image: "calendar")
+                        ListButton("Morning Routine", image: "sun.horizon")
+                        ListButton("Student Stress", image: "graduationcap")
+                        ListButton("Home Stress", image: "house")
+                        ListButton("Not Sure", image: "questionmark")
+                        ListButton("Other", image: "ellipsis.circle")
                     }
                     .headerProminence(.increased)
                 }
                 .opacity(opacity)
                 .scrollIndicators(.hidden)
-                .padding()
             }
         }
 //        ProgressView()
@@ -94,6 +80,29 @@ struct Gear1: View {
                 if phase < 1 {
                     animatePhase(phase: phase + 1)
                 }
+            }
+        }
+    }
+}
+
+struct ListButton: View {
+    @Environment(NavigationRouter.self) private var router
+    let text: String
+    let image: String
+    
+    init(_ text: String, image: String) {
+        self.text = text
+        self.image = image
+    }
+    
+    var body: some View {
+        Button {
+            router.navigateToGear2()
+        } label: {
+            HStack {
+                Image(systemName: image)
+                    .padding(.trailing)
+                Text(text)
             }
         }
     }

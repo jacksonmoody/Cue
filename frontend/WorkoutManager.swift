@@ -161,7 +161,7 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
             "timestamp": ISO8601DateFormatter().string(from: Date())
         ]
         
-        backendService.post(path: "/api/sessions", body: sessionData) { result in
+        backendService.post(path: "/sessions", body: sessionData) { result in
             switch result {
             case .success:
                 WatchConnectivityManager.shared.notifySessionRecorded()

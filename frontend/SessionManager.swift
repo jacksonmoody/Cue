@@ -36,7 +36,7 @@ class SessionManager: ObservableObject {
         do {
             let encodedUserId = userId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? userId
             let response = try await backendService.get(
-                path: "/api/sessions/\(encodedUserId)/count",
+                path: "/sessions/\(encodedUserId)/count",
                 responseType: SessionCountResponse.self
             )
             sessionCount = response.count
