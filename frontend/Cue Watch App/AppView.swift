@@ -94,9 +94,14 @@ struct AppView: View {
                     case .gear2:
                         Gear2()
                     case .gear3:
-                        Gear3()
+                        Gear3(bypassMute: false)
+                    case .gear3Bypass:
+                        Gear3(bypassMute: true)
                     case .settings:
                         SettingsView()
+                    case .muted:
+                        MutedView()
+                            .navigationBarBackButtonHidden()
                     }
                 }
             }

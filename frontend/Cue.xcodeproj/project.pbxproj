@@ -15,6 +15,8 @@
 		D57A47BA2F020E74002722F6 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D57A47B92F020E74002722F6 /* GoogleSignInSwift */; };
 		D57A498B2F02254D002722F6 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57A498A2F02254D002722F6 /* LocationManager.swift */; };
 		D57A498C2F02254D002722F6 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57A498A2F02254D002722F6 /* LocationManager.swift */; };
+		D57A498E2F13125A002722F6 /* detection.aiff in Resources */ = {isa = PBXBuildFile; fileRef = D57A498D2F13125A002722F6 /* detection.aiff */; };
+		D57A498F2F13125A002722F6 /* detection.aiff in Resources */ = {isa = PBXBuildFile; fileRef = D57A498D2F13125A002722F6 /* detection.aiff */; };
 		D583BBB22EEFA1BE006CDC9B /* Cue Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D58A97A72EF60A950078459A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A97A62EF60A950078459A /* SessionManager.swift */; };
 		D58A97A82EF60A950078459A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A97A62EF60A950078459A /* SessionManager.swift */; };
@@ -94,6 +96,7 @@
 		D55EB3852EF5FE520077F3B4 /* BackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendService.swift; sourceTree = "<group>"; };
 		D57A47BD2F0212F9002722F6 /* Cue-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Cue-Watch-App-Info.plist"; sourceTree = "<group>"; };
 		D57A498A2F02254D002722F6 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		D57A498D2F13125A002722F6 /* detection.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = detection.aiff; sourceTree = "<group>"; };
 		D583BBA42EEFA1BD006CDC9B /* Cue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cue Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D58A97A62EF60A950078459A /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
@@ -211,6 +214,7 @@
 				D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */,
 				D5A969752EF3AEE700782283 /* ElapsedTimeView.swift */,
 				D51A5BF22EFA8496001AD612 /* breathe.mp3 */,
+				D57A498D2F13125A002722F6 /* detection.aiff */,
 				D57A47BD2F0212F9002722F6 /* Cue-Watch-App-Info.plist */,
 				D583BBA62EEFA1BD006CDC9B /* Cue */,
 				D583BBB52EEFA1BE006CDC9B /* Cue Watch App */,
@@ -365,6 +369,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D58D5DF62EEFDF2B00E4D1DB /* Assets.xcassets in Resources */,
+				D57A498E2F13125A002722F6 /* detection.aiff in Resources */,
 				D58D5E0F2EF08D6200E4D1DB /* App Icon.icon in Resources */,
 				D591A8462EF12D25000E88F2 /* Launch Screen.storyboard in Resources */,
 			);
@@ -375,6 +380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D51A5BF32EFA8496001AD612 /* breathe.mp3 in Resources */,
+				D57A498F2F13125A002722F6 /* detection.aiff in Resources */,
 				D58D5E112EF0903600E4D1DB /* Assets.xcassets in Resources */,
 				D58D5E0E2EF08D6200E4D1DB /* App Icon.icon in Resources */,
 			);

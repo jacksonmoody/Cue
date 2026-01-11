@@ -16,9 +16,9 @@ struct InstructionsView: View {
     let refresher: Bool
     
     #if os(iOS)
-    let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions, then click the \"Get Started\" button and accept all required permissions.\n\n"
+    let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions carefully, then click the \"Begin Setup\" button and accept all required permissions.\n\n"
     #else
-    let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions:\n\n"
+    let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions carefully:\n\n"
     #endif
     
     var instructionText: String? {

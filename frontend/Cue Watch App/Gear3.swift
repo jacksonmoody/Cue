@@ -13,22 +13,30 @@ struct Gear3: View {
     @Environment(NavigationRouter.self) private var router
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
+    @State private var backgroundOpacity: Double = 0
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
         (fadeIn: 1.5, display: 1.5, fadeOut: 1.5),
         (fadeIn: 1.5, display: 71.5, fadeOut: 3)
     ]
+    let bypassMute: Bool
     
     var body: some View {
         ZStack {
+            if !bypassMute {
+                MuteTesterView()
+            }
             if currentPhase == 0 {
+                Color.black.ignoresSafeArea(.all)
+                    .opacity(backgroundOpacity)
                 Text("Let's try a quick breathing exercise...")
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .opacity(opacity)
-                    .padding()
+                    .padding(.horizontal)
             }
-            
             if currentPhase == 1 {
+                Color.black.ignoresSafeArea(.all)
+                    .opacity(backgroundOpacity)
                 Breathe()
                     .opacity(opacity)
             }
@@ -48,11 +56,18 @@ struct Gear3: View {
         
         withAnimation(.easeInOut(duration: timing.fadeIn)) {
             opacity = 1.0
+            if phase == 0 {
+                backgroundOpacity = 1
+            }
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + timing.fadeIn + timing.display) {
             withAnimation(.easeInOut(duration: timing.fadeOut)) {
                 opacity = 0.0
+                
+                if phase == 1 {
+                    backgroundOpacity = 0.0
+                }
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + timing.fadeOut) {
@@ -68,6 +83,6 @@ struct Gear3: View {
 }
 
 #Preview {
-    Gear3()
+    Gear3(bypassMute: true)
         .environment(NavigationRouter())
 }

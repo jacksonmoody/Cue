@@ -36,7 +36,7 @@ struct Survey: View {
     @EnvironmentObject var variantManager: VariantManager
     
     var firstName: String? {
-        let components =   variantManager.appleUserId?.split(separator: " ")
+        let components = UserDefaults.standard.string(forKey: "fullName")?.split(separator: " ")
         if let components, components.count > 0 {
             return String(components[0])
         }

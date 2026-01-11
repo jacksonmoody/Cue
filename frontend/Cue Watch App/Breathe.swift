@@ -41,7 +41,6 @@ struct Breathe: View {
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea(.all)
             Circle()
                 .stroke(Color.white.opacity(0.2), lineWidth: 2)
                 .scaleEffect(1.0)

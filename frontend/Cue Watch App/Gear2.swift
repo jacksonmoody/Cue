@@ -28,7 +28,7 @@ struct Gear2: View {
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .opacity(opacity)
-                    .padding()
+                    .padding(.horizontal)
             }
             
             if currentPhase == 1 {
@@ -36,37 +36,40 @@ struct Gear2: View {
                     .fontWeight(.bold)
                     .opacity(opacity)
                     .multilineTextAlignment(.center)
-                    .padding()
+                    .padding(.horizontal)
             }
             
             if currentPhase == 2 {
                 List {
-                    Button("  Heart Racing", systemImage: "heart"){
+                    ListButton("Heart Racing", image: "heart") {
                         router.navigateToGear3()
                     }
-                    Button("  Muscle Tensing", systemImage: "dumbbell"){
+                    ListButton("Muscle Tensing", image: "dumbbell") {
                         router.navigateToGear3()
                     }
-                    Button("  Rapid Breathing", systemImage: "lungs"){
+                    ListButton("Rapid Breathing", image: "lungs") {
                         router.navigateToGear3()
                     }
-                    Button("  Feeling Heavy", systemImage: "scalemass"){
+                    ListButton("Feeling Heavy", image: "scalemass") {
                         router.navigateToGear3()
                     }
-                    Button("  Other", systemImage: "questionmark"){
+                    ListButton("Other", image: "questionmark") {
                         router.navigateToGear3()
                     }
-                    Button("  No Change", systemImage: "circle.slash"){
+                    ListButton("No Change", image: "circle.slash") {
                         router.navigateToGear3()
                     }
                 }
                 .opacity(opacity)
                 .scrollIndicators(.hidden)
-                .padding()
+                .padding(.horizontal)
             }
         }
         .onAppear {
             startAnimation()
+        }
+        .onDisappear {
+            stopVibration()
         }
     }
     
