@@ -4,8 +4,8 @@
 //
 //  Created by Jackson Moody on 12/22/25.
 
-// Gear 1: Awareness of the Habit Loop.
-// Should be highly personal/contextual
+// Gear 1: Awareness of the Habit Loop
+// Brewer emphasizes a highly personal/contextual prompt
 
 import SwiftUI
 

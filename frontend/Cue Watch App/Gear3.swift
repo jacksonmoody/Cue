@@ -5,7 +5,7 @@
 //  Created by Jackson Moody on 12/22/25.
 
 // Gear 3: Substitution of a better and higher reward
-// 4-7-8 Breathing Exercise
+// 4-7-8 Visual breathing exercise inspired by the Hoberman Sphere
 
 import SwiftUI
 
