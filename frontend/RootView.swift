@@ -59,6 +59,15 @@ struct RootView: View {
             }
             #endif
         }
+        .onChange(of: variantManager.appleUserId) { _, newValue in
+            #if os(watchOS)
+            if newValue != nil {
+                Task {
+                    await checkOnboardingStatus()
+                }
+            }
+            #endif
+        }
          
     }
     
@@ -78,9 +87,10 @@ struct RootView: View {
         }
         
         if phoneOnboardingCompleted {
-            phoneOnboardingCompleted = false
             return
         }
+        
+        watchOnboardingLoading = true
 
         do {
             let response = try await BackendService.shared.get(
