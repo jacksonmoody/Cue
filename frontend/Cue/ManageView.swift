@@ -85,7 +85,7 @@ struct ManageView: View {
         .alert("Apple Watch Not Reachable", isPresented: $connectivityManager.showError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Please open the Cue app on your Apple Watch to manage the session.")
+            Text("Open the Cue app on your Apple Watch to manage the session.")
         }
     }
 }

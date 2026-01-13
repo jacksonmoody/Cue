@@ -20,7 +20,7 @@
 		D583BBB22EEFA1BE006CDC9B /* Cue Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D58A97A72EF60A950078459A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A97A62EF60A950078459A /* SessionManager.swift */; };
 		D58A97A82EF60A950078459A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58A97A62EF60A950078459A /* SessionManager.swift */; };
-		D58D5DF42EEFDF2B00E4D1DB /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */; };
+		D58D5DF42EEFDF2B00E4D1DB /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DF22EEFDF2B00E4D1DB /* RootView.swift */; };
 		D58D5DF62EEFDF2B00E4D1DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */; };
 		D58D5E002EEFE21800E4D1DB /* VariantManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */; };
 		D58D5E032EEFE63800E4D1DB /* VariantManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */; };
@@ -29,7 +29,7 @@
 		D58D5E112EF0903600E4D1DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */; };
 		D58D5E162EF093DF00E4D1DB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E152EF093DF00E4D1DB /* LoginView.swift */; };
 		D58D5E172EF093DF00E4D1DB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E152EF093DF00E4D1DB /* LoginView.swift */; };
-		D58D5E1C2EF0953400E4D1DB /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */; };
+		D58D5E1C2EF0953400E4D1DB /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5DF22EEFDF2B00E4D1DB /* RootView.swift */; };
 		D58D5E2D2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */; };
 		D58D5E2E2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */; };
 		D58D5E302EF0D1C300E4D1DB /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */; };
@@ -101,7 +101,7 @@
 		D583BBB12EEFA1BE006CDC9B /* Cue Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cue Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D58A97A62EF60A950078459A /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = /Users/jacksonmoody/Documents/Programming/Cue/frontend/Assets.xcassets; sourceTree = "<absolute>"; };
-		D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		D58D5DF22EEFDF2B00E4D1DB /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariantManager.swift; sourceTree = "<group>"; };
 		D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "App Icon.icon"; sourceTree = "<group>"; };
 		D58D5E152EF093DF00E4D1DB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -209,7 +209,7 @@
 				D58D5E2F2EF0D1C300E4D1DB /* WatchConnectivityManager.swift */,
 				D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */,
 				D58D5E152EF093DF00E4D1DB /* LoginView.swift */,
-				D58D5DF22EEFDF2B00E4D1DB /* OnboardingView.swift */,
+				D58D5DF22EEFDF2B00E4D1DB /* RootView.swift */,
 				D58D5E2C2EF0C3E100E4D1DB /* SwirlingRing.swift */,
 				D58D5E352EF0DDBF00E4D1DB /* InstructionsView.swift */,
 				D5A969752EF3AEE700782283 /* ElapsedTimeView.swift */,
@@ -407,7 +407,7 @@
 				D5B7ED562EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
 				D58D5E2D2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */,
 				D57A498C2F02254D002722F6 /* LocationManager.swift in Sources */,
-				D58D5DF42EEFDF2B00E4D1DB /* OnboardingView.swift in Sources */,
+				D58D5DF42EEFDF2B00E4D1DB /* RootView.swift in Sources */,
 				D58D5E172EF093DF00E4D1DB /* LoginView.swift in Sources */,
 				D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */,
 				D58D5E332EF0DA0E00E4D1DB /* WorkoutManager.swift in Sources */,
@@ -428,7 +428,7 @@
 				D57A498B2F02254D002722F6 /* LocationManager.swift in Sources */,
 				D5B7ED572EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
 				D58D5E372EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */,
-				D58D5E1C2EF0953400E4D1DB /* OnboardingView.swift in Sources */,
+				D58D5E1C2EF0953400E4D1DB /* RootView.swift in Sources */,
 				D58D5E342EF0DA0E00E4D1DB /* WorkoutManager.swift in Sources */,
 				D58D5E302EF0D1C300E4D1DB /* WatchConnectivityManager.swift in Sources */,
 				D58D5E032EEFE63800E4D1DB /* VariantManager.swift in Sources */,

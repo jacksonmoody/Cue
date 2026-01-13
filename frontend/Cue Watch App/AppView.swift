@@ -80,7 +80,7 @@ struct AppView: View {
                     }
                 }
                 .sheet(isPresented: $showingInstructions) {
-                    InstructionsView(onboardingNeeded: .constant(false), refresher: true)
+                    InstructionsView(instructionsNeeded: .constant(false), refresher: true)
                 }
                 .alert("Connectivity Error", isPresented: $connectivityManager.showError) {
                     Button("OK", role: .cancel) {}

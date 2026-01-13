@@ -14,6 +14,7 @@ struct Gear3: View {
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
     @State private var backgroundOpacity: Double = 0
+    @State private var runtimeSession: WKExtendedRuntimeSession?
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
         (fadeIn: 1.5, display: 1.5, fadeOut: 1.5),
         (fadeIn: 1.5, display: 71.5, fadeOut: 3)
@@ -45,16 +46,25 @@ struct Gear3: View {
             }
         }
         .onAppear {
-            startAnimation()
+            startExtendedRuntimeSession()
+            animatePhase(phase: 0)
         }
     }
     
     private func completeReflection(canceled: Bool) {
+        endExtendedRuntimeSession()
         router.navigateHome()
     }
-    
-    private func startAnimation() {
-        animatePhase(phase: 0)
+
+    private func startExtendedRuntimeSession() {
+        let session = WKExtendedRuntimeSession()
+        runtimeSession = session
+        session.start()
+    }
+
+    private func endExtendedRuntimeSession() {
+        runtimeSession?.invalidate()
+        runtimeSession = nil
     }
     
     private func animatePhase(phase: Int) {

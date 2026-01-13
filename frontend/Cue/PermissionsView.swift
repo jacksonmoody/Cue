@@ -24,7 +24,7 @@ struct PermissionsView: View {
     @EnvironmentObject var locationService: LocationService
     @EnvironmentObject var variantManager: VariantManager
     @Environment(\.dismiss) private var dismiss
-    @Binding var onboardingNeeded: Bool
+    @Binding var instructionsNeeded: Bool
     
     @State private var isHealthAuthorized: Bool = false
     @State private var isNotificationAuthorized: Bool = false
@@ -128,7 +128,7 @@ struct PermissionsView: View {
         .alert("Unable to Set Up Cue", isPresented: $showError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Please ensure that you are connected to the Internet and try again.")
+            Text("Ensure that you are connected to the Internet and try again.")
         }
         .onAppear {
             checkLocationStatus()
@@ -245,7 +245,8 @@ struct PermissionsView: View {
                         responseType: Bool.self
                     )
                     if (response) {
-                        onboardingNeeded = false
+                        WatchConnectivityManager.shared.notifyOnboardingCompleted()
+                        instructionsNeeded = false
                         dismiss()
                     } else {
                         print("Failed to finish onboarding")
@@ -335,7 +336,7 @@ struct PermissionCard: View {
 }
 
 #Preview {
-    PermissionsView(onboardingNeeded: .constant(false))
+    PermissionsView(instructionsNeeded: .constant(false))
         .environmentObject(WorkoutManager())
         .environmentObject(LocationService())
         .environmentObject(VariantManager())

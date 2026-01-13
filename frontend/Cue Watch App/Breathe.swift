@@ -10,10 +10,10 @@ import Combine
 import AVFoundation
 
 struct Breathe: View {
-    enum BreathingPhase {
+    enum BreathingPhase: CaseIterable {
         case inhale, hold, exhale
         
-        var duration: Int {
+        var duration: TimeInterval {
             switch self {
             case .inhale: return 4
             case .hold: return 7
@@ -30,23 +30,73 @@ struct Breathe: View {
         }
     }
     
-    @State private var phase: BreathingPhase = .inhale
-    @State private var timeElapsedInPhase = 0
-    @State private var circleScale: CGFloat = 0.5
-    @State private var pulseOpacity: Double = 1.0
-    @State private var displayText: String = "In"
+    @State private var startDate = Date()
     @State private var audioPlayer: AVAudioPlayer?
-    
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private var totalCycleDuration: TimeInterval {
+        BreathingPhase.allCases.reduce(0) { $0 + $1.duration }
+    }
     
     var body: some View {
+        TimelineView(BreatheTimelineSchedule(from: startDate)) { context in
+            let elapsed = context.date.timeIntervalSince(startDate)
+            let cycleElapsed = elapsed.truncatingRemainder(dividingBy: totalCycleDuration)
+            let (phase, phaseElapsed) = calculatePhase(cycleElapsed: cycleElapsed)
+            BreatheVisuals(
+                date: context.date,
+                phase: phase,
+                phaseElapsed: phaseElapsed
+            )
+        }
+        .onAppear {
+            startDate = Date()
+            playAudio()
+        }
+        .onDisappear {
+            audioPlayer?.stop()
+            audioPlayer = nil
+        }
+    }
+    
+    func calculatePhase(cycleElapsed: TimeInterval) -> (BreathingPhase, TimeInterval) {
+        if cycleElapsed < 4 {
+            return (.inhale, cycleElapsed)
+        } else if cycleElapsed < 11 {
+            return (.hold, cycleElapsed - 4)
+        } else {
+            return (.exhale, cycleElapsed - 11)
+        }
+    }
+    
+    func playAudio() {
+        guard let url = Bundle.main.url(forResource: "breathe", withExtension: "mp3") else {
+            return
+        }
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.play()
+        } catch {
+            print("Error playing audio: \(error.localizedDescription)")
+        }
+    }
+}
+
+struct BreatheVisuals: View {
+    let date: Date
+    let phase: Breathe.BreathingPhase
+    let phaseElapsed: TimeInterval
+    
+    var body: some View {
+        let circleScale = calculateScale()
+        let displayText = calculateText()
+        let pulseOpacity = calculatePulse()
+        
         ZStack {
             Circle()
                 .stroke(Color.white.opacity(0.2), lineWidth: 2)
                 .scaleEffect(1.0)
             
             ZStack {
-                SwirlingOrb()
+                SwirlingOrb(date: date)
                     .scaleEffect(circleScale)
                 
                 if phase == .hold {
@@ -54,14 +104,8 @@ struct Breathe: View {
                         .stroke(Color.white.opacity(0.5), lineWidth: 4)
                         .scaleEffect(circleScale)
                         .opacity(pulseOpacity)
-                        .onAppear {
-                            withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
-                                pulseOpacity = 0.1
-                            }
-                        }
                 }
             }
-            .animation(.linear(duration: Double(phase.duration)), value: circleScale)
             
             Text(displayText)
                 .font(.title2)
@@ -72,94 +116,56 @@ struct Breathe: View {
                 .id(displayText)
                 .transition(.opacity.animation(.easeInOut(duration: 0.5)))
         }
-        .onAppear {
-            playAudio()
-            startCycle()
-        }
-        .onDisappear {
-            audioPlayer?.stop()
-            audioPlayer = nil
-        }
-        .onReceive(timer) { _ in
-            advanceTime()
+        .onChange(of: phase) {
+            WKInterfaceDevice.current().play(.click)
         }
     }
     
-    
-    func playAudio() {
-        guard let url = Bundle.main.url(forResource: "breathe", withExtension: "mp3") else {
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer?.play()
-        } catch {
-            print("Error playing audio: \(error.localizedDescription)")
-        }
-    }
-    
-    func startCycle() {
-        WKInterfaceDevice.current().play(.click)
-        
-        phase = .inhale
-        timeElapsedInPhase = 0
-        displayText = phase.instruction
-        circleScale = 0.5
-        
-        withAnimation(.easeInOut(duration: 4)) {
-            circleScale = 1.0
-        }
-    }
-    
-    func advanceTime() {
-        timeElapsedInPhase += 1
-        
-        if timeElapsedInPhase >= phase.duration {
-            moveToNextPhase()
-        } else {
-            if timeElapsedInPhase == 0 {
-                withAnimation {
-                    displayText = phase.instruction
-                }
-            } else {
-                withAnimation {
-                    displayText = "\(timeElapsedInPhase + 1)"
-                }
-            }
-        }
-    }
-    
-    func moveToNextPhase() {
-        WKInterfaceDevice.current().play(.click)
-        
+    func calculateScale() -> CGFloat {
         switch phase {
         case .inhale:
-            phase = .hold
-            
+            return 0.5 + (0.5 * (phaseElapsed / 4.0))
         case .hold:
-            phase = .exhale
-            withAnimation(.easeInOut(duration: 8)) {
-                circleScale = 0.5
-            }
-            
+            return 1.0
         case .exhale:
-            phase = .inhale
-            withAnimation(.easeInOut(duration: 4)) {
-                circleScale = 1.0
-            }
+            return 1.0 - (0.5 * (phaseElapsed / 8.0))
         }
-        
-        timeElapsedInPhase = 0
-        withAnimation {
-            displayText = phase.instruction
+    }
+    
+    func calculateText() -> String {
+        let seconds = Int(phaseElapsed)
+        if seconds == 0 {
+            return phase.instruction
+        } else {
+            return "\(seconds + 1)"
         }
-        pulseOpacity = 1.0
+    }
+    
+    func calculatePulse() -> Double {
+        guard phase == .hold else { return 0 }
+        let pulseDuration = 2.0
+        let progress = phaseElapsed.truncatingRemainder(dividingBy: pulseDuration) / pulseDuration
+        let val = cos(progress * 2 * .pi)
+        return 0.1 + 0.9 * ((val + 1) / 2)
+    }
+}
+
+// Ensure that view continues updating frequently even with Always On Display
+struct BreatheTimelineSchedule: TimelineSchedule {
+    var startDate: Date
+
+    init(from startDate: Date) {
+        self.startDate = startDate
+    }
+
+    func entries(from startDate: Date, mode: TimelineScheduleMode) -> PeriodicTimelineSchedule.Entries {
+        PeriodicTimelineSchedule(from: self.startDate, by: 1.0 / 30.0)
+            .entries(from: startDate, mode: mode)
     }
 }
 
 struct SwirlingOrb: View {
-    @State private var isAnimating = false
+    let date: Date
     let gradientColors: [Color] = [
         Color(red: 1.0, green: 0.98, blue: 0.85),
         Color(red: 1.0, green: 0.75, blue: 0.85),
@@ -170,6 +176,9 @@ struct SwirlingOrb: View {
     ]
     
     var body: some View {
+        let rotationPeriod = 8.0
+        let rotation = (date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: rotationPeriod) / rotationPeriod) * 360
+        
         ZStack {
             Circle()
                 .fill(
@@ -180,8 +189,7 @@ struct SwirlingOrb: View {
                 )
                 .blur(radius: 10)
                 .mask(Circle())
-                .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                .animation(.linear(duration: 8).repeatForever(autoreverses: false), value: isAnimating)
+                .rotationEffect(.degrees(rotation))
             
             Circle()
                 .fill(
@@ -193,12 +201,10 @@ struct SwirlingOrb: View {
                     )
                 )
         }
-        .onAppear {
-            isAnimating = true
-        }
     }
 }
 
 #Preview {
     Breathe()
 }
+

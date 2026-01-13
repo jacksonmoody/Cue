@@ -12,7 +12,7 @@ struct InstructionsView: View {
     #if os(iOS)
     @EnvironmentObject var tabController: TabController
     #endif
-    @Binding var onboardingNeeded: Bool
+    @Binding var instructionsNeeded: Bool
     let refresher: Bool
     
     #if os(iOS)
@@ -53,7 +53,7 @@ struct InstructionsView: View {
 #if os(iOS)
                         if !refresher {
                             NavigationLink("Begin Setup") {
-                                PermissionsView(onboardingNeeded: $onboardingNeeded)
+                                PermissionsView(instructionsNeeded: $instructionsNeeded)
                             }
                             .padding()
                             .fontWeight(.bold)
@@ -87,7 +87,7 @@ struct InstructionsView: View {
 #Preview {
     ZStack {
         LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
-        InstructionsView(onboardingNeeded: .constant(false), refresher: false)
+        InstructionsView(instructionsNeeded: .constant(false), refresher: false)
             .environmentObject(VariantManager())
         #if os(iOS)
             .environmentObject(TabController())

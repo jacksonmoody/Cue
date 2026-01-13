@@ -15,7 +15,7 @@ struct MutedView: View {
                 Image(systemName: "bell.slash")
                     .foregroundStyle(Color.red)
                     .font(.system(size: 30))
-                Text("Before continuing, please take your Apple Watch off silent mode.")
+                Text("Before continuing, take your Apple Watch off silent mode.")
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 Button("Done") {

@@ -19,7 +19,7 @@ struct Cue_Watch_AppApp: App {
     
     var body: some Scene {
         WindowGroup {
-             OnboardingView()
+             RootView()
                 .onAppear {
                     workoutManager.variantManager = variantManager
                     delegate.workoutManager = workoutManager

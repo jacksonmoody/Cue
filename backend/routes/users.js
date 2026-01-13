@@ -157,6 +157,20 @@ router.post("/finish-onboarding", async function (req, res) {
   }
 });
 
+router.get("/onboarded/:userId", async function (req, res) {
+  var db = req.db;
+  var userId = req.params.userId;
+  if (!userId || typeof userId !== "string" || !userId.trim()) {
+    return res.status(400).json({ error: "userId (string) is required" });
+  }
+  var users = db.collection("users");
+  var user = await users.findOne({ userId: userId });
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  res.json({ onboarded: user.onboarded });
+});
+
 module.exports = {
   getDecryptedTokens: getDecryptedTokens,
   router: router,

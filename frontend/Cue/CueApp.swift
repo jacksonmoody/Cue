@@ -18,7 +18,7 @@ struct CueApp: App {
     
     var body: some Scene {
         WindowGroup {
-            OnboardingView()
+            RootView()
                 .environmentObject(workoutManager)
                 .environmentObject(variantManager)
                 .environmentObject(sessionManager)

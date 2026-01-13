@@ -27,6 +27,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     
     // Callback for when a session is recorded (used by iOS to update session count)
     var onSessionRecorded: (() -> Void)?
+
+    // Callback when iOS onboarding finishes so watch can refresh
+    var onOnboardingCompleted: (() -> Void)?
     
     private override init() {
         super.init()
@@ -138,6 +141,36 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             replyHandler: nil,
             errorHandler: { error in
                 print("Error sending session recorded message: \(error.localizedDescription)")
+                do {
+                    try session.updateApplicationContext(message)
+                } catch {
+                    print("Error updating application context as fallback: \(error.localizedDescription)")
+                }
+            }
+        )
+    }
+
+    func notifyOnboardingCompleted() {
+        guard let session = session, session.activationState == .activated else {
+            return
+        }
+
+        let message = ["onboardingCompleted": true]
+
+        guard session.isReachable else {
+            do {
+                try session.updateApplicationContext(message)
+            } catch {
+                print("Error updating application context: \(error.localizedDescription)")
+            }
+            return
+        }
+
+        session.sendMessage(
+            message,
+            replyHandler: nil,
+            errorHandler: { error in
+                print("Error sending onboarding completed message: \(error.localizedDescription)")
                 do {
                     try session.updateApplicationContext(message)
                 } catch {
@@ -264,6 +297,12 @@ extension WatchConnectivityManager: WCSessionDelegate {
                 self.onSessionRecorded?()
             }
         }
+
+        if let _ = message["onboardingCompleted"] as? Bool {
+            DispatchQueue.main.async {
+                self.onOnboardingCompleted?()
+            }
+        }
     }
     
     #if os(watchOS)
@@ -292,6 +331,12 @@ extension WatchConnectivityManager: WCSessionDelegate {
         if let _ = applicationContext["sessionRecorded"] as? Bool {
             DispatchQueue.main.async {
                 self.onSessionRecorded?()
+            }
+        }
+
+        if let _ = applicationContext["onboardingCompleted"] as? Bool {
+            DispatchQueue.main.async {
+                self.onOnboardingCompleted?()
             }
         }
     }

@@ -24,7 +24,7 @@ struct AppView: View {
                 FeedbackView()
             }
             Tab("Help", systemImage: "questionmark.circle", value: TabItem.help, role: .search) {
-                InstructionsView(onboardingNeeded: .constant(false), refresher: true)
+                InstructionsView(instructionsNeeded: .constant(false), refresher: true)
             }
         }
         .environmentObject(tabController)
