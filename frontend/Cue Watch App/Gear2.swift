@@ -15,6 +15,7 @@ struct Gear2: View {
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
     @State private var vibrationTimer: Timer?
+    @State private var isMuted: Bool = false
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
         (fadeIn: 1.5, display: 3.0, fadeOut: 1.5),
         (fadeIn: 1.5, display: 4.0, fadeOut: 1.5),
@@ -23,6 +24,7 @@ struct Gear2: View {
     
     var body: some View {
         ZStack {
+            MuteTesterView()
             if currentPhase == 0 {
                 Text("Now, shift your attention to your body...")
                     .fontWeight(.bold)
@@ -32,7 +34,7 @@ struct Gear2: View {
             }
             
             if currentPhase == 1 {
-                Text("If you were to follow your body's usual response, what might happen here?")
+                Text("If you were to follow your body's usual response, what might you feel here?")
                     .fontWeight(.bold)
                     .opacity(opacity)
                     .multilineTextAlignment(.center)
@@ -42,22 +44,22 @@ struct Gear2: View {
             if currentPhase == 2 {
                 List {
                     ListButton("Heart Racing", image: "heart") {
-                        router.navigateToGear3()
+                        navigateNext()
                     }
                     ListButton("Muscle Tensing", image: "dumbbell") {
-                        router.navigateToGear3()
+                        navigateNext()
                     }
                     ListButton("Rapid Breathing", image: "lungs") {
-                        router.navigateToGear3()
+                        navigateNext()
                     }
                     ListButton("Feeling Heavy", image: "scalemass") {
-                        router.navigateToGear3()
+                        navigateNext()
                     }
                     ListButton("Other", image: "questionmark") {
-                        router.navigateToGear3()
+                        navigateNext()
                     }
                     ListButton("No Change", image: "circle.slash") {
-                        router.navigateToGear3()
+                        navigateNext()
                     }
                 }
                 .opacity(opacity)
@@ -70,6 +72,9 @@ struct Gear2: View {
         }
         .onDisappear {
             stopVibration()
+        }
+        .onReceive(updateSilentState) { silent in
+            isMuted = silent
         }
     }
     
@@ -120,6 +125,14 @@ struct Gear2: View {
     private func stopVibration() {
         vibrationTimer?.invalidate()
         vibrationTimer = nil
+    }
+
+    private func navigateNext() {
+        if isMuted {
+            router.navigateToMuted()
+        } else {
+            router.navigateToGear3()
+        }
     }
 }
 

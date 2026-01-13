@@ -94,9 +94,7 @@ struct AppView: View {
                     case .gear2:
                         Gear2()
                     case .gear3:
-                        Gear3(bypassMute: false)
-                    case .gear3Bypass:
-                        Gear3(bypassMute: true)
+                        Gear3()
                     case .settings:
                         SettingsView()
                     case .muted:

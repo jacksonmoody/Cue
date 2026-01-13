@@ -9,20 +9,14 @@ import SwiftUI
 import Combine
 
 struct MuteTesterView: View {
-    @Environment(NavigationRouter.self) private var router
     @State private var audioToolBoxHandle: UnsafeMutableRawPointer? = nil
     @State private var mod = MuteTester()
-    
+
     var body: some View {
         Rectangle()
             .opacity(0)
         .onAppear {
             monitorMute()
-        }
-        .onReceive(updateSilentState) { silent in
-            if silent {
-                router.navigateToMuted()
-            }
         }
     }
     func monitorMute() {

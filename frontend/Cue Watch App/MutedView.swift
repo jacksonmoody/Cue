@@ -15,11 +15,11 @@ struct MutedView: View {
                 Image(systemName: "bell.slash")
                     .foregroundStyle(Color.red)
                     .font(.system(size: 30))
-                Text("For best results, take your Apple Watch off silent mode and increase the volume.")
+                Text("Before continuing, please take your Apple Watch off silent mode.")
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 Button("Done") {
-                    router.navigateToGear3(bypass: true)
+                    router.navigateToGear3()
                 }
             }
         }

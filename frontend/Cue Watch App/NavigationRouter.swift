@@ -12,7 +12,6 @@ enum Route: Hashable {
     case gear1
     case gear2
     case gear3
-    case gear3Bypass
     case muted
     case settings
 }
@@ -30,12 +29,8 @@ class NavigationRouter {
         path.append(Route.gear2)
     }
     
-    func navigateToGear3(bypass: Bool = false) {
-        if bypass {
-            path.append(Route.gear3Bypass)
-        } else {
-            path.append(Route.gear3)
-        }
+    func navigateToGear3() {
+        path.append(Route.gear3)
     }
     
     func navigateToSettings() {

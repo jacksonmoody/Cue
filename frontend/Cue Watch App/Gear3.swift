@@ -18,13 +18,9 @@ struct Gear3: View {
         (fadeIn: 1.5, display: 1.5, fadeOut: 1.5),
         (fadeIn: 1.5, display: 71.5, fadeOut: 3)
     ]
-    let bypassMute: Bool
-    
+
     var body: some View {
         ZStack {
-            if !bypassMute {
-                MuteTesterView()
-            }
             if currentPhase == 0 {
                 Color.black.ignoresSafeArea(.all)
                     .opacity(backgroundOpacity)
@@ -41,9 +37,20 @@ struct Gear3: View {
                     .opacity(opacity)
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Cancel", systemImage: "xmark") {
+                    completeReflection(canceled: true)
+                }
+            }
+        }
         .onAppear {
             startAnimation()
         }
+    }
+    
+    private func completeReflection(canceled: Bool) {
+        router.navigateHome()
     }
     
     private func startAnimation() {
@@ -75,7 +82,7 @@ struct Gear3: View {
                     animatePhase(phase: phase + 1)
                 }
                 if phase == 1 {
-                    router.navigateHome()
+                    completeReflection(canceled:false)
                 }
             }
         }
@@ -83,6 +90,6 @@ struct Gear3: View {
 }
 
 #Preview {
-    Gear3(bypassMute: true)
+    Gear3()
         .environment(NavigationRouter())
 }
