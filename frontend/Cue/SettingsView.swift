@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-struct GearOption: Identifiable, Equatable {
-    let id = UUID()
-    var text: String
-    var icon: String
-}
-
 struct SettingsView: View {
     @State private var gear2Options: [GearOption] = [
         GearOption(text: "Heart Racing", icon: "heart"),
@@ -298,7 +292,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .navigationTitle("Customize Reflection Options")
+        .navigationTitle("Customize Options")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)

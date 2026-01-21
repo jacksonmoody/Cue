@@ -78,7 +78,6 @@ class WorkoutManager: NSObject, ObservableObject {
         recordSession(duration: builder?.elapsedTime ?? 0)
     }
 
-    // MARK: - Workout Metrics
     @Published var averageHeartRate: Double = 0
     @Published var heartRate: Double = 0
     @Published var hrv: Double = 0
@@ -112,15 +111,17 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
         }
         
         if toState == .stopped {
-            WatchConnectivityManager.shared.updateSessionState(false)
-            builder?.discardWorkout()
-            session?.end()
-            
-            DispatchQueue.main.async {
-                self.builder = nil
-                self.session = nil
-                self.averageHeartRate = 0
-                self.heartRate = 0
+            builder?.endCollection(withEnd: date) { (success, error) in
+                self.builder?.finishWorkout { (workout, error) in
+                    WatchConnectivityManager.shared.updateSessionState(false)
+                    self.session?.end()
+                    DispatchQueue.main.async {
+                        self.builder = nil
+                        self.session = nil
+                        self.averageHeartRate = 0
+                        self.heartRate = 0
+                    }
+                }
             }
         }
     }

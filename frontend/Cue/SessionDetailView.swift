@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import Charts
+import HealthKit
 
 struct SessionDetailView: View {
     let session: Session
@@ -16,70 +18,21 @@ struct SessionDetailView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    // Icon
-                    HStack {
-                        Spacer()
-                        Image(systemName: iconName(for: session.reflectionType))
-                            .font(.system(size: 60))
-                            .foregroundStyle(.white)
-                        Spacer()
-                    }
-                    .padding(.top, 40)
-                    
-                    // Session Details
                     VStack(alignment: .leading, spacing: 16) {
-                        DetailRow(label: "Date & Time", value: formatDate(session.timestamp))
+                        DetailRow(label: "Date & Time", value: formatDate(session.startDate))
                         DetailRow(label: "Duration", value: formatDuration(session.duration))
                     }
                     .padding(.horizontal)
-                    
-                    // Heart Rate Graph
                     VStack(alignment: .leading, spacing: 12) {
-                        HeartRateGraph()
+                        HeartRateGraph(session: session)
                             .padding(.horizontal)
                     }
-                    .padding(.top, 20)
-                    
-                    Spacer(minLength: 20)
                 }
             }
         }
         .navigationTitle("Session Details")
         .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    private func iconName(for reflectionType: ReflectionOptions) -> String {
-        switch reflectionType {
-        case .breaths:
-            return "apple.meditate"
-        case .taps:
-            return "hand.tap"
-        case .visualization:
-            return "photo"
-        case .exercise:
-            return "figure.run.treadmill"
-        case .nature:
-            return "tree"
-        case .friends:
-            return "figure.2.arms.open"
-        }
-    }
-    
-    private func reflectionTypeName(_ type: ReflectionOptions) -> String {
-        switch type {
-        case .breaths:
-            return "Mindful Breaths"
-        case .taps:
-            return "Cross Body Taps"
-        case .visualization:
-            return "Visualization"
-        case .exercise:
-            return "Exercise"
-        case .nature:
-            return "Time in Nature"
-        case .friends:
-            return "Talk with Friend(s)"
-        }
+        .toolbarColorScheme(.dark, for: .navigationBar)
     }
     
     private func formatDate(_ date: Date) -> String {
@@ -87,12 +40,6 @@ struct SessionDetailView: View {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: date)
-    }
-    
-    private func formatDuration(_ duration: TimeInterval) -> String {
-        let minutes = Int(duration) / 60
-        let seconds = Int(duration) % 60
-        return String(format: "%d min %d sec", minutes, seconds)
     }
 }
 
@@ -113,20 +60,42 @@ struct DetailRow: View {
     }
 }
 
+struct Line: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path { path in
+            path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
+        }
+    }
+}
+
 struct HeartRateGraph: View {
-    @State private var part1Label = "Student Stress"
-    @State private var part2Label = "Heart Racing"
-    @State private var part3Label = "Mindful Breaths"
+    struct DataPoint: Identifiable {
+        var time: Double
+        var hr: Double
+        var id = UUID()
+    }
+    
+    let session: Session
+    @State private var part1Label: String = ""
+    @State private var part2Label: String = ""
+    @State private var part3Label: String = ""
+    @State private var data: [DataPoint] = []
+    
+    init(session: Session) {
+        self.session = session
+        _part1Label = State(initialValue: session.gear1.text)
+        _part2Label = State(initialValue: session.gear2.text)
+        _part3Label = State(initialValue: session.gear3.text)
+        _data = State(initialValue: HeartRateGraph.makeFakeData(for: session))
+    }
     
     var body: some View {
         VStack(spacing: 16) {
-            // Graph
             graphView
-                .frame(height: 250)
-            
-            // Larger text fields below
-            VStack(spacing: 12) {
-                HStack {
+                .frame(height: 300)
+            VStack(spacing: 24) {
+                VStack(alignment: .leading) {
                     Text("What triggered this response?")
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -136,7 +105,7 @@ struct HeartRateGraph: View {
                         .font(.subheadline)
                 }
                 
-                HStack {
+                VStack(alignment: .leading) {
                     Text("What was your body's immediate reaction?")
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -146,7 +115,7 @@ struct HeartRateGraph: View {
                         .font(.subheadline)
                 }
                 
-                HStack {
+                VStack(alignment: .leading) {
                     Text("How did you choose to respond?")
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -156,130 +125,154 @@ struct HeartRateGraph: View {
                         .font(.subheadline)
                 }
             }
+            .task {
+                await loadHRData()
+            }
         }
     }
     
     private var graphView: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .topLeading) {
-                // Background
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white.opacity(0.1))
-                
-                // Heart rate line
-                Path { path in
-                    let width = geometry.size.width - 32
-                    let height = geometry.size.height - 80
-                    let startX: CGFloat = 16
-                    let startY: CGFloat = 60
-                    
-                    // Section 1: High heart rate (elevated, fluctuating)
-                    path.move(to: CGPoint(x: startX, y: startY + height * 0.2))
-                    
-                    for i in 0...20 {
-                        let x = startX + (width / 3) * (CGFloat(i) / 20)
-                        let baseY = startY + height * 0.2
-                        let variation = sin(Double(i) * 0.8) * 15
-                        path.addLine(to: CGPoint(x: x, y: baseY + variation))
-                    }
-                    
-                    // Section 2: Slightly lower heart rate
-                    let section2Start = startX + width / 3
-                    for i in 0...20 {
-                        let x = section2Start + (width / 3) * (CGFloat(i) / 20)
-                        let baseY = startY + height * 0.35
-                        let variation = sin(Double(i) * 0.8) * 12
-                        path.addLine(to: CGPoint(x: x, y: baseY + variation))
-                    }
-                    
-                    // Section 3: Declining heart rate
-                    let section3Start = startX + 2 * width / 3
-                    for i in 0...20 {
-                        let x = section3Start + (width / 3) * (CGFloat(i) / 20)
-                        let progress = CGFloat(i) / 20
-                        let baseY = startY + height * (0.35 + progress * 0.4)
-                        let variation = sin(Double(i) * 0.8) * (12.0 - progress * 8)
-                        path.addLine(to: CGPoint(x: x, y: baseY + variation))
-                    }
+        let maxHr = data.map(\.hr).max() ?? 200
+        return Chart(data) { point in
+            PointMark(
+                x: .value("Time", point.time),
+                y: .value("Heart Rate", point.hr)
+            )
+            .foregroundStyle(.red)
+            .symbolSize(10)
+        }
+        .chartOverlay { proxy in
+            GeometryReader { geometry in
+                if let gear1Date = session.gear1Finished {
+                    chartAnnotation(date: gear1Date, proxy: proxy, geometry: geometry, label: part1Label, startDate: session.startDate)
                 }
-                .stroke(Color.red.opacity(0.8), style: StrokeStyle(lineWidth: 2.5, dash: [6, 6]))
-                
-                // Section dividers
-                Path { path in
-                    let width = geometry.size.width - 32
-                    let height = geometry.size.height - 80
-                    let startX: CGFloat = 16
-                    let startY: CGFloat = 60
-                    
-                    // Divider 1
-                    let div1X = startX + width / 3
-                    path.move(to: CGPoint(x: div1X, y: startY))
-                    path.addLine(to: CGPoint(x: div1X, y: startY + height))
-                    
-                    // Divider 2
-                    let div2X = startX + 2 * width / 3
-                    path.move(to: CGPoint(x: div2X, y: startY))
-                    path.addLine(to: CGPoint(x: div2X, y: startY + height))
-                }
-                .stroke(Color.white.opacity(0.8), style: StrokeStyle(lineWidth: 1, dash: [5]))
-                
-                // Annotations
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack(spacing: 0) {
-                        // Gear 1 annotation
-                        VStack(spacing: 4) {
-                            Text("Trigger")
-                                .font(.caption2)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white.opacity(0.9))
-                            Text(part1Label)
-                                .font(.caption2)
-                                .foregroundStyle(.white.opacity(0.7))
-                                .lineLimit(1)
-                        }
-                        .frame(maxWidth: .infinity)
-                        
-                        // Gear 2 annotation
-                        VStack(spacing: 4) {
-                            Text("Reaction")
-                                .font(.caption2)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white.opacity(0.9))
-                            Text(part2Label)
-                                .font(.caption2)
-                                .foregroundStyle(.white.opacity(0.7))
-                                .lineLimit(1)
-                        }
-                        .frame(maxWidth: .infinity)
-                        
-                        // Gear 3 annotation
-                        VStack(spacing: 4) {
-                            Text("Response")
-                                .font(.caption2)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white.opacity(0.9))
-                            Text(part3Label)
-                                .font(.caption2)
-                                .foregroundStyle(.white.opacity(0.7))
-                                .lineLimit(1)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
+                // Gear 2 end date is equivalent to gear 3 start date (annotated here)
+                if let gear2Date = session.gear2Finished {
+                    chartAnnotation(date: gear2Date, proxy: proxy, geometry: geometry, label: part3Label, startDate: session.startDate)
                 }
             }
+        }
+        .chartXAxis {
+            AxisMarks(position: .bottom) { value in
+                AxisGridLine()
+                    .foregroundStyle(.white.opacity(0.5))
+                AxisTick()
+                    .foregroundStyle(.white.opacity(0.5))
+                AxisValueLabel {
+                    if let seconds = value.as(Double.self) {
+                        Text(formatDuration(seconds))
+                    }
+                }
+                .foregroundStyle(.white)
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .leading) { _ in
+                AxisGridLine()
+                    .foregroundStyle(.white.opacity(0.7))
+                AxisTick()
+                    .foregroundStyle(.white.opacity(0.7))
+                AxisValueLabel()
+                    .foregroundStyle(.white)
+            }
+        }
+        .chartYAxisLabel(alignment: .leading) {
+            Text("Heart Rate (BPM)")
+                .font(Font.caption.bold())
+                .foregroundStyle(.white)
+        }
+        .chartYScale(domain: [30, maxHr + 20])
+        .chartXAxisLabel(alignment: .center) {
+            Text("Time")
+                .font(Font.caption.bold())
+                .foregroundStyle(.white)
+        }
+    }
+    
+    private struct chartAnnotation: View {
+        let date: Date
+        let proxy: ChartProxy
+        let geometry: GeometryProxy
+        let label: String
+        let startDate: Date
+        
+        var body: some View {
+            let targetTime = date.timeIntervalSince(startDate)
+            if let xPos = proxy.position(forX: targetTime),
+               let plotFrameAnchor = proxy.plotFrame {
+                let plotFrame = geometry[plotFrameAnchor]
+                let topOffset: CGFloat = 20
+                let lineHeight = plotFrame.height - topOffset
+                VStack(spacing: 4) {
+                    Text(label)
+                        .font(.caption)
+                        .padding(3)
+                        .background(.white.opacity(0.5), in: RoundedRectangle(cornerRadius: 20))
+                    Line()
+                        .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [2, 5]))
+                        .foregroundStyle(.white)
+                        .frame(width: 1.5, height: lineHeight)
+                }
+                .position(x: plotFrame.minX + xPos, y: plotFrame.minY + topOffset + lineHeight / 2)
+            }
+        }
+    }
+    
+    private static func makeFakeData(for session: Session) -> [DataPoint] {
+        // Generate a sine curve for heart rate data
+        let totalDuration = min(session.endDate?.timeIntervalSince(session.startDate) ?? 0, 60)
+        let sampleCount = min(Int(totalDuration), 90)
+        let baselineHR = 85.0
+        let amplitude = 25.0
+        let frequency = 2.0 // Number of complete cycles
+        
+        var points: [DataPoint] = []
+        points.reserveCapacity(sampleCount)
+        
+        for i in 0..<sampleCount {
+            let t = Double(i) / Double(sampleCount - 1)
+            
+            // Sine wave: baseline + amplitude * sin(2π * frequency * t)
+            let hrBase = baselineHR + amplitude * sin(2 * .pi * frequency * t)
+            
+            // Add small random noise
+            let noise = Double.random(in: -2...2)
+            let hr = max(50, hrBase + noise)
+            
+            let time = t * totalDuration
+            points.append(DataPoint(time: time, hr: hr))
+        }
+        
+        return points
+    }
+    
+    private func loadHRData() async {
+        do {
+            let store = HKHealthStore()
+            let hrType = HKQuantityType(.heartRate)
+            let datePredicate = HKQuery.predicateForSamples(withStart: session.startDate, end: session.endDate, options: [])
+            let descriptor = HKSampleQueryDescriptor(
+                predicates: [.quantitySample(type: hrType, predicate: datePredicate)],
+                sortDescriptors: [SortDescriptor(\.endDate, order: .reverse)])
+            let results = try await descriptor.result(for: store)
+            data = results.map { sample in
+                DataPoint(time: sample.startDate.timeIntervalSince(session.startDate), hr: sample.quantity.doubleValue(for: .count()))
+            }
+        } catch {
+            print("Error fetching HR data: \(error.localizedDescription)")
         }
     }
 }
 
+fileprivate func formatDuration(_ duration: TimeInterval) -> String {
+    let minutes = Int(duration) / 60
+    let seconds = Int(duration) % 60
+    return String(format: "%d min %d sec", minutes, seconds)
+}
+
 #Preview {
     NavigationStack {
-        SessionDetailView(session: Session(
-            id: UUID(),
-            timestamp: Date(),
-            duration: 600,
-            reflectionType: .breaths
-        ))
+        SessionDetailView(session: Session(id: UUID(), startDate: .now, gear1Finished: .now + 14, gear2Finished: .now + 50, endDate: .now + 650, gear1: .init(text: "11am Thesis Meeting", icon: "calendar"), gear2: .init(text:"Heart Racing", icon: "heart"), gear3: .init(text:"Mindful Breaths", icon: "lungs")))
     }
 }
+
