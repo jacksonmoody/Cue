@@ -8,6 +8,7 @@ var variantsRouter = require("./routes/variants");
 var sessionsRouter = require("./routes/sessions");
 var usersRouter = require("./routes/users").router;
 var gear1Router = require("./routes/gear1");
+var preferencesRouter = require("./routes/preferences");
 
 require("dotenv").config();
 
@@ -74,6 +75,7 @@ app.use("/variant", variantsRouter);
 app.use("/sessions", sessionsRouter);
 app.use("/users", usersRouter);
 app.use("/gear1", gear1Router);
+app.use("/preferences", preferencesRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));

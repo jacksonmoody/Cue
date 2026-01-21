@@ -14,6 +14,9 @@ struct AppView: View {
     
     var body: some View {
         TabView(selection: $tabController.activeTab) {
+            Tab("Reflect", systemImage: "apple.meditate", value: TabItem.reflect) {
+                ReflectView()
+            }
             Tab("Manage", systemImage: "applewatch.side.right", value: TabItem.manage) {
                 ManageView(variant: variant)
             }
@@ -22,9 +25,6 @@ struct AppView: View {
             }
             Tab("Feedback", systemImage: "megaphone.fill", value: TabItem.feedback) {
                 FeedbackView()
-            }
-            Tab("Help", systemImage: "questionmark.circle", value: TabItem.help, role: .search) {
-                InstructionsView(instructionsNeeded: .constant(false), refresher: true)
             }
         }
         .environmentObject(tabController)

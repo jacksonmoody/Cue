@@ -12,6 +12,7 @@ struct InstructionsView: View {
     #if os(iOS)
     @EnvironmentObject var tabController: TabController
     #endif
+    @Environment(\.dismiss) var dismiss
     @Binding var instructionsNeeded: Bool
     let refresher: Bool
     
@@ -36,11 +37,6 @@ struct InstructionsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-#if os(iOS)
-                if refresher {
-                    LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
-                }
-#endif
                 ScrollView {
                     VStack(alignment:.leading, spacing: 30) {
 #if os(iOS)
@@ -61,6 +57,7 @@ struct InstructionsView: View {
                             .foregroundStyle(.white)
                         } else {
                             Button("Log a Session") {
+                                dismiss()
                                 tabController.open(.manage)
                             }
                             .padding()
@@ -70,13 +67,9 @@ struct InstructionsView: View {
                         }
 #endif
                     }
-#if os(iOS)
-                    .padding(refresher ? 30 : 40)
-                    .font(!refresher ? .title2 : .default)
-                    .foregroundStyle(refresher ? .white : .primary)
-#else
-                    .multilineTextAlignment(.center)
                     .padding()
+#if os(watchOS)
+                    .multilineTextAlignment(.center)
 #endif
                 }
             }

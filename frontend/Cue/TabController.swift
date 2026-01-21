@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 enum TabItem {
+    case reflect
     case manage
     case survey
-    case help
     case feedback
 }
 

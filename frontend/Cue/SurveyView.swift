@@ -51,7 +51,6 @@ struct Survey: View {
                     .fontWeight(.bold)
                 Text("Before beginning, please ensure that both your iOS Cue App and watchOS Cue App report that you are in Variant \(String(variantManager.variant ?? -1)). If they do not agree, report the issue via the \"Feedback\" tab and do not submit the survey.")
                     .fontWeight(.bold)
-//                Text("Please complete the following survey to the best of your ability. If you have any questions, please ask them via the \"Feedback\" tab.")
             }
         }
     }
@@ -65,7 +64,7 @@ struct SurveyLocked: View {
             Text("Survey Closed")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            Text("In order to unlock the survey, you must log at least 5 sessions, each of which must be at least 5 hours in length. Please return to this tab once you have done so!")
+            Text("In order to unlock the survey, you must log at least 5 monitoring sessions, each of which must be at least 5 hours in length. Please return to this tab once you have done so!")
             Button("Log a Session") {
                 tabController.open(.manage)
             }

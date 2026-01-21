@@ -95,13 +95,23 @@ struct PermissionsView: View {
                         action: handleLocationPermissions
                     )
                     
-                    PermissionCard(
-                        title: "Google Calendar",
-                        icon: "calendar",
-                        description: "Used to personalize your reflection experience. Please sign in with your most-used account for calendar events.",
-                        isAuthorized: isCalendarAuthorized,
-                        action: handleGoogleSignIn
-                    )
+                    VStack(spacing: 20) {
+                        Text("Sign in with Google to personalize your reflection experience with events from your Google Calendar:")
+                            .font(.system(size: 16))
+                            .fontWeight(.semibold)
+                        GoogleSignInButton {
+                            handleGoogleSignIn()
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+//                    PermissionCard(
+//                        title: "Google Calendar",
+//                        icon: "calendar",
+//                        description: "Used to personalize your reflection experience. Please sign in with your most-used account for calendar events.",
+//                        isAuthorized: isCalendarAuthorized,
+//                        action: handleGoogleSignIn
+//                    )
                 }
                 
                 Button(action: handleNext) {

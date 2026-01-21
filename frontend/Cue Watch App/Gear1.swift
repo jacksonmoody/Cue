@@ -47,6 +47,9 @@ struct Gear1: View {
                         ListButton("Other", image: "ellipsis.circle") {
                             router.navigateToGear2()
                         }
+                        Text("Customize this response in the \"Reflect\" tab of the Cue iOS app.")
+                            .font(.system(size: 12))
+                            .listRowBackground(Color.black.opacity(0))
                     }
                     .headerProminence(.increased)
                 }
@@ -56,8 +59,15 @@ struct Gear1: View {
             }
         }
         .onAppear {
-            startAnimation()
+            animatePhase(phase:0)
         }
+        .task {
+            await setupReflection()
+        }
+    }
+    
+    private func setupReflection() async {
+        
     }
     
     private func startAnimation() {

@@ -61,6 +61,9 @@ struct Gear2: View {
                     ListButton("No Change", image: "circle.slash") {
                         navigateNext()
                     }
+                    Text("Customize these options in the \"Reflect\" tab of the Cue iOS app.")
+                        .font(.system(size: 12))
+                        .listRowBackground(Color.black.opacity(0))
                 }
                 .opacity(opacity)
                 .scrollIndicators(.hidden)
@@ -68,7 +71,7 @@ struct Gear2: View {
             }
         }
         .onAppear {
-            startAnimation()
+            animatePhase(phase: 0)
         }
         .onDisappear {
             stopVibration()
@@ -76,10 +79,6 @@ struct Gear2: View {
         .onReceive(updateSilentState) { silent in
             isMuted = silent
         }
-    }
-    
-    private func startAnimation() {
-        animatePhase(phase: 0)
     }
     
     private func animatePhase(phase: Int) {
