@@ -12,41 +12,39 @@ import SwiftUI
 struct Gear1: View {
     @Environment(NavigationRouter.self) private var router
     @EnvironmentObject var reflectionManager: ReflectionManager
+    @EnvironmentObject var locationService: LocationService
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
-    private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
-        (fadeIn: 2, display: 3.0, fadeOut: 2),
-        (fadeIn: 2, display: 0.0, fadeOut: 0.0)
-    ]
+    @State private var fetchedOptions: Bool = false
+    @State private var showLoading: Bool = false
+
     var body: some View {
         ZStack {
             if currentPhase == 0 {
-                Text("Let's take a moment to reflect...")
+                VStack {
+                    Text("Let's take a moment to reflect...")
                         .fontWeight(.bold)
-                .multilineTextAlignment(.center)
-                .opacity(opacity)
-                .padding(.horizontal)
+                        .multilineTextAlignment(.center)
+                        .opacity(opacity)
+                        .padding(.horizontal)
+                    if showLoading {
+                        ProgressView()
+                    }
+                }
             }
             if currentPhase == 1 {
                 List {
                     Section(header: Text("What may have triggered this response?").padding(.leading, -5).padding(.bottom, 10).padding(.trailing, -10)) {
-                        ListButton("10:30am IRB Review", image: "calendar") {
-                            gear1Selection()
-                        }
-                        ListButton("Morning Routine", image: "sun.horizon") {
-                            gear1Selection()
-                        }
-                        ListButton("Student Stress", image: "graduationcap") {
-                            gear1Selection()
-                        }
-                        ListButton("Home Stress", image: "house") {
-                            gear1Selection()
+                        ForEach(reflectionManager.gear1Options) { option in
+                            ListButton(option.text, image: option.icon) {
+                                gear1Selection(option)
+                            }
                         }
                         ListButton("Not Sure", image: "questionmark") {
-                            gear1Selection()
+                            gear1Selection(GearOption(text: "Not Sure", icon: "questionmark"))
                         }
                         ListButton("Other", image: "ellipsis.circle") {
-                            gear1Selection()
+                            gear1Selection(GearOption(text: "Other", icon: "ellipsis.circle"))
                         }
                         Text("Customize this response in the \"Reflect\" tab of the Cue iOS app.")
                             .font(.system(size: 12))
@@ -60,49 +58,52 @@ struct Gear1: View {
             }
         }
         .onAppear {
-            animatePhase(phase:0)
+            withAnimation(.easeInOut(duration: 2)) {
+                opacity = 1.0
+            }
         }
         .task {
             await setupReflection()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                withAnimation {
+                    showLoading = true
+                }
+            }
+        }
+        .onChange(of: locationService.mostRecentLocation) { oldValue, newValue in
+            if let location = newValue, !fetchedOptions {
+                fetchedOptions = true
+                locationService.mostRecentLocation = nil
+                Task {
+                    await reflectionManager.fetchGear1Options(currentLocation: location)
+                }
+            }
+        }
+        .onChange(of: reflectionManager.gear1Options) {
+            oldOptions, newOptions in
+            if !newOptions.isEmpty {
+                withAnimation(.easeInOut(duration: 1.5)) {
+                    opacity = 0
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    currentPhase = 1
+                    withAnimation(.easeInOut(duration: 1.5)) {
+                        opacity = 1
+                    }
+                }
+            }
         }
     }
     
     private func setupReflection() async {
+        locationService.requestCurrentLocation()
         reflectionManager.startNewSession()
         await reflectionManager.loadPreferences()
     }
     
-    private func gear1Selection() {
-        reflectionManager.logGearSelection(GearOption(text: "11am Thesis Meeting", icon: "star"), forGear: 1, atDate: .now)
+    private func gear1Selection(_ option: GearOption) {
+        reflectionManager.logGearSelection(option, forGear: 1, atDate: .now)
         router.navigateToGear2()
-    }
-    
-    private func startAnimation() {
-        animatePhase(phase: 0)
-    }
-    
-    private func animatePhase(phase: Int) {
-        currentPhase = phase
-        let timing = phaseTimings[phase]
-        withAnimation(.easeInOut(duration: timing.fadeIn)) {
-            opacity = 1.0
-        }
-        
-        if phase == 1 {
-            return
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + timing.fadeIn + timing.display) {
-            withAnimation(.easeInOut(duration: timing.fadeOut)) {
-                opacity = 0.0
-            }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + timing.fadeOut) {
-                if phase < 1 {
-                    animatePhase(phase: phase + 1)
-                }
-            }
-        }
     }
 }
 
@@ -134,4 +135,5 @@ struct ListButton: View {
     Gear1()
         .environment(NavigationRouter())
         .environmentObject(ReflectionManager())
+        .environmentObject(LocationService())
 }

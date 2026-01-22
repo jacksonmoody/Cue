@@ -10,31 +10,34 @@ import Combine
 
 class LocationService: NSObject, CLLocationManagerDelegate, ObservableObject {
 
+    @Published var mostRecentLocation: CLLocation?
     let locationManager: CLLocationManager
-    private var pendingAuthorizationCompletion: ((Bool) -> Void)?
     var onAuthorizationChange: ((CLAuthorizationStatus) -> Void)?
 
     init(locationManager: CLLocationManager = CLLocationManager()) {
         self.locationManager = locationManager
         super.init()
-        locationManager.allowsBackgroundLocationUpdates = true
         locationManager.delegate = self
     }
 
     // MARK: - LocationService
 
-    func start() {
+    func requestAuthorization() {
         switch locationManager.authorizationStatus {
         case .notDetermined:
-            locationManager.requestAlwaysAuthorization()
+            locationManager.requestWhenInUseAuthorization()
         case .authorizedAlways,
              .authorizedWhenInUse,
              .restricted,
              .denied:
-            print("Unauthorized")
+            return
         @unknown default:
             break
         }
+    }
+    
+    func requestCurrentLocation() {
+        locationManager.requestLocation()
     }
 
     // MARK: - CLLocationManagerDelegate
@@ -42,12 +45,8 @@ class LocationService: NSObject, CLLocationManagerDelegate, ObservableObject {
     func locationManager(_ manager: CLLocationManager,
                          didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {
-        case .authorizedAlways:
-            #if os(iOS)
-            locationManager.startMonitoringVisits()
-            #endif
-            onAuthorizationChange?(manager.authorizationStatus)
         case .notDetermined,
+             .authorizedAlways,
              .authorizedWhenInUse,
              .restricted,
              .denied:
@@ -56,11 +55,17 @@ class LocationService: NSObject, CLLocationManagerDelegate, ObservableObject {
             break
         }
     }
-
-    #if os(iOS)
-    func locationManager(_ manager: CLLocationManager,
-                         didVisit visit: CLVisit) {
-        print(visit.arrivalDate, visit.departureDate, visit.coordinate)
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location: CLLocation = locations[locations.count-1] as CLLocation
+        if (location.horizontalAccuracy > 0) {
+            DispatchQueue.main.async {
+                self.mostRecentLocation = location
+            }
+        }
     }
-    #endif
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+        print("Error obtaining location: \(error.localizedDescription)")
+    }
 }

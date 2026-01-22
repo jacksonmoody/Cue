@@ -26,7 +26,7 @@ struct PermissionsView: View {
     @State private var showError: Bool = false
     
     var canContinue: Bool {
-        isHealthAuthorized && isNotificationAuthorized && isCalendarAuthorized && isLocationAuthorized
+        isHealthAuthorized && isNotificationAuthorized && isCalendarAuthorized && isLocationAuthorized && !occupation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     let center = UNUserNotificationCenter.current()
@@ -34,14 +34,13 @@ struct PermissionsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                VStack(alignment: .center, spacing: 12) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("What is your current occupation?")
                         .font(.headline)
                         .foregroundColor(.primary)
                     
                     TextField("e.g. Student, Software Engineer, Retired", text: $occupation)
                         .textFieldStyle(.roundedBorder)
-                        .padding()
                 }
                 .padding()
                 .background(Color(.systemBackground))
@@ -140,7 +139,7 @@ struct PermissionsView: View {
     
     func checkLocationStatus() {
         let status = locationService.locationManager.authorizationStatus
-        isLocationAuthorized = (status == .authorizedAlways)
+        isLocationAuthorized = (status == .authorizedWhenInUse)
     }
     
     func handleHealthPermissions() {
@@ -150,7 +149,7 @@ struct PermissionsView: View {
     }
     
     func handleLocationPermissions() {
-        locationService.start()
+        locationService.requestAuthorization()
     }
     
     func handleNotificationPermissions() {
@@ -238,7 +237,7 @@ struct PermissionsView: View {
                         path: "/users/finish-onboarding",
                         body: [
                             "userId": userId,
-                            "occupation": occupation
+                            "occupation": occupation.trimmingCharacters(in: .whitespacesAndNewlines)
                         ],
                         responseType: Bool.self
                     )

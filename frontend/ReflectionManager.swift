@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+internal import CoreLocation
 
 struct Session: Identifiable, Hashable, Codable {
     let id: UUID
@@ -190,13 +191,14 @@ class ReflectionManager: ObservableObject {
         }
     }
     
-    func fetchGear1Options() async {
+    func fetchGear1Options(currentLocation: CLLocation) async {
         guard let userId = variantManager?.appleUserId else {
             return
         }
         let userData: [String: Any] = [
             "idToken": userId,
-            "location": "home" // TODO: Update this
+            "latitude": currentLocation.coordinate.latitude.formatted(),
+            "longitude": currentLocation.coordinate.longitude.formatted()
         ]
         do {
             let response = try await backendService.post(

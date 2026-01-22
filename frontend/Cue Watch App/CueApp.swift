@@ -16,6 +16,7 @@ struct Cue_Watch_AppApp: App {
     @StateObject private var workoutManager = WorkoutManager()
     @StateObject private var variantManager = VariantManager()
     @StateObject private var reflectionManager = ReflectionManager()
+    @StateObject private var locationService = LocationService()
     @State private var navigationRouter = NavigationRouter()
     
     var body: some Scene {
@@ -33,6 +34,7 @@ struct Cue_Watch_AppApp: App {
                 .environmentObject(workoutManager)
                 .environmentObject(variantManager)
                 .environmentObject(reflectionManager)
+                .environmentObject(locationService)
                 .environment(navigationRouter)
         }
     }
