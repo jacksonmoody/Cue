@@ -8,23 +8,10 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var gear2Options: [GearOption] = [
-        GearOption(text: "Heart Racing", icon: "heart"),
-        GearOption(text: "Muscle Tensing", icon: "dumbbell"),
-        GearOption(text: "Rapid Breathing", icon: "lungs"),
-        GearOption(text: "Feeling Heavy", icon: "scalemass"),
-        GearOption(text: "Other", icon: "questionmark"),
-        GearOption(text: "No Change", icon: "circle.slash")
-    ]
+    @EnvironmentObject var reflectionManager: ReflectionManager
     
-    @State private var gear3Options: [GearOption] = [
-        GearOption(text: "Mindful Breaths", icon: "apple.meditate"),
-        GearOption(text: "Cross Body Taps", icon: "hand.tap"),
-        GearOption(text: "Visualization", icon: "photo"),
-        GearOption(text: "Exercise", icon: "figure.run.treadmill"),
-        GearOption(text: "Time in Nature", icon: "tree"),
-        GearOption(text: "Talk with Friend(s)", icon: "figure.2.arms.open")
-    ]
+    @State private var gear2Options: [GearOption] = []
+    @State private var gear3Options: [GearOption] = []
     
     @State private var showGear2AddForm = false
     @State private var showGear3AddForm = false
@@ -34,6 +21,7 @@ struct SettingsView: View {
     @State private var newGear3Icon = "star"
     @State private var gear2EditMode: EditMode = .inactive
     @State private var gear3EditMode: EditMode = .inactive
+    @State private var showingError = false
     
     let commonPhysicalIcons = ["star", "heart", "brain", "lungs", "eye", "hand.raised", "cross", "dumbbell", "scalemass", "thermometer.variable", "blood.pressure.cuff", "questionmark", "circle.slash"]
     let commonReflectionIcons = ["star", "apple.meditate", "brain", "lungs", "hand.tap", "face.smiling", "photo", "figure.run.treadmill", "figure.walk", "basketball", "tree", "service.dog", "fork.knife.circle", "gift", "music.quarternote.3", "theatermask.and.paintbrush", "figure.2.arms.open"]
@@ -52,6 +40,11 @@ struct SettingsView: View {
                             Spacer()
                             Button(gear2EditMode.isEditing ? "Done" : "Edit") {
                                 withAnimation {
+                                    if gear2EditMode.isEditing {
+                                        Task {
+                                            await reflectionManager.saveGear2Preferences(gear2Options)
+                                        }
+                                    }
                                     gear2EditMode = gear2EditMode.isEditing ? .inactive : .active
                                 }
                             }
@@ -135,6 +128,9 @@ struct SettingsView: View {
                                                 newGear2Text = ""
                                                 newGear2Icon = "star"
                                             }
+                                            Task {
+                                                await reflectionManager.saveGear2Preferences(gear2Options)
+                                            }
                                         }
                                     }
                                     .foregroundStyle(.white)
@@ -175,6 +171,11 @@ struct SettingsView: View {
                             Spacer()
                             Button(gear3EditMode.isEditing ? "Done" : "Edit") {
                                 withAnimation {
+                                    if gear3EditMode.isEditing {
+                                        Task {
+                                            await reflectionManager.saveGear3Preferences(gear3Options)
+                                        }
+                                    }
                                     gear3EditMode = gear3EditMode.isEditing ? .inactive : .active
                                 }
                             }
@@ -258,6 +259,9 @@ struct SettingsView: View {
                                                 newGear3Text = ""
                                                 newGear3Icon = "star"
                                             }
+                                            Task {
+                                                await reflectionManager.saveGear3Preferences(gear3Options)
+                                            }
                                         }
                                     }
                                     .foregroundStyle(.white)
@@ -296,6 +300,33 @@ struct SettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .task {
+            await reflectionManager.loadPreferences()
+            if let prefs = reflectionManager.preferences {
+                gear2Options = prefs.gear2Options
+                gear3Options = prefs.gear3Options
+            }
+        }
+        .onChange(of: reflectionManager.preferences) { oldValue, newValue in
+            if let prefs = newValue {
+                gear2Options = prefs.gear2Options
+                gear3Options = prefs.gear3Options
+            }
+        }
+        .onChange(of: reflectionManager.errorMessage) { oldValue, newValue in
+            if newValue != nil {
+                showingError = true
+            }
+        }
+        .alert("Error", isPresented: $showingError) {
+            Button("OK", role: .cancel) {
+                reflectionManager.errorMessage = nil
+            }
+        } message: {
+            if let errorMessage = reflectionManager.errorMessage {
+                Text(errorMessage)
+            }
+        }
     }
 }
 
@@ -322,5 +353,6 @@ struct DragPreviewInsetRect: InsettableShape {
 #Preview {
     NavigationStack {
         SettingsView()
+            .environmentObject(ReflectionManager())
     }
 }

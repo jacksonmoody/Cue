@@ -15,6 +15,7 @@ struct CueApp: App {
     @StateObject private var variantManager = VariantManager()
     @StateObject private var sessionManager = SessionManager()
     @StateObject private var locationService = LocationService()
+    @StateObject private var reflectionManager = ReflectionManager()
     
     var body: some Scene {
         WindowGroup {
@@ -23,9 +24,11 @@ struct CueApp: App {
                 .environmentObject(variantManager)
                 .environmentObject(sessionManager)
                 .environmentObject(locationService)
+                .environmentObject(reflectionManager)
                 .onAppear {
                     workoutManager.variantManager = variantManager
                     sessionManager.variantManager = variantManager
+                    reflectionManager.variantManager = variantManager
                     WatchConnectivityManager.shared.onSessionRecorded = {
                         Task {
                             await sessionManager.loadSessionCount()

@@ -81,19 +81,24 @@ struct HeartRateGraph: View {
     @State private var part2Label: String = ""
     @State private var part3Label: String = ""
     @State private var data: [DataPoint] = []
+    @State private var loading: Bool = true
     
     init(session: Session) {
         self.session = session
-        _part1Label = State(initialValue: session.gear1.text)
-        _part2Label = State(initialValue: session.gear2.text)
-        _part3Label = State(initialValue: session.gear3.text)
-        _data = State(initialValue: HeartRateGraph.makeFakeData(for: session))
+        _part1Label = State(initialValue: session.gear1?.text ?? "Unknown")
+        _part2Label = State(initialValue: session.gear2?.text ?? "Unknown")
+        _part3Label = State(initialValue: session.gear3?.text ?? "Unknown")
     }
     
     var body: some View {
         VStack(spacing: 16) {
-            graphView
-                .frame(height: 300)
+            if loading {
+                ProgressView()
+                    .frame(height: 300)
+            } else if !data.isEmpty {
+                graphView
+                    .frame(height: 300)
+            }
             VStack(spacing: 24) {
                 VStack(alignment: .leading) {
                     Text("What triggered this response?")
@@ -116,7 +121,7 @@ struct HeartRateGraph: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text("How did you choose to respond?")
+                    Text("How did you choose to reflect?")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
@@ -126,6 +131,7 @@ struct HeartRateGraph: View {
                 }
             }
             .task {
+                defer { loading = false }
                 await loadHRData()
             }
         }
@@ -139,7 +145,7 @@ struct HeartRateGraph: View {
                 y: .value("Heart Rate", point.hr)
             )
             .foregroundStyle(.red)
-            .symbolSize(10)
+            .symbolSize(20)
         }
         .chartOverlay { proxy in
             GeometryReader { geometry in
@@ -201,8 +207,8 @@ struct HeartRateGraph: View {
             if let xPos = proxy.position(forX: targetTime),
                let plotFrameAnchor = proxy.plotFrame {
                 let plotFrame = geometry[plotFrameAnchor]
-                let topOffset: CGFloat = 20
-                let lineHeight = plotFrame.height - topOffset
+                let offset: CGFloat = 20
+                let lineHeight = plotFrame.height - offset * 2
                 VStack(spacing: 4) {
                     Text(label)
                         .font(.caption)
@@ -213,37 +219,9 @@ struct HeartRateGraph: View {
                         .foregroundStyle(.white)
                         .frame(width: 1.5, height: lineHeight)
                 }
-                .position(x: plotFrame.minX + xPos, y: plotFrame.minY + topOffset + lineHeight / 2)
+                .position(x: plotFrame.minX + xPos, y: plotFrame.minY + offset + lineHeight / 2)
             }
         }
-    }
-    
-    private static func makeFakeData(for session: Session) -> [DataPoint] {
-        // Generate a sine curve for heart rate data
-        let totalDuration = min(session.endDate?.timeIntervalSince(session.startDate) ?? 0, 60)
-        let sampleCount = min(Int(totalDuration), 90)
-        let baselineHR = 85.0
-        let amplitude = 25.0
-        let frequency = 2.0 // Number of complete cycles
-        
-        var points: [DataPoint] = []
-        points.reserveCapacity(sampleCount)
-        
-        for i in 0..<sampleCount {
-            let t = Double(i) / Double(sampleCount - 1)
-            
-            // Sine wave: baseline + amplitude * sin(2π * frequency * t)
-            let hrBase = baselineHR + amplitude * sin(2 * .pi * frequency * t)
-            
-            // Add small random noise
-            let noise = Double.random(in: -2...2)
-            let hr = max(50, hrBase + noise)
-            
-            let time = t * totalDuration
-            points.append(DataPoint(time: time, hr: hr))
-        }
-        
-        return points
     }
     
     private func loadHRData() async {
@@ -255,8 +233,11 @@ struct HeartRateGraph: View {
                 predicates: [.quantitySample(type: hrType, predicate: datePredicate)],
                 sortDescriptors: [SortDescriptor(\.endDate, order: .reverse)])
             let results = try await descriptor.result(for: store)
-            data = results.map { sample in
-                DataPoint(time: sample.startDate.timeIntervalSince(session.startDate), hr: sample.quantity.doubleValue(for: .count()))
+            let hrUnit = HKUnit.count().unitDivided(by: HKUnit.minute())
+            withAnimation {
+                data = results.map { sample in
+                    DataPoint(time: sample.startDate.timeIntervalSince(session.startDate), hr: sample.quantity.doubleValue(for: hrUnit))
+                }
             }
         } catch {
             print("Error fetching HR data: \(error.localizedDescription)")
@@ -272,7 +253,7 @@ fileprivate func formatDuration(_ duration: TimeInterval) -> String {
 
 #Preview {
     NavigationStack {
-        SessionDetailView(session: Session(id: UUID(), startDate: .now, gear1Finished: .now + 14, gear2Finished: .now + 50, endDate: .now + 650, gear1: .init(text: "11am Thesis Meeting", icon: "calendar"), gear2: .init(text:"Heart Racing", icon: "heart"), gear3: .init(text:"Mindful Breaths", icon: "lungs")))
+        SessionDetailView(session: Session(startDate: Date()))
     }
 }
 

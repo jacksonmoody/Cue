@@ -66,6 +66,29 @@ class BackendService {
     
     // MARK: - Async Request Methods
     
+    func post(
+        path: String,
+        body: [String: Any]? = nil
+    ) async throws {
+        let request = try createRequest(path: path, method: "POST", body: body)
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw BackendError.invalidResponse
+            }
+            
+            guard 200...299 ~= httpResponse.statusCode else {
+                throw BackendError.serverError(httpResponse.statusCode)
+            }
+        } catch let error as BackendError {
+            throw error
+        } catch {
+            throw BackendError.networkError(error)
+        }
+    }
+    
     func post<T: Decodable>(
         path: String,
         body: [String: Any]? = nil,

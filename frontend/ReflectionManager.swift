@@ -6,27 +6,245 @@
 //
 
 import Foundation
+import Combine
 
-struct Session: Identifiable, Hashable {
+struct Session: Identifiable, Hashable, Codable {
     let id: UUID
     let startDate: Date
-    let gear1Finished: Date?
-    let gear2Finished: Date?
-    let endDate: Date?
+    var gear1Finished: Date?
+    var gear2Finished: Date?
+    var endDate: Date?
     
     var duration: TimeInterval {
         guard let endDate else { return 0 }
         return endDate.timeIntervalSince(startDate)
     }
     
-    let gear1: GearOption
-    let gear2: GearOption
-    let gear3: GearOption
+    var gear1: GearOption?
+    var gear2: GearOption?
+    var gear3: GearOption?
+    
+    init(startDate: Date) {
+        id = UUID()
+        self.startDate = startDate
+        self.gear1Finished = nil
+        self.gear2Finished = nil
+        self.endDate = nil
+        
+        self.gear1 = nil
+        self.gear2 = nil
+        self.gear3 = nil
+    }
 }
 
-struct GearOption: Identifiable, Equatable, Hashable {
-    let id = UUID()
+struct GearOption: Identifiable, Equatable, Hashable, Codable {
+    var id: UUID
     var text: String
     var icon: String
+    
+    init(id: UUID = UUID(), text: String, icon: String) {
+        self.id = id
+        self.text = text
+        self.icon = icon
+    }
+}
+
+struct Preferences: Codable, Equatable {
+    var gear2Options: [GearOption]
+    var gear3Options: [GearOption]
+    
+    enum CodingKeys: String, CodingKey {
+        case gear2Options = "gear2"
+        case gear3Options = "gear3"
+    }
+}
+
+class ReflectionManager: ObservableObject {
+    @Published var currentSession: Session?
+    @Published var sessions: [Session] = []
+    @Published var preferences: Preferences?
+    @Published var errorMessage: String?
+    
+    private let backendService = BackendService.shared
+    private let userDefaults = UserDefaults.standard
+    var variantManager: VariantManager?
+    
+    let reflectionsKey = "reflections"
+    let preferencesKey = "preferences"
+    
+    func startNewSession() {
+        currentSession = Session(startDate: Date())
+    }
+    
+    func logGearSelection(_ gear: GearOption, forGear gearNumber: Int, atDate date: Date) {
+        guard var currentSession else { return }
+        switch gearNumber {
+        case 1:
+            currentSession.gear1 = gear
+            currentSession.gear1Finished = date
+        case 2:
+            currentSession.gear2 = gear
+            currentSession.gear2Finished = date
+        case 3:
+            currentSession.gear3 = gear
+        default:
+            return
+        }
+    }
+    
+    func endCurrentSession(atDate date: Date) {
+        guard var currentSession else { return }
+        currentSession.endDate = date
+        self.currentSession = nil
+    }
+    
+    func loadReflections() async {
+        guard let userId = variantManager?.appleUserId else {
+            return
+        }
+
+        if let data = userDefaults.data(forKey: reflectionsKey),
+           let cachedSessions = try? JSONDecoder().decode([Session].self, from: data) {
+            sessions = cachedSessions
+        }
+        await fetchAndStoreReflections(userId: userId)
+    }
+
+    private func fetchAndStoreReflections(userId: String) async {
+        let encodedUserId = userId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? userId
+        do {
+            let response = try await backendService.get(
+                path: "/reflections/\(encodedUserId)",
+                responseType: [Session].self
+            )
+            if let encoded = try? JSONEncoder().encode(response) {
+                userDefaults.set(encoded, forKey: reflectionsKey)
+            }
+            sessions = response
+            errorMessage = nil
+        } catch {
+            print("Unexpected error: \(error.localizedDescription)")
+            errorMessage = "Failed to fetch reflections."
+        }
+    }
+    
+    func loadPreferences() async {
+        guard let userId = variantManager?.appleUserId else {
+            return
+        }
+        
+        if let data = userDefaults.data(forKey: preferencesKey),
+           let cachedPreferences = try? JSONDecoder().decode(Preferences.self, from: data) {
+            preferences = cachedPreferences
+        }
+        
+        await fetchAndStorePreferences(userId: userId)
+    }
+    
+    func fetchAndStorePreferences(userId: String) async {
+        let encodedUserId = userId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? userId
+        do {
+            let response = try await backendService.get(
+                path: "/preferences/\(encodedUserId)",
+                responseType: Preferences.self
+            )
+            if let encoded = try? JSONEncoder().encode(response) {
+                userDefaults.set(encoded, forKey: preferencesKey)
+            }
+            preferences = response
+            errorMessage = nil
+        } catch {
+            print("Unexpected error: \(error.localizedDescription)")
+            errorMessage = "Failed to fetch preferences."
+        }
+    }
+    
+    func saveGear2Preferences(_ options: [GearOption]) async {
+        guard let userId = variantManager?.appleUserId else {
+            return
+        }
+        
+        let gear2Preferences = options.map { option in
+            [
+                "id": option.id.uuidString,
+                "text": option.text,
+                "icon": option.icon
+            ]
+        }
+        
+        do {
+            let body: [String: Any] = [
+                "userId": userId,
+                "gear2Preferences": gear2Preferences
+            ]
+            
+            try await backendService.post(
+                path: "/preferences/gear2",
+                body: body
+            )
+            
+            if var currentPreferences = preferences {
+                currentPreferences.gear2Options = options
+                preferences = currentPreferences
+                if let encoded = try? JSONEncoder().encode(currentPreferences) {
+                    userDefaults.set(encoded, forKey: preferencesKey)
+                }
+            } else {
+                let newPreferences = Preferences(gear2Options: options, gear3Options: [])
+                preferences = newPreferences
+                if let encoded = try? JSONEncoder().encode(newPreferences) {
+                    userDefaults.set(encoded, forKey: preferencesKey)
+                }
+            }
+            errorMessage = nil
+        } catch {
+            print("Error saving gear2 preferences: \(error.localizedDescription)")
+            errorMessage = "Failed to save preferences."
+        }
+    }
+    
+    func saveGear3Preferences(_ options: [GearOption]) async {
+        guard let userId = variantManager?.appleUserId else {
+            return
+        }
+        
+        let gear3Preferences = options.map { option in
+            [
+                "id": option.id.uuidString,
+                "text": option.text,
+                "icon": option.icon
+            ]
+        }
+        
+        do {
+            let body: [String: Any] = [
+                "userId": userId,
+                "gear3Preferences": gear3Preferences
+            ]
+            
+            try await backendService.post(
+                path: "/preferences/gear3",
+                body: body
+            )
+            
+            if var currentPreferences = preferences {
+                currentPreferences.gear3Options = options
+                preferences = currentPreferences
+                if let encoded = try? JSONEncoder().encode(currentPreferences) {
+                    userDefaults.set(encoded, forKey: preferencesKey)
+                }
+            } else {
+                let newPreferences = Preferences(gear2Options: [], gear3Options: options)
+                preferences = newPreferences
+                if let encoded = try? JSONEncoder().encode(newPreferences) {
+                    userDefaults.set(encoded, forKey: preferencesKey)
+                }
+            }
+            errorMessage = nil
+        } catch {
+            print("Error saving gear3 preferences: \(error.localizedDescription)")
+            errorMessage = "Failed to save preferences."
+        }
+    }
 }
 

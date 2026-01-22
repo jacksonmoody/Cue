@@ -1,4 +1,5 @@
 var express = require("express");
+var crypto = require("crypto");
 
 var router = express.Router();
 
@@ -18,10 +19,18 @@ router.post("/gear2", async function (req, res) {
   var trimmedUserId = userId.trim();
 
   try {
+    var gear2WithIds = gear2Preferences.map(function (pref) {
+      return {
+        id: pref.id || crypto.randomUUID(),
+        text: pref.text,
+        icon: pref.icon,
+      };
+    });
+
     var preferences = db.collection("preferences");
     var updateDoc = {
       $set: {
-        gear2: gear2Preferences,
+        gear2: gear2WithIds,
       },
       $setOnInsert: {
         userId: trimmedUserId,
@@ -36,7 +45,7 @@ router.post("/gear2", async function (req, res) {
 
     res.status(200).json({
       userId: trimmedUserId,
-      gear2: gear2Preferences,
+      gear2: gear2WithIds,
     });
   } catch (err) {
     console.error("Error recording preferences", err);
@@ -60,10 +69,18 @@ router.post("/gear3", async function (req, res) {
   var trimmedUserId = userId.trim();
 
   try {
+    var gear3WithIds = gear3Preferences.map(function (pref) {
+      return {
+        id: pref.id || crypto.randomUUID(),
+        text: pref.text,
+        icon: pref.icon,
+      };
+    });
+
     var preferences = db.collection("preferences");
     var updateDoc = {
       $set: {
-        gear3: gear3Preferences,
+        gear3: gear3WithIds,
       },
       $setOnInsert: {
         userId: trimmedUserId,
@@ -78,7 +95,7 @@ router.post("/gear3", async function (req, res) {
 
     res.status(200).json({
       userId: trimmedUserId,
-      gear3: gear3Preferences,
+      gear3: gear3WithIds,
     });
   } catch (err) {
     console.error("Error recording preferences", err);
@@ -86,59 +103,75 @@ router.post("/gear3", async function (req, res) {
   }
 });
 
-const defaultGear2Preferences = [
-  {
-    text: "Heart Racing",
-    icon: "heart",
-  },
-  {
-    text: "Muscle Tensing",
-    icon: "dumbbell",
-  },
-  {
-    text: "Rapid Breathing",
-    icon: "lungs",
-  },
-  {
-    text: "Feeling Heavy",
-    icon: "scalemass",
-  },
-  {
-    text: "Other",
-    icon: "questionmark",
-  },
-  {
-    text: "No Change",
-    icon: "circle.slash",
-  },
-];
+function getDefaultGear2Preferences() {
+  return [
+    {
+      id: crypto.randomUUID(),
+      text: "Heart Racing",
+      icon: "heart",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Muscle Tensing",
+      icon: "dumbbell",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Rapid Breathing",
+      icon: "lungs",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Feeling Heavy",
+      icon: "scalemass",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Other",
+      icon: "questionmark",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "No Change",
+      icon: "circle.slash",
+    },
+  ];
+}
 
-const defaultGear3Preferences = [
-  {
-    text: "Mindful Breaths",
-    icon: "apple.meditate",
-  },
-  {
-    text: "Cross Body Taps",
-    icon: "hand.tap",
-  },
-  {
-    text: "Visualization",
-    icon: "photo",
-  },
-  {
-    text: "Exercise",
-    icon: "figure.run.treadmill",
-  },
-  {
-    text: "Time in Nature",
-    icon: "tree",
-  },
-  {
-    text: "Talk with Friend(s)",
-    icon: "figure.2.arms.open",
-  },
-];
+function getDefaultGear3Preferences() {
+  return [
+    {
+      id: crypto.randomUUID(),
+      text: "Mindful Breaths",
+      icon: "apple.meditate",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Cross Body Taps",
+      icon: "hand.tap",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Visualization",
+      icon: "photo",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Exercise",
+      icon: "figure.run.treadmill",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Time in Nature",
+      icon: "tree",
+    },
+    {
+      id: crypto.randomUUID(),
+      text: "Talk with Friend(s)",
+      icon: "figure.2.arms.open",
+    },
+  ];
+}
 
 router.get("/:userId", async function (req, res) {
   var db = req.db;
@@ -157,14 +190,15 @@ router.get("/:userId", async function (req, res) {
     if (!userPreferences) {
       return res.json({
         userId: trimmedUserId,
-        gear2: defaultGear2Preferences,
-        gear3: defaultGear3Preferences,
+        gear2: getDefaultGear2Preferences(),
+        gear3: getDefaultGear3Preferences(),
       });
     }
+    
     var response = {
       userId: userPreferences.userId,
-      gear2: userPreferences.gear2 || defaultGear2Preferences,
-      gear3: userPreferences.gear3 || defaultGear3Preferences,
+      gear2: userPreferences.gear2,
+      gear3: userPreferences.gear3,
     };
     res.json(response);
   } catch (err) {

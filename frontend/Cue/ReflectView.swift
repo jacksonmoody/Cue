@@ -8,42 +8,61 @@
 import SwiftUI
 
 struct ReflectView: View {
+    @EnvironmentObject var reflectionManager: ReflectionManager
     @State private var showingSettings = false
     @State private var selectedSession: Session?
-    @State private var sessions: [Session] = [
-        Session(id: UUID(), startDate: .now, gear1Finished: .distantPast, gear2Finished: .distantPast, endDate: .distantFuture, gear1: .init(text: "11am Thesis Meeting", icon: "calendar"), gear2: .init(text:"Heart Racing", icon: "heart"), gear3: .init(text:"Mindful Breaths", icon: "lungs"))
-    ]
+    @State private var showingError = false
     
     var body: some View {
         NavigationStack {
             ZStack {
                 LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
-                List(sessions, id: \.id) { session in
-                    NavigationLink {
-                        SessionDetailView(session: session)
-                    } label: {
-                        HStack(spacing: 16) {
-                            Image(systemName: session.gear3.icon)
-                                .font(.title2)
-                                .foregroundStyle(.white)
-                                .frame(width: 40)
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(session.gear1.text)
-                                    .foregroundStyle(.white)
-                                    .font(.headline)
-                                Text(formatDate(session.startDate))
-                                    .font(.subheadline)
-                                    .foregroundStyle(.white.opacity(0.8))
+                Group {
+                    if reflectionManager.sessions.isEmpty {
+                        VStack(alignment: .leading, spacing: 30) {
+                            Text("No Reflections Recorded")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                            Text("Once you log a reflection session, you will be able to review it here. Press the leaf icon in the upper-left corner of the Cue app on your Apple Watch to get started reflecting.\n\nIn the meantime, feel free to customize your reflection experience here.")
+                            Button("Customize Experience") {
+                                showingSettings = true
                             }
+                            .fontWeight(.bold)
+                            .padding()
+                            .glassEffect(.regular.tint(.blue).interactive())
                         }
-                        .padding(.vertical, 8)
+                        .padding()
+                        .padding(.top, -30)
+                        .foregroundStyle(.white)
+                    } else {
+                        List(reflectionManager.sessions, id: \.id) { session in
+                            NavigationLink {
+                                SessionDetailView(session: session)
+                            } label: {
+                                HStack(spacing: 16) {
+                                    Image(systemName: session.gear3?.icon ?? "apple.meditate")
+                                        .font(.title2)
+                                        .foregroundStyle(.white)
+                                        .frame(width: 40)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(session.gear1?.text ?? "Reflection Session")
+                                            .foregroundStyle(.white)
+                                            .font(.headline)
+                                        Text(formatDate(session.startDate))
+                                            .font(.subheadline)
+                                            .foregroundStyle(.white.opacity(0.8))
+                                    }
+                                }
+                                .padding(.vertical, 8)
+                            }
+                            .listRowBackground(Color.white.opacity(0.1))
+                        }
+                        .scrollContentBackground(.hidden)
+                        .padding(.top, -20)
                     }
-                    .listRowBackground(Color.white.opacity(0.1))
                 }
-                .scrollContentBackground(.hidden)
-                .padding(.top, -20)
-                .navigationTitle("Recent Reflections")
+                .navigationTitle(!reflectionManager.sessions.isEmpty ? "Recent Reflections" : "")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarColorScheme(.dark, for: .navigationBar)
                 .toolbar {
@@ -55,6 +74,23 @@ struct ReflectView: View {
                 }
                 .navigationDestination(isPresented: $showingSettings) {
                     SettingsView()
+                }
+                .task {
+                    await reflectionManager.loadReflections()
+                }
+                .onChange(of: reflectionManager.errorMessage) { oldValue, newValue in
+                    if newValue != nil {
+                        showingError = true
+                    }
+                }
+                .alert("Error", isPresented: $showingError) {
+                    Button("OK", role: .cancel) {
+                        reflectionManager.errorMessage = nil
+                    }
+                } message: {
+                    if let errorMessage = reflectionManager.errorMessage {
+                        Text(errorMessage)
+                    }
                 }
             }
         }
@@ -70,4 +106,5 @@ struct ReflectView: View {
 
 #Preview {
     ReflectView()
+        .environmentObject(ReflectionManager())
 }

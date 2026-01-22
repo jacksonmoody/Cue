@@ -23,6 +23,7 @@ class VariantManager: ObservableObject {
 
     private let variantKey = "variantId"
     private let appleUserIdKey = "appleUserId"
+    private let fullNameKey = "fullName"
     private let userDefaults = UserDefaults.standard
     private let backendService = BackendService.shared
 
@@ -72,7 +73,7 @@ class VariantManager: ObservableObject {
             }
             appleUserId = credential.user
             if let fullName = credential.fullName, let givenName = fullName.givenName, let familyName = fullName.familyName {
-               userDefaults.set("\(givenName) \(familyName)", forKey: "fullName")
+               userDefaults.set("\(givenName) \(familyName)", forKey: fullNameKey)
             }
             Task { await loadVariant() }
         case .failure:
