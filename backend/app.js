@@ -9,6 +9,7 @@ var sessionsRouter = require("./routes/sessions");
 var usersRouter = require("./routes/users").router;
 var gear1Router = require("./routes/gear1");
 var preferencesRouter = require("./routes/preferences");
+var reflectionsRouter = require("./routes/reflections");
 
 require("dotenv").config();
 
@@ -71,11 +72,12 @@ app.use(async function (req, res, next) {
   next();
 });
 
+app.use("/users", usersRouter);
 app.use("/variant", variantsRouter);
 app.use("/sessions", sessionsRouter);
-app.use("/users", usersRouter);
-app.use("/gear1", gear1Router);
+app.use("/reflections", reflectionsRouter);
 app.use("/preferences", preferencesRouter);
+app.use("/gear1", gear1Router);
 
 app.use(function (req, res, next) {
   next(createError(404));

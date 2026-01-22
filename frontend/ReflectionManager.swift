@@ -95,7 +95,38 @@ class ReflectionManager: ObservableObject {
     func endCurrentSession(atDate date: Date) {
         guard var currentSession else { return }
         currentSession.endDate = date
-        self.currentSession = nil
+        
+        guard let userId = variantManager?.appleUserId else {
+            print("Cannot record session: userId not available")
+            self.currentSession = nil
+            return
+        }
+        
+        do {
+            let reflectionData = try JSONEncoder().encode(currentSession)
+            guard let reflectionDict = try JSONSerialization.jsonObject(with: reflectionData) as? [String: Any] else {
+                print("Failed to convert reflection to dictionary")
+                self.currentSession = nil
+                return
+            }
+            
+            let sessionData: [String: Any] = [
+                "userId": userId,
+                "reflection": reflectionDict
+            ]
+            backendService.post(path: "/reflections", body: sessionData) { result in
+                switch result {
+                case .success:
+                    self.currentSession = nil
+                case .failure(let error):
+                    print("Failed to record session: \(error.localizedDescription)")
+                    self.currentSession = nil
+                }
+            }
+        } catch {
+            print("Error encoding session: \(error.localizedDescription)")
+            self.currentSession = nil
+        }
     }
     
     func loadReflections() async {
