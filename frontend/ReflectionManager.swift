@@ -190,18 +190,24 @@ class ReflectionManager: ObservableObject {
         }
     }
     
-    func fetchGear1Options() {
+    func fetchGear1Options() async {
         guard let userId = variantManager?.appleUserId else {
             return
         }
-        
+        let userData: [String: Any] = [
+            "idToken": userId,
+            "location": "home" // TODO: Update this
+        ]
         do {
-            let sessionData: [String: Any] = [
-                "idToken": userId,
-                "location": "home" // TODO: Update this
-            ]
-            let response = try await backendService.post(path: <#T##String#>, body: <#T##[String : Any]?#>, responseType: <#T##Decodable.Type#>
-                
+            let response = try await backendService.post(
+                path: "/gear1",
+                body: userData,
+                responseType: [GearOption].self
+            )
+            gear1Options = response
+            errorMessage = nil
+        } catch {
+            print("Failed to fetch gear1 options: \(error.localizedDescription)")
         }
     }
     

@@ -10,16 +10,8 @@ import GoogleSignInSwift
 import GoogleSignIn
 internal import CoreLocation
 
-enum Occupation: String, CaseIterable, Identifiable {
-    case student = "student"
-    case employed = "employed"
-    case unemployed = "unemployed"
-    case retired = "retired"
-    var id: Self { self }
-}
-
 struct PermissionsView: View {
-    @AppStorage("occupation") var selectedOccupation: Occupation = .student
+    @AppStorage("occupation") var occupation: String = ""
     @EnvironmentObject var workoutManager: WorkoutManager
     @EnvironmentObject var locationService: LocationService
     @EnvironmentObject var variantManager: VariantManager
@@ -43,17 +35,13 @@ struct PermissionsView: View {
         ScrollView {
             VStack(spacing: 24) {
                 VStack(alignment: .center, spacing: 12) {
-                    Text("What is your current occupational status?")
+                    Text("What is your current occupation?")
                         .font(.headline)
                         .foregroundColor(.primary)
                     
-                    Picker("Occupation Status:", selection: $selectedOccupation) {
-                        Text("Student").tag(Occupation.student)
-                        Text("Employed").tag(Occupation.employed)
-                        Text("Unemployed").tag(Occupation.unemployed)
-                        Text("Retired").tag(Occupation.retired)
-                    }
-                    .pickerStyle(.segmented)
+                    TextField("e.g. Student, Software Engineer, Retired", text: $occupation)
+                        .textFieldStyle(.roundedBorder)
+                        .padding()
                 }
                 .padding()
                 .background(Color(.systemBackground))
@@ -250,7 +238,7 @@ struct PermissionsView: View {
                         path: "/users/finish-onboarding",
                         body: [
                             "userId": userId,
-                            "occupation": selectedOccupation.rawValue
+                            "occupation": occupation
                         ],
                         responseType: Bool.self
                     )
