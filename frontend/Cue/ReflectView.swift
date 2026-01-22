@@ -11,7 +11,13 @@ struct ReflectView: View {
     @EnvironmentObject var reflectionManager: ReflectionManager
     @State private var showingSettings = false
     @State private var selectedSession: Session?
-    @State private var showingError = false
+    
+    private var showingError: Binding<Bool> {
+        Binding(
+            get: { reflectionManager.errorMessage != nil },
+            set: { if !$0 { reflectionManager.errorMessage = nil } }
+        )
+    }
     
     var body: some View {
         NavigationStack {
@@ -78,15 +84,8 @@ struct ReflectView: View {
                 .task {
                     await reflectionManager.loadReflections()
                 }
-                .onChange(of: reflectionManager.errorMessage) { oldValue, newValue in
-                    if newValue != nil {
-                        showingError = true
-                    }
-                }
-                .alert("Error", isPresented: $showingError) {
-                    Button("OK", role: .cancel) {
-                        reflectionManager.errorMessage = nil
-                    }
+                .alert("Error", isPresented: showingError) {
+                    Button("OK", role: .cancel) { }
                 } message: {
                     if let errorMessage = reflectionManager.errorMessage {
                         Text(errorMessage)

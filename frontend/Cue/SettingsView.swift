@@ -21,7 +21,13 @@ struct SettingsView: View {
     @State private var newGear3Icon = "star"
     @State private var gear2EditMode: EditMode = .inactive
     @State private var gear3EditMode: EditMode = .inactive
-    @State private var showingError = false
+    
+    private var showingError: Binding<Bool> {
+        Binding(
+            get: { reflectionManager.errorMessage != nil },
+            set: { if !$0 { reflectionManager.errorMessage = nil } }
+        )
+    }
     
     let commonPhysicalIcons = ["star", "heart", "brain", "lungs", "eye", "hand.raised", "cross", "dumbbell", "scalemass", "thermometer.variable", "blood.pressure.cuff", "questionmark", "circle.slash"]
     let commonReflectionIcons = ["star", "apple.meditate", "brain", "lungs", "hand.tap", "face.smiling", "photo", "figure.run.treadmill", "figure.walk", "basketball", "tree", "service.dog", "fork.knife.circle", "gift", "music.quarternote.3", "theatermask.and.paintbrush", "figure.2.arms.open"]
@@ -313,15 +319,8 @@ struct SettingsView: View {
                 gear3Options = prefs.gear3Options
             }
         }
-        .onChange(of: reflectionManager.errorMessage) { oldValue, newValue in
-            if newValue != nil {
-                showingError = true
-            }
-        }
-        .alert("Error", isPresented: $showingError) {
-            Button("OK", role: .cancel) {
-                reflectionManager.errorMessage = nil
-            }
+        .alert("Error", isPresented: showingError) {
+            Button("OK", role: .cancel) { }
         } message: {
             if let errorMessage = reflectionManager.errorMessage {
                 Text(errorMessage)

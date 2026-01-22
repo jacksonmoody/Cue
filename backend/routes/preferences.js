@@ -189,16 +189,14 @@ router.get("/:userId", async function (req, res) {
 
     if (!userPreferences) {
       return res.json({
-        userId: trimmedUserId,
         gear2: getDefaultGear2Preferences(),
         gear3: getDefaultGear3Preferences(),
       });
     }
     
     var response = {
-      userId: userPreferences.userId,
-      gear2: userPreferences.gear2,
-      gear3: userPreferences.gear3,
+      gear2: userPreferences.gear2 || getDefaultGear2Preferences(),
+      gear3: userPreferences.gear3 || getDefaultGear3Preferences(),
     };
     res.json(response);
   } catch (err) {
