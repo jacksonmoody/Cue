@@ -4,7 +4,7 @@ var { encryptObject, decryptObject } = require("../utils/encryption");
 
 var router = express.Router();
 
-async function getDecryptedTokens(db, userId) {
+async function getUserInfo(db, userId) {
   var encryptionKey = process.env.ENCRYPTION_KEY;
   if (!encryptionKey) {
     throw new Error("ENCRYPTION_KEY is not configured");
@@ -23,7 +23,7 @@ async function getDecryptedTokens(db, userId) {
     encryptionKey
   );
 
-  return decryptedTokens;
+  return [decryptedTokens, user.occupation];
 }
 
 router.post("/sign-in", async function (req, res) {
@@ -172,6 +172,6 @@ router.get("/onboarded/:userId", async function (req, res) {
 });
 
 module.exports = {
-  getDecryptedTokens: getDecryptedTokens,
+  getUserInfo: getUserInfo,
   router: router,
 };

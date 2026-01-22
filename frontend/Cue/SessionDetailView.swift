@@ -70,6 +70,8 @@ struct Line: Shape {
 }
 
 struct HeartRateGraph: View {
+    @EnvironmentObject var reflectionManager: ReflectionManager
+    
     struct DataPoint: Identifiable {
         var time: Double
         var hr: Double
@@ -82,6 +84,10 @@ struct HeartRateGraph: View {
     @State private var part3Label: String = ""
     @State private var data: [DataPoint] = []
     @State private var loading: Bool = true
+    
+    @FocusState private var part1Focused: Bool
+    @FocusState private var part2Focused: Bool
+    @FocusState private var part3Focused: Bool
     
     init(session: Session) {
         self.session = session
@@ -105,9 +111,22 @@ struct HeartRateGraph: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
-                    TextField("Label", text: $part1Label)
-                        .textFieldStyle(.roundedBorder)
-                        .font(.subheadline)
+                    HStack(spacing: 10) {
+                        Image(systemName: session.gear1?.icon ?? "")
+                            .foregroundStyle(.white)
+                        TextField("Label", text: $part1Label)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.subheadline)
+                            .focused($part1Focused)
+                            .onChange(of: part1Focused) { _, isFocused in
+                                if !isFocused {
+                                    updateSession()
+                                }
+                            }
+                            .onSubmit {
+                                updateSession()
+                            }
+                    }
                 }
                 
                 VStack(alignment: .leading) {
@@ -115,9 +134,22 @@ struct HeartRateGraph: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
-                    TextField("Label", text: $part2Label)
-                        .textFieldStyle(.roundedBorder)
-                        .font(.subheadline)
+                    HStack(spacing: 10) {
+                        Image(systemName: session.gear2?.icon ?? "")
+                            .foregroundStyle(.white)
+                        TextField("Label", text: $part2Label)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.subheadline)
+                            .focused($part2Focused)
+                            .onChange(of: part2Focused) { _, isFocused in
+                                if !isFocused {
+                                    updateSession()
+                                }
+                            }
+                            .onSubmit {
+                                updateSession()
+                            }
+                    }
                 }
                 
                 VStack(alignment: .leading) {
@@ -125,11 +157,25 @@ struct HeartRateGraph: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
-                    TextField("Label", text: $part3Label)
-                        .textFieldStyle(.roundedBorder)
-                        .font(.subheadline)
+                    HStack(spacing: 10) {
+                        Image(systemName: session.gear3?.icon ?? "")
+                            .foregroundStyle(.white)
+                        TextField("Label", text: $part3Label)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.subheadline)
+                            .focused($part3Focused)
+                            .onChange(of: part3Focused) { _, isFocused in
+                                if !isFocused {
+                                    updateSession()
+                                }
+                            }
+                            .onSubmit {
+                                updateSession()
+                            }
+                    }
                 }
             }
+            .padding(.bottom)
             .task {
                 defer { loading = false }
                 await loadHRData()
@@ -145,7 +191,7 @@ struct HeartRateGraph: View {
                 y: .value("Heart Rate", point.hr)
             )
             .foregroundStyle(.red)
-            .symbolSize(20)
+            .symbolSize(25)
         }
         .chartOverlay { proxy in
             GeometryReader { geometry in
@@ -241,6 +287,13 @@ struct HeartRateGraph: View {
         } catch {
             print("Error fetching HR data: \(error.localizedDescription)")
         }
+    }
+    private func updateSession() {
+        var newSession = session
+        newSession.gear1 = GearOption(text: part1Label, icon: session.gear1?.icon ?? "")
+        newSession.gear2 = GearOption(text: part2Label, icon: session.gear2?.icon ?? "")
+        newSession.gear3 = GearOption(text: part3Label, icon: session.gear3?.icon ?? "")
+        reflectionManager.updateSession(newSession)
     }
 }
 

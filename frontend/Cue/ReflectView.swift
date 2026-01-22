@@ -13,12 +13,16 @@ struct ReflectView: View {
     @State private var selectedSession: Session?
     @State private var showingError = false
     
+    private var sortedSessions: [Session] {
+        reflectionManager.sessions.sorted { $0.startDate > $1.startDate }
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 LinearGradient(colors: [.gradientBlue, .gradientPurple], startPoint: .top, endPoint: .bottom).ignoresSafeArea(.all)
                 Group {
-                    if reflectionManager.sessions.isEmpty {
+                    if sortedSessions.isEmpty {
                         VStack(alignment: .leading, spacing: 30) {
                             Text("No Reflections Recorded")
                                 .font(.largeTitle)
@@ -35,7 +39,7 @@ struct ReflectView: View {
                         .padding(.top, -30)
                         .foregroundStyle(.white)
                     } else {
-                        List(reflectionManager.sessions, id: \.id) { session in
+                        List(sortedSessions, id: \.id) { session in
                             NavigationLink {
                                 SessionDetailView(session: session)
                             } label: {
@@ -58,11 +62,14 @@ struct ReflectView: View {
                             }
                             .listRowBackground(Color.white.opacity(0.1))
                         }
+                        .refreshable {
+                            await reflectionManager.loadReflections()
+                        }
                         .scrollContentBackground(.hidden)
                         .padding(.top, -20)
                     }
                 }
-                .navigationTitle(!reflectionManager.sessions.isEmpty ? "Recent Reflections" : "")
+                .navigationTitle(!sortedSessions.isEmpty ? "Recent Reflections" : "")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarColorScheme(.dark, for: .navigationBar)
                 .toolbar {

@@ -17,7 +17,6 @@
 	<string>716669605174-6q0nerfcjg019mp5bkhhiegcspui97vl.apps.googleusercontent.com</string>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>location</string>
 		<string>processing</string>
 		<string>fetch</string>
 	</array>

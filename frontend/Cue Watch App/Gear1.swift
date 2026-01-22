@@ -15,8 +15,8 @@ struct Gear1: View {
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
-        (fadeIn: 1.5, display: 3.0, fadeOut: 1.5),
-        (fadeIn: 1.5, display: 0.0, fadeOut: 0.0)
+        (fadeIn: 2, display: 3.0, fadeOut: 2),
+        (fadeIn: 2, display: 0.0, fadeOut: 0.0)
     ]
     var body: some View {
         ZStack {
@@ -30,7 +30,7 @@ struct Gear1: View {
             if currentPhase == 1 {
                 List {
                     Section(header: Text("What may have triggered this response?").padding(.leading, -5).padding(.bottom, 10).padding(.trailing, -10)) {
-                        ListButton("11am Thesis Meeting", image: "calendar") {
+                        ListButton("10:30am IRB Review", image: "calendar") {
                             gear1Selection()
                         }
                         ListButton("Morning Routine", image: "sun.horizon") {
@@ -73,7 +73,7 @@ struct Gear1: View {
     }
     
     private func gear1Selection() {
-        reflectionManager.logGearSelection(GearOption(text: "test", icon: "star"), forGear: 1, atDate: .now)
+        reflectionManager.logGearSelection(GearOption(text: "11am Thesis Meeting", icon: "star"), forGear: 1, atDate: .now)
         router.navigateToGear2()
     }
     

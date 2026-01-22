@@ -69,6 +69,7 @@ class ReflectionManager: ObservableObject {
     @Published var sessions: [Session] = []
     @Published var preferences: Preferences?
     @Published var errorMessage: String?
+    @Published var gear1Options: [GearOption] = []
     var currentSession: Session?
     
     private let backendService = BackendService.shared
@@ -79,7 +80,31 @@ class ReflectionManager: ObservableObject {
     let preferencesKey = "preferences"
     
     func startNewSession() {
-        currentSession = Session(startDate: Date())
+        do {
+            currentSession = Session(startDate: Date())
+            guard let userId = variantManager?.appleUserId else {
+                return
+            }
+            let reflectionData = try JSONEncoder().encode(currentSession)
+            guard let reflectionDict = try JSONSerialization.jsonObject(with: reflectionData) as? [String: Any] else {
+                print("Failed to convert reflection to dictionary")
+                return
+            }
+            let sessionData: [String: Any] = [
+                "userId": userId,
+                "reflection": reflectionDict
+            ]
+            backendService.post(path: "/reflections", body: sessionData) { result in
+                switch result {
+                case .success:
+                    return
+                case .failure(let error):
+                    print("Failed to record session: \(error.localizedDescription)")
+                }
+            }
+        } catch {
+            print("Error encoding session: \(error.localizedDescription)")
+        }
     }
     
     func logGearSelection(_ gear: GearOption, forGear gearNumber: Int, atDate date: Date) {
@@ -97,6 +122,7 @@ class ReflectionManager: ObservableObject {
         default:
             return
         }
+        self.currentSession = currentSession
     }
     
     func endCurrentSession(atDate date: Date) {
@@ -121,7 +147,7 @@ class ReflectionManager: ObservableObject {
                 "userId": userId,
                 "reflection": reflectionDict
             ]
-            backendService.post(path: "/reflections", body: sessionData) { result in
+            backendService.post(path: "/reflections/update", body: sessionData) { result in
                 switch result {
                 case .success:
                     self.currentSession = nil
@@ -133,6 +159,49 @@ class ReflectionManager: ObservableObject {
         } catch {
             print("Error encoding session: \(error.localizedDescription)")
             self.currentSession = nil
+        }
+    }
+    
+    func updateSession(_ session: Session) {
+        guard let userId = variantManager?.appleUserId else {
+            return
+        }
+        do {
+            let reflectionData = try JSONEncoder().encode(session)
+            guard let reflectionDict = try JSONSerialization.jsonObject(with: reflectionData) as? [String: Any] else {
+                print("Failed to convert reflection to dictionary")
+                self.currentSession = nil
+                return
+            }
+            let sessionData: [String: Any] = [
+                "userId": userId,
+                "reflection": reflectionDict
+            ]
+            backendService.post(path: "/reflections/update", body: sessionData) { result in
+                switch result {
+                case .success:
+                    return
+                case .failure(let error):
+                    print("Failed to record session: \(error.localizedDescription)")
+                }
+            }
+        } catch {
+            print("Error encoding session: \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchGear1Options() {
+        guard let userId = variantManager?.appleUserId else {
+            return
+        }
+        
+        do {
+            let sessionData: [String: Any] = [
+                "idToken": userId,
+                "location": "home" // TODO: Update this
+            ]
+            let response = try await backendService.post(path: <#T##String#>, body: <#T##[String : Any]?#>, responseType: <#T##Decodable.Type#>
+                
         }
     }
     

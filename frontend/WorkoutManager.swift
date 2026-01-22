@@ -18,7 +18,7 @@ class WorkoutManager: NSObject, ObservableObject {
 
     func startWorkout() {
         let configuration = HKWorkoutConfiguration()
-        configuration.activityType = .other
+        configuration.activityType = .mindAndBody
 
         do {
             session = try HKWorkoutSession(healthStore: healthStore, configuration: configuration)
@@ -111,17 +111,15 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
         }
         
         if toState == .stopped {
-            builder?.endCollection(withEnd: date) { (success, error) in
-                self.builder?.finishWorkout { (workout, error) in
-                    WatchConnectivityManager.shared.updateSessionState(false)
-                    self.session?.end()
-                    DispatchQueue.main.async {
-                        self.builder = nil
-                        self.session = nil
-                        self.averageHeartRate = 0
-                        self.heartRate = 0
-                    }
-                }
+            WatchConnectivityManager.shared.updateSessionState(false)
+            builder?.discardWorkout()
+            session?.end()
+            
+            DispatchQueue.main.async {
+                self.builder = nil
+                self.session = nil
+                self.averageHeartRate = 0
+                self.heartRate = 0
             }
         }
     }

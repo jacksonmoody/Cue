@@ -25,7 +25,7 @@ struct Gear3: View {
     var body: some View {
         ZStack {
             if currentPhase == 0 {
-                Text("How else would you like to respond?")
+                Text("How would you like to respond instead?")
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .opacity(opacity)
@@ -67,6 +67,7 @@ struct Gear3: View {
     private func handleSelection(_ option: GearOption) {
         selectedOption = option
         reflectionManager.logGearSelection(option, forGear: 3, atDate: .now)
+        transitionToReflectionView()
     }
     
     private func completeReflection(canceled: Bool) {
@@ -110,6 +111,20 @@ struct Gear3: View {
         }
     }
     
+    private func transitionToReflectionView() {
+        withAnimation(.easeInOut(duration: 1.5)) {
+            opacity = 0.0
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            showReflectionView = true
+            reflectionViewOpacity = 0.0
+            withAnimation(.easeInOut(duration: 0.5)) {
+                reflectionViewOpacity = 1.0
+            }
+        }
+    }
+    
     @ViewBuilder
     private func reflectionView(for option: GearOption) -> some View {
         switch option {
@@ -127,20 +142,6 @@ struct Gear3: View {
         default:
             Text(option.text)
                 .fontWeight(.bold)
-        }
-    }
-    
-    private func transitionToReflectionView() {
-        withAnimation(.easeInOut(duration: 1.5)) {
-            opacity = 0.0
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            showReflectionView = true
-            reflectionViewOpacity = 0.0
-            withAnimation(.easeInOut(duration: 0.5)) {
-                reflectionViewOpacity = 1.0
-            }
         }
     }
 }
