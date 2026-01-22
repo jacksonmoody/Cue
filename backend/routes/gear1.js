@@ -14,6 +14,8 @@ router.post("/", async function (req, res) {
     var idToken = req.body && req.body.idToken;
     var latitude = req.body && req.body.latitude;
     var longitude = req.body && req.body.longitude;
+    var timeOfDay = req.body && req.body.timeOfDay;
+    var dayOfWeek = req.body && req.body.dayOfWeek;
 
     if (!idToken || typeof idToken !== "string" || !idToken.trim()) {
       return res.status(400).json({ error: "idToken (string) is required" });
@@ -23,6 +25,10 @@ router.post("/", async function (req, res) {
       return res.status(400).json({ error: "latitude (string) and longitude (string) are required" });
     }
 
+    if (!timeOfDay || typeof timeOfDay !== "string" || !dayOfWeek || typeof dayOfWeek !== "string") {
+      return res.status(400).json({ error: "timeOfDay (string) and dayOfWeek (string) are required" });
+    }
+
     var [googleTokens, occupation] = await getUserInfo(db, idToken);
     if (!googleTokens || !occupation) {
       return res.status(401).json({ error: "Invalid user info" });
@@ -30,9 +36,6 @@ router.post("/", async function (req, res) {
 
     var upcomingEvents = await getUpcomingEvents(googleTokens, occupation);
     var location = await getPlaceInformation(latitude, longitude);
-
-    var timeOfDay = new Date().getHours();
-    var dayOfWeek = new Date().getDay();
     var eventsText = upcomingEvents
       .map(
         (event) =>
@@ -143,7 +146,7 @@ async function llmCall(userContext) {
         content: [
           {
             type: "text",
-            text: `You will be generating possible sources of stress for a user based on their current context. This is for Gear 1 of Jud Brewer\'s 3 gears framework, which focuses on awareness of the “habit loop” – becoming conscious of the triggers of a particular stress response.\n\nHere is the user\'s context information:\n<user_context>\n${userContext}\n</user_context>\n\nYour task is to generate 4-5 possible sources of stress that are relevant to this user based on their calendar events today, time of day (in hours), day of the week (1-7), current occupation, and current location information. \n\nBefore generating your list, use the scratchpad to think through what might be stressing this person given their context.\n\n<scratchpad>\nConsider:\n- What upcoming events or deadlines might be causing stress?\n- Are there time pressures based on the current time and scheduled events?\n- What work or personal obligations might be weighing on them?\n- Are there contextual factors (day of week, location) that suggest particular stressors?\n- What common stressors apply to someone with their occupation?\n- In the location information, you are provided with the address, relevant areas/regions, and nearby landmarks. Based on this information, consider if the address is residential, workplace, school, commute, etc. and think of stressors accordingly.\n</scratchpad>\n\nNow generate your list of stress sources. Each stress source should have:\n1. A very short title in title case (2-4 words) (e.g., "11am Meeting with John", "Staying up Late", "Traffic on Commute")\n2. An SF symbol name that visually represents the stressor, or an empty string if no suitable symbol exists. Make the stress sources realistic and specific to the user\'s context. Vary the types of stressors (work-related, time pressure, social, personal obligations, etc.) to give a comprehensive picture of potential stress in their current situation. Do not create new stressors that are not already present in the user\'s context; it is better to have less stressors than more. Do not include leading or trailing spaces in the title or icon names.`,
+            text: `You will be generating possible sources of stress for a user based on their current context. This is for Gear 1 of Jud Brewer\'s 3 gears framework, which focuses on awareness of the “habit loop” – becoming conscious of the triggers of a particular stress response.\n\nHere is the user\'s context information:\n<user_context>\n${userContext}\n</user_context>\n\nYour task is to generate 4-5 possible sources of stress that are relevant to this user based on their calendar events today, time of day, day of the week, current occupation, and current location information. \n\nBefore generating your list, use the scratchpad to think through what might be stressing this person given their context.\n\n<scratchpad>\nConsider:\n- What upcoming events or deadlines might be causing stress?\n- Are there time pressures based on the current time and scheduled events?\n- What work or personal obligations might be weighing on them?\n- Are there contextual factors (day of week, location) that suggest particular stressors?\n- What common stressors apply to someone with their occupation?\n- In the location information, you are provided with the address, relevant areas/regions, and nearby landmarks. Based on this information, consider if the address is residential, workplace, school, commute, etc. and consider any related stressors.\n</scratchpad>\n\nNow generate your list of stress sources. Each stress source should have:\n1. A very short title in title case (2-4 words) (e.g., "11am Meeting with John", "Staying up Late", "Traffic on Commute")\n2. An SF symbol name that visually represents the stressor, or an empty string if no suitable symbol exists. Make the stress sources realistic and specific to the user\'s context. Vary the types of stressors (occupation-related, location-related, event-related, time-related, etc.) to give a comprehensive picture of potential stress in their current situation. Do not create new stressors that are not already present in the user\'s context; it is better to have less stressors than more. Do not include leading or trailing spaces in the title or icon names.`,
           },
         ],
       },
