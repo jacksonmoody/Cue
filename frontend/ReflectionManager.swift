@@ -209,7 +209,7 @@ class ReflectionManager: ObservableObject {
             gear1Options = response
             errorMessage = nil
         } catch {
-            print("Failed to fetch gear1 options: \(error.localizedDescription)")
+            print("Failed to fetch gear 1 options: \(error.localizedDescription)")
         }
     }
     

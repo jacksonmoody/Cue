@@ -29,6 +29,8 @@ struct Gear1: View {
                         .padding(.horizontal)
                     if showLoading {
                         ProgressView()
+                            .frame(maxHeight: 10)
+                            .padding(.top, 25)
                     }
                 }
             }

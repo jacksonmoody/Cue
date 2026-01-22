@@ -19,8 +19,8 @@ router.post("/", async function (req, res) {
       return res.status(400).json({ error: "idToken (string) is required" });
     }
 
-    if (!latitude || typeof latitude !== "number" || !longitude || typeof longitude !== "number") {
-      return res.status(400).json({ error: "latitude (number) and longitude (number) are required" });
+    if (!latitude || typeof latitude !== "string" || !longitude || typeof longitude !== "string") {
+      return res.status(400).json({ error: "latitude (string) and longitude (string) are required" });
     }
 
     var [googleTokens, occupation] = await getUserInfo(db, idToken);
