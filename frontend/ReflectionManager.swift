@@ -195,11 +195,23 @@ class ReflectionManager: ObservableObject {
         guard let userId = variantManager?.appleUserId else {
             return
         }
+        
+        let now = Date()
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateFormat = "ha"
+        let hourString = formatter.string(from: now).lowercased()
+        let weekdayIndex = Calendar.current.component(.weekday, from: now)
+        let weekdayName = formatter.weekdaySymbols[weekdayIndex - 1]
+        
         let userData: [String: Any] = [
             "idToken": userId,
             "latitude": currentLocation.coordinate.latitude.formatted(),
-            "longitude": currentLocation.coordinate.longitude.formatted()
+            "longitude": currentLocation.coordinate.longitude.formatted(),
+            "timeOfDay": hourString,
+            "dayOfWeek": weekdayName
         ]
+
         do {
             let response = try await backendService.post(
                 path: "/gear1",
