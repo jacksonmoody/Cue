@@ -196,10 +196,10 @@ struct HeartRateGraph: View {
         .chartOverlay { proxy in
             GeometryReader { geometry in
                 if let gear1Date = session.gear1Finished {
-                    chartAnnotation(date: gear1Date, proxy: proxy, geometry: geometry, label: part1Label, startDate: session.startDate)
+                    chartAnnotation(date: gear1Date, proxy: proxy, geometry: geometry, label: part1Label, startDate: session.startDate, offset: 20)
                 }
                 if let gear3Date = session.gear3Started {
-                    chartAnnotation(date: gear3Date, proxy: proxy, geometry: geometry, label: part3Label, startDate: session.startDate)
+                    chartAnnotation(date: gear3Date, proxy: proxy, geometry: geometry, label: part3Label, startDate: session.startDate, offset: 50)
                 }
             }
         }
@@ -246,14 +246,14 @@ struct HeartRateGraph: View {
         let geometry: GeometryProxy
         let label: String
         let startDate: Date
+        let offset: CGFloat
         
         var body: some View {
             let targetTime = date.timeIntervalSince(startDate)
             if let xPos = proxy.position(forX: targetTime),
                let plotFrameAnchor = proxy.plotFrame {
                 let plotFrame = geometry[plotFrameAnchor]
-                let offset: CGFloat = 20
-                let lineHeight = plotFrame.height - offset * 2
+                let lineHeight = plotFrame.height - offset - 10
                 VStack(spacing: 4) {
                     Text(label)
                         .font(.caption)

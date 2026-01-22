@@ -27,7 +27,7 @@ struct ReflectView: View {
                             Text("No Reflections Recorded")
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
-                            Text("Once you log a reflection session, you will be able to review it here. Press the leaf icon in the upper-left corner of the Cue app on your Apple Watch to get started reflecting.\n\nIn the meantime, feel free to customize your reflection experience here.")
+                            Text("Once you log a reflection session, you will be able to review it here. Press the leaf icon in the upper-left corner of the Cue app on your Apple Watch to get started.\n\nIn the meantime, feel free to customize your reflection experience here:")
                             Button("Customize Experience") {
                                 showingSettings = true
                             }
