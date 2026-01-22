@@ -44,7 +44,7 @@ struct ReflectView: View {
                                 SessionDetailView(session: session)
                             } label: {
                                 HStack(spacing: 16) {
-                                    Image(systemName: session.gear3?.icon ?? "apple.meditate")
+                                    Image(systemName: session.gear1?.icon ?? "apple.meditate")
                                         .font(.title2)
                                         .foregroundStyle(.white)
                                         .frame(width: 40)
