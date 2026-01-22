@@ -118,6 +118,7 @@ async function getPlaceInformation(latitude, longitude) {
 }
 
 async function llmCall(userContext) {
+  console.log("Generating custom stressors based on the following context:", userContext);
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
   });

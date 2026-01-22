@@ -31,6 +31,7 @@ struct Gear1: View {
                         ProgressView()
                             .frame(maxHeight: 10)
                             .padding(.top, 25)
+                            .opacity(opacity)
                     }
                 }
             }
@@ -48,7 +49,7 @@ struct Gear1: View {
                         ListButton("Other", image: "ellipsis.circle") {
                             gear1Selection(GearOption(text: "Other", icon: "ellipsis.circle"))
                         }
-                        Text("Customize this response in the \"Reflect\" tab of the Cue iOS app.")
+                        Text("You can edit your response in the \"Reflect\" tab of the Cue iOS app.")
                             .font(.system(size: 12))
                             .listRowBackground(Color.clear)
                     }
@@ -60,13 +61,13 @@ struct Gear1: View {
             }
         }
         .onAppear {
-            withAnimation(.easeInOut(duration: 2)) {
+            withAnimation(.easeInOut(duration: 2.5)) {
                 opacity = 1.0
             }
         }
         .task {
             await setupReflection()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                 withAnimation {
                     showLoading = true
                 }

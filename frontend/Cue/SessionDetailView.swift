@@ -298,6 +298,7 @@ struct HeartRateGraph: View {
 }
 
 fileprivate func formatDuration(_ duration: TimeInterval) -> String {
+    if duration == 0 { return "Incomplete" }
     let minutes = Int(duration) / 60
     let seconds = Int(duration) % 60
     return String(format: "%d min %d sec", minutes, seconds)
