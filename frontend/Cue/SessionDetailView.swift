@@ -152,9 +152,8 @@ struct HeartRateGraph: View {
                 if let gear1Date = session.gear1Finished {
                     chartAnnotation(date: gear1Date, proxy: proxy, geometry: geometry, label: part1Label, startDate: session.startDate)
                 }
-                // Gear 2 end date is equivalent to gear 3 start date (annotated here)
-                if let gear2Date = session.gear2Finished {
-                    chartAnnotation(date: gear2Date, proxy: proxy, geometry: geometry, label: part3Label, startDate: session.startDate)
+                if let gear3Date = session.gear3Started {
+                    chartAnnotation(date: gear3Date, proxy: proxy, geometry: geometry, label: part3Label, startDate: session.startDate)
                 }
             }
         }

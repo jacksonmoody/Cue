@@ -13,6 +13,7 @@ struct Session: Identifiable, Hashable, Codable {
     let startDate: Date
     var gear1Finished: Date?
     var gear2Finished: Date?
+    var gear3Started: Date?
     var endDate: Date?
     
     var duration: TimeInterval {
@@ -29,6 +30,7 @@ struct Session: Identifiable, Hashable, Codable {
         self.startDate = startDate
         self.gear1Finished = nil
         self.gear2Finished = nil
+        self.gear3Started = nil
         self.endDate = nil
         
         self.gear1 = nil
@@ -47,6 +49,10 @@ struct GearOption: Identifiable, Equatable, Hashable, Codable {
         self.text = text
         self.icon = icon
     }
+    
+    public static func == (lhs: GearOption, rhs: GearOption) -> Bool {
+        lhs.text == rhs.text
+    }
 }
 
 struct Preferences: Codable, Equatable {
@@ -60,10 +66,10 @@ struct Preferences: Codable, Equatable {
 }
 
 class ReflectionManager: ObservableObject {
-    @Published var currentSession: Session?
     @Published var sessions: [Session] = []
     @Published var preferences: Preferences?
     @Published var errorMessage: String?
+    var currentSession: Session?
     
     private let backendService = BackendService.shared
     private let userDefaults = UserDefaults.standard
@@ -87,6 +93,7 @@ class ReflectionManager: ObservableObject {
             currentSession.gear2Finished = date
         case 3:
             currentSession.gear3 = gear
+            currentSession.gear3Started = date
         default:
             return
         }

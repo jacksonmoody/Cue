@@ -11,6 +11,7 @@ import SwiftUI
 
 struct Gear1: View {
     @Environment(NavigationRouter.self) private var router
+    @EnvironmentObject var reflectionManager: ReflectionManager
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
@@ -30,26 +31,26 @@ struct Gear1: View {
                 List {
                     Section(header: Text("What may have triggered this response?").padding(.leading, -5).padding(.bottom, 10).padding(.trailing, -10)) {
                         ListButton("11am Thesis Meeting", image: "calendar") {
-                            router.navigateToGear2()
+                            gear1Selection()
                         }
                         ListButton("Morning Routine", image: "sun.horizon") {
-                            router.navigateToGear2()
+                            gear1Selection()
                         }
                         ListButton("Student Stress", image: "graduationcap") {
-                            router.navigateToGear2()
+                            gear1Selection()
                         }
                         ListButton("Home Stress", image: "house") {
-                            router.navigateToGear2()
+                            gear1Selection()
                         }
                         ListButton("Not Sure", image: "questionmark") {
-                            router.navigateToGear2()
+                            gear1Selection()
                         }
                         ListButton("Other", image: "ellipsis.circle") {
-                            router.navigateToGear2()
+                            gear1Selection()
                         }
                         Text("Customize this response in the \"Reflect\" tab of the Cue iOS app.")
                             .font(.system(size: 12))
-                            .listRowBackground(Color.black.opacity(0))
+                            .listRowBackground(Color.clear)
                     }
                     .headerProminence(.increased)
                 }
@@ -67,7 +68,13 @@ struct Gear1: View {
     }
     
     private func setupReflection() async {
-        
+        reflectionManager.startNewSession()
+        await reflectionManager.loadPreferences()
+    }
+    
+    private func gear1Selection() {
+        reflectionManager.logGearSelection(GearOption(text: "test", icon: "star"), forGear: 1, atDate: .now)
+        router.navigateToGear2()
     }
     
     private func startAnimation() {
@@ -126,4 +133,5 @@ struct ListButton: View {
 #Preview {
     Gear1()
         .environment(NavigationRouter())
+        .environmentObject(ReflectionManager())
 }

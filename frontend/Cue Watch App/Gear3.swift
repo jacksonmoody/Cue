@@ -5,20 +5,16 @@
 //  Created by Jackson Moody on 12/22/25.
 
 // Gear 3: Substitution of a better and higher reward
-// 4-7-8 Visual breathing exercise inspired by the Hoberman Sphere
 
 import SwiftUI
 
-enum ReflectionOptions {
-    case breaths, taps, visualization, exercise, nature, friends
-}
-
 struct Gear3: View {
     @Environment(NavigationRouter.self) private var router
+    @EnvironmentObject var reflectionManager: ReflectionManager
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
     @State private var runtimeSession: WKExtendedRuntimeSession?
-    @State private var selection: ReflectionOptions?
+    @State private var selectedOption: GearOption?
     @State private var showReflectionView: Bool = false
     @State private var reflectionViewOpacity: Double = 0
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
@@ -37,33 +33,20 @@ struct Gear3: View {
             }
             if currentPhase == 1 && !showReflectionView {
                 List {
-                    ListButton("Mindful Breaths", image: "apple.meditate") {
-                        selection = .breaths
-                    }
-                    ListButton("Cross Body Taps", image: "hand.tap") {
-                        selection = .taps
-                    }
-                    ListButton("Visualization", image: "photo") {
-                        selection = .visualization
-                    }
-                    ListButton("Exercise", image: "figure.run.treadmill") {
-                        selection = .exercise
-                    }
-                    ListButton("Time in Nature", image: "tree") {
-                        selection = .nature
-                    }
-                    ListButton("Talk with Friend(s)", image: "figure.2.arms.open") {
-                        selection = .friends
+                    ForEach(reflectionManager.preferences?.gear3Options ?? []) { option in
+                        ListButton(option.text, image: option.icon) {
+                            handleSelection(option)
+                        }
                     }
                     Text("Customize these options in the \"Reflect\" tab of the Cue iOS app.")
                         .font(.system(size: 12))
-                        .listRowBackground(Color.black.opacity(0))
+                        .listRowBackground(Color.clear)
                 }
                 .opacity(opacity)
                 .scrollIndicators(.hidden)
                 .padding(.horizontal)
             }
-            if showReflectionView, let selectedOption = selection {
+            if showReflectionView, let selectedOption {
                 reflectionView(for: selectedOption)
                     .opacity(reflectionViewOpacity)
             }
@@ -79,14 +62,15 @@ struct Gear3: View {
             startExtendedRuntimeSession()
             animatePhase(phase: 0)
         }
-        .onChange(of: selection) { oldValue, newValue in
-            if newValue != nil {
-                transitionToReflectionView()
-            }
-        }
+    }
+    
+    private func handleSelection(_ option: GearOption) {
+        selectedOption = option
+        reflectionManager.logGearSelection(option, forGear: 3, atDate: .now)
     }
     
     private func completeReflection(canceled: Bool) {
+        reflectionManager.endCurrentSession(atDate: .now)
         endExtendedRuntimeSession()
         router.navigateHome()
     }
@@ -127,24 +111,21 @@ struct Gear3: View {
     }
     
     @ViewBuilder
-    private func reflectionView(for option: ReflectionOptions) -> some View {
+    private func reflectionView(for option: GearOption) -> some View {
         switch option {
-        case .breaths:
+        case GearOption(text: "Mindful Breaths", icon: "apple.meditate"):
             Breathe()
-        case .taps:
+        case GearOption(text: "Cross Body Taps", icon: "hand.tap"):
             Text("Cross Body Taps")
                 .fontWeight(.bold)
-        case .visualization:
+        case GearOption(text: "Visualization", icon: "photo"):
             Text("Visualization")
                 .fontWeight(.bold)
-        case .exercise:
+        case GearOption(text: "Exercise", icon: "figure.run.treadmill"):
             Text("Exercise")
                 .fontWeight(.bold)
-        case .nature:
-            Text("Time in Nature")
-                .fontWeight(.bold)
-        case .friends:
-            Text("Talk with Friend(s)")
+        default:
+            Text(option.text)
                 .fontWeight(.bold)
         }
     }
@@ -167,4 +148,5 @@ struct Gear3: View {
 #Preview {
     Gear3()
         .environment(NavigationRouter())
+        .environmentObject(ReflectionManager())
 }

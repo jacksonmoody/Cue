@@ -12,6 +12,7 @@ import WatchKit
 
 struct Gear2: View {
     @Environment(NavigationRouter.self) private var router
+    @EnvironmentObject var reflectionManager: ReflectionManager
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
     @State private var vibrationTimer: Timer?
@@ -43,27 +44,14 @@ struct Gear2: View {
             
             if currentPhase == 2 {
                 List {
-                    ListButton("Heart Racing", image: "heart") {
-                        navigateNext()
-                    }
-                    ListButton("Muscle Tensing", image: "dumbbell") {
-                        navigateNext()
-                    }
-                    ListButton("Rapid Breathing", image: "lungs") {
-                        navigateNext()
-                    }
-                    ListButton("Feeling Heavy", image: "scalemass") {
-                        navigateNext()
-                    }
-                    ListButton("Other", image: "questionmark") {
-                        navigateNext()
-                    }
-                    ListButton("No Change", image: "circle.slash") {
-                        navigateNext()
+                    ForEach(reflectionManager.preferences?.gear2Options ?? []) { option in
+                        ListButton(option.text, image: option.icon) {
+                            navigateNext(option)
+                        }
                     }
                     Text("Customize these options in the \"Reflect\" tab of the Cue iOS app.")
                         .font(.system(size: 12))
-                        .listRowBackground(Color.black.opacity(0))
+                        .listRowBackground(Color.clear)
                 }
                 .opacity(opacity)
                 .scrollIndicators(.hidden)
@@ -126,7 +114,8 @@ struct Gear2: View {
         vibrationTimer = nil
     }
 
-    private func navigateNext() {
+    private func navigateNext(_ option: GearOption) {
+        reflectionManager.logGearSelection(option, forGear: 2, atDate: .now)
         if isMuted {
             router.navigateToMuted()
         } else {
@@ -138,4 +127,5 @@ struct Gear2: View {
 #Preview {
     Gear2()
         .environment(NavigationRouter())
+        .environmentObject(ReflectionManager())
 }

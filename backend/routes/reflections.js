@@ -34,6 +34,42 @@ router.post("/", async function (req, res) {
     }
 });
 
+router.post("/update", async function (req, res) {
+    var db = req.db;
+    var userId = req.body && req.body.userId;
+    var reflection = req.body && req.body.reflection;
+
+    if (!userId || typeof userId !== "string" || !userId.trim()) {
+        return res.status(400).json({ error: "userId (string) is required" });
+    }
+
+    if (!reflection) {
+        return res.status(400).json({ error: "reflection (object) is required" });
+    }
+
+    var trimmedUserId = userId.trim();
+
+    try {
+        var reflections = db.collection("reflections");
+        var result = await reflections.updateOne(
+            { userId: trimmedUserId, "reflection.id": reflection.id },
+            { $set: { reflection: reflection } }
+        );
+        
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ error: "Reflection not found" });
+        }
+        
+        res.status(200).json({
+            reflection: reflection,
+        });
+    }
+    catch (err) {
+        console.error("Error updating reflection", err);
+        res.status(500).json({ error: "Failed to update reflection" });
+    }
+});
+
 router.get("/:userId", async function (req, res) {
     var db = req.db;
     var userId = req.params.userId;

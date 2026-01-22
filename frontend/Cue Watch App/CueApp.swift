@@ -15,6 +15,7 @@ struct Cue_Watch_AppApp: App {
     @WKApplicationDelegateAdaptor(WatchDelegate.self) var delegate
     @StateObject private var workoutManager = WorkoutManager()
     @StateObject private var variantManager = VariantManager()
+    @StateObject private var reflectionManager = ReflectionManager()
     @State private var navigationRouter = NavigationRouter()
     
     var body: some Scene {
@@ -22,6 +23,7 @@ struct Cue_Watch_AppApp: App {
              RootView()
                 .onAppear {
                     workoutManager.variantManager = variantManager
+                    reflectionManager.variantManager = variantManager
                     delegate.workoutManager = workoutManager
                     if delegate.launchedFromNotification {
                         print("User launched app from local notification")
@@ -30,6 +32,7 @@ struct Cue_Watch_AppApp: App {
                 }
                 .environmentObject(workoutManager)
                 .environmentObject(variantManager)
+                .environmentObject(reflectionManager)
                 .environment(navigationRouter)
         }
     }
