@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**_Last Updated: January 09, 2026_**
+**_Last Updated: January 27, 2026_**
 
 This Privacy Notice for Cue (**"we,"** **"us,"** or **"our"**), describes how and why we might access, collect, store, use, and/or share (**"process"**) your personal information when you use our services (**"Services"**), including when you:
 
@@ -14,13 +14,13 @@ This Privacy Notice for Cue (**"we,"** **"us,"** or **"our"**), describes how an
 
 **_This summary provides key points from our Privacy Notice, but you can find out more details about any of these topics by clicking the link following each key point or by using our [table of contents](#table-of-contents) below to find the section you are looking for._**
 
-**What personal information do we process?** When you visit, use, or navigate our Services, we may process personal information depending on how you interact with us and the Services, the choices you make, and the products and features you use. Learn more about [personal information you disclose to us](#1-what-information-do-we-collect).
+**What personal information do we process?** When you visit, use, or navigate our Services, we may process personal information depending on how you interact with us and the Services, the choices you make, and the features you use. Learn more about [personal information you disclose to us](#1-what-information-do-we-collect).
 
-**Do we process any sensitive personal information?** Some of the information may be considered "special" or "sensitive" in certain jurisdictions, for example your racial or ethnic origins, sexual orientation, and religious beliefs. We may process sensitive personal information when necessary with your consent or as otherwise permitted by applicable law.
+**Do we process any sensitive personal information?** Some of the information may be considered "special" or "sensitive" in certain jurisdictions, for example your personal health or location information. We may process sensitive personal information when necessary with your consent or as otherwise permitted by applicable law.
 
-**Do we collect any information from third parties?** We do not collect any information from third parties.
+**Do we collect any information from third parties?** We do not collect any information from third parties. Additionally, we do not transfer or disclose your information to third parties for purposes other than the ones provided in this Privacy Policy.
 
-**How do we process your information?** We process your information to provide, improve, and administer our Services, communicate with you, for security and fraud prevention, and to comply with law. We may also process your information for other purposes with your consent. We process your information only when we have a valid legal reason to do so. Learn more about [how we process your information](#2-how-do-we-process-your-information).
+**How do we process your information?** We process your information to provide and administer our Services, communicate with you, for security and fraud prevention, and to comply with law. We process your information only when we have a valid legal reason to do so. Learn more about [how we process your information](#2-how-do-we-process-your-information).
 
 **How do we keep your information safe?** We have adequate organizational and technical processes and procedures in place to protect your personal information. However, no electronic transmission over the internet or information storage technology can be guaranteed to be 100% secure, so we cannot promise or guarantee that hackers, cybercriminals, or other unauthorized third parties will not be able to defeat our security and improperly collect, access, steal, or modify your information. Learn more about [how we keep your information safe](#6-how-do-we-keep-your-information-safe).
 
@@ -52,44 +52,47 @@ Want to learn more about what we do with any information we collect? [Review the
 
 **_In Short:_** _We collect personal information that you provide to us._
 
-We collect personal information that you voluntarily provide to us when you register on the Services, express an interest in obtaining information about us or our products and Services, when you participate in activities on the Services, or otherwise when you contact us.
+We collect personal information that you voluntarily provide to us when you register on the Services, when you participate in activities on the Services, or otherwise when you contact us.
 
 **Personal Information Provided by You.** The personal information that we collect depends on the context of your interactions with us and the Services, the choices you make, and the products and features you use. The personal information we collect may include the following:
 
 - names
 - email addresses
+- occupation
   <br>
 
 **Sensitive Information.** When necessary, with your consent or as otherwise permitted by applicable law, we process the following categories of sensitive information:
 
-- health data
+- health data (heart rate, resting heart rate, heart rate variability)
+- motion data (accelerometer, gyroscope)
+- calendar data (events from Google Calendar)
   <br>
 
-**Social Media Login Data.** We may provide you with the option to register with us using your existing social media account details, including your Apple ID and Google Accounts. If you choose to register in this way, we will collect certain profile information about you from the social media provider, as described in the section called ["HOW DO WE HANDLE YOUR SOCIAL LOGINS?"](#4-how-do-we-handle-your-social-logins) below.
+**Social Media Login Data.** We provide you with the option to register with us using your existing social media account details, including your Apple ID and Google Account. If you choose to register in this way, we collect certain profile information about you from the social media provider, as described in the section called ["HOW DO WE HANDLE YOUR SOCIAL LOGINS?"](#4-how-do-we-handle-your-social-logins) below.
 
 **Application Data.** If you use our application(s), we also may collect the following information if you choose to provide us with access or permission:
 
 - _Geolocation Information_. We may request access or permission to track location-based information from your mobile device, either continuously or while you are using our mobile application(s), to provide certain location-based services. If you wish to change our access or permissions, you may do so in your device's settings.
-- _Mobile Device Access_. We may request access or permission to certain features from your mobile device, including your mobile device's calendar, sensors, and other features. If you wish to change our access or permissions, you may do so in your device's settings.
+- _Mobile Device Access_. We may request access or permission to certain features from your mobile device, including your mobile device's motion sensors. If you wish to change our access or permissions, you may do so in your device's settings.
 - _Push Notifications_. We may request to send you push notifications regarding your account or certain features of the application(s). If you wish to opt out from receiving these types of communications, you may turn them off in your device's settings.
 
-This information is primarily needed to maintain the security and operation of our application(s), for troubleshooting, and for our internal analytics and reporting purposes.
-
-All personal information that you provide to us must be true, complete, and accurate, and you must notify us of any changes to such personal information.
+This information is used solely for the purpose of providing or improving user-facing features of the application. All other uses are expressly prohibited.
 
 ### Google API
 
-Our use of information received from Google APIs will adhere to [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the [Limited Use requirements](https://developers.google.com/terms/api-services-user-data-policy#limited-use).
+Our use of Google Calendar data and profile information received from Google APIs will adhere to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the [Limited Use requirements](https://developers.google.com/terms/api-services-user-data-policy#limited-use).
+
+In particular, Google user data will be used solely for the purpose of providing or improving user-facing features of the application. All other uses are expressly prohibited.
 
 ## 2. HOW DO WE PROCESS YOUR INFORMATION?
 
-**_In Short:_** _We process your information to provide, improve, and administer our Services, communicate with you, for security and fraud prevention, and to comply with law. We may also process your information for other purposes with your consent._
+**_In Short:_** _We process your information to provide and administer our Services, communicate with you, for security and fraud prevention, and to comply with law. We process your information only when we have a valid legal reason to do so._
 
 **We process your personal information for a variety of reasons, depending on how you interact with our Services, including:**
 
 - **To facilitate account creation and authentication and otherwise manage user accounts**. We may process your information so you can create and log in to your account, as well as keep your account in working order.
 - **To deliver and facilitate delivery of services to the user**. We may process your information to provide you with the requested service.
-- **To evaluate and improve our Services**. We may process your information when we believe it is necessary to identify usage trends, determine the effectiveness of different experimental variations, and to evaluate and improve our Services.
+- **To evaluate and improve our Services**. We may process your information when we believe it is necessary to identify usage trends and to determine the effectiveness of different experimental variations.
 
 ## 3. DO WE OFFER ARTIFICIAL INTELLIGENCE-BASED PRODUCTS?
 
@@ -99,26 +102,28 @@ As part of our Services, we offer products, features, or tools powered by artifi
 
 **Use of AI Technologies**
 
-We provide the AI Products through third-party service providers ("AI Service Providers"), including OpenAI. As outlined in this Privacy Notice, your input, output, and personal information will be shared with and processed by these AI Service Providers to enable your use of our AI Products. You must not use the AI Products in any way that violates the terms or policies of any AI Service Provider.
+We provide the AI Products through third-party service providers ("AI Service Providers"), including OpenAI and Anthropic. As outlined in this Privacy Notice, redacted versions of your personal information will be shared with and processed by these AI Service Providers to enable your use of our AI Products. You must not use the AI Products in any way that violates the terms or policies of any AI Service Provider.
 
 **Our AI Products**
 
 Our AI Products are designed for the following functions:
 
-- AI insights
+- AI insights and reflections
 - Smart notifications
 
 **How We Process Your Data Using AI**
 
-All personal information processed using our AI Products is handled in line with our Privacy Notice and our agreement with third parties. This ensures high security and safeguards your personal information throughout the process, giving you peace of mind about your data's safety.
+Personal information processed using our AI Products is handled in line with our Privacy Notice and our agreement with third parties. This ensures high security and safeguards your personal information throughout the process, giving you peace of mind about your data's safety.
+
+Google user data will not be shared with AI Service Providers or used to train AI models.
 
 ## 4. HOW DO WE HANDLE YOUR SOCIAL LOGINS?
 
 **_In Short:_** _If you choose to register or log in to our Services using a social media account, we may have access to certain information about you._
 
-Our Services offer you the ability to register and log in using your third-party social media account details (including your Apple ID and Google Accounts). Where you choose to do this, we will receive certain profile information about you from your social media provider. The profile information we receive may vary depending on the social media provider concerned, but will often include your name, email address, and profile picture, as well as other information you choose to make public on such a social media platform.
+Our Services offer you the ability to register and log in using your third-party social media account details (including your Apple ID and Google Account). Where you choose to do this, we will receive certain profile information about you from your social media provider. The profile information we receive may vary depending on the social media provider concerned, but will often include your name, email address, and profile picture, as well as other information you choose to make public on such a social media platform.
 
-We will use the information we receive only for the purposes that are described in this Privacy Notice or that are otherwise made clear to you on the relevant Services. Please note that we do not control, and are not responsible for, other uses of your personal information by your third-party social media provider. We recommend that you review their privacy notice to understand how they collect, use, and share your personal information, and how you can set your privacy preferences on their sites and apps.
+We will use the information we receive only for the purposes that are described in this Privacy Notice. In particular, any user data obtained via social login will be used solely for the purpose of providing or improving user-facing features of the application. All other uses are expressly prohibited. Please note that we do not control, and are not responsible for, other uses of your personal information by your third-party social media provider. We recommend that you review their privacy notice to understand how they collect, use, and share your personal information, and how you can set your privacy preferences on their sites and apps.
 
 ## 5. HOW LONG DO WE KEEP YOUR INFORMATION?
 
@@ -126,13 +131,13 @@ We will use the information we receive only for the purposes that are described 
 
 We will only keep your personal information for as long as it is necessary for the purposes set out in this Privacy Notice, unless a longer retention period is required or permitted by law (such as tax, accounting, or other legal requirements). No purpose in this notice will require us keeping your personal information for longer than the period of time in which users have an account with us.
 
-When we have no ongoing legitimate business need to process your personal information, we will either delete or anonymize such information, or, if this is not possible (for example, because your personal information has been stored in backup archives), then we will securely store your personal information and isolate it from any further processing until deletion is possible.
+When we have no ongoing legitimate need to process your personal information, it will be securely deleted from our systems.
 
 ## 6. HOW DO WE KEEP YOUR INFORMATION SAFE?
 
 **_In Short:_** _We aim to protect your personal information through a system of organizational and technical security measures._
 
-We have implemented appropriate and reasonable technical and organizational security measures designed to protect the security of any personal information we process. However, despite our safeguards and efforts to secure your information, no electronic transmission over the Internet or information storage technology can be guaranteed to be 100% secure, so we cannot promise or guarantee that hackers, cybercriminals, or other unauthorized third parties will not be able to defeat our security and improperly collect, access, steal, or modify your information. Although we will do our best to protect your personal information, transmission of personal information to and from our Services is at your own risk. You should only access the Services within a secure environment.
+We have implemented appropriate and reasonable technical and organizational security measures designed to protect the security of any personal information we process. However, despite our safeguards and efforts to secure your information, no electronic transmission over the Internet or information storage technology can be guaranteed to be 100% secure, so we cannot promise or guarantee that hackers, cybercriminals, or other unauthorized third parties will not be able to defeat our security and improperly collect, access, steal, or modify your information. Although we will do our best to protect your personal information, transmission of personal information to and from our Services is at your own risk.
 
 ## 7. DO WE COLLECT INFORMATION FROM MINORS?
 
@@ -152,7 +157,7 @@ However, please note that this will not affect the lawfulness of the processing 
 
 If you would at any time like to review or change the information in your account or terminate your account, you can email us at [jacksonmoody@college.harvard.edu](mailto:jacksonmoody@college.harvard.edu).
 
-Upon your request to terminate your account, we will deactivate or delete your account and information from our active databases. However, we may retain some information in our files to prevent fraud, troubleshoot problems, assist with any investigations, enforce our legal terms and/or comply with applicable legal requirements.
+Upon your request to terminate your account, we will delete your account and information from our active databases. However, we may retain some information in our files to prevent fraud, troubleshoot problems, assist with any investigations, enforce our legal terms and/or comply with applicable legal requirements.
 
 If you have questions or comments about your privacy rights, you may email us at [jacksonmoody@college.harvard.edu](mailto:jacksonmoody@college.harvard.edu).
 
@@ -181,13 +186,13 @@ The table below shows the categories of personal information we have collected i
 | E. Biometric information                                                      | Fingerprints and voiceprints                                                                                                                                                                             | NO            |
 | F. Internet or other similar network activity                                 | Browsing history, search history, online behavior, interest data, and interactions with our and other websites, applications, systems, and advertisements                                                | NO            |
 | G. Geolocation data                                                           | Device location                                                                                                                                                                                          | YES           |
-| H. Audio, electronic, sensory, or similar information                         | Images and audio, video or call recordings created in connection with our business activities                                                                                                            | YES           |
+| H. Audio, electronic, sensory, or similar information                         | Images and audio, video or call recordings created in connection with our application                                                                                                                    | YES           |
 | I. Professional or employment-related information                             | Business contact details in order to provide you our Services at a business level or job title, work history, and professional qualifications if you apply for a job with us                             | NO            |
 | J. Education Information                                                      | Student records and directory information                                                                                                                                                                | NO            |
 | K. Inferences drawn from collected personal information                       | Inferences drawn from any of the collected personal information listed above to create a profile or summary about, for example, an individual’s preferences and characteristics                          | NO            |
 | L. Sensitive personal Information                                             | Health data and precise geolocation                                                                                                                                                                      | YES           |
 
-We only collect sensitive personal information, as defined by applicable privacy laws or the purposes allowed by law or with your consent. Sensitive personal information may be used, or disclosed to a service provider or contractor, for additional, specified purposes. You may have the right to limit the use or disclosure of your sensitive personal information. We do not collect or process sensitive personal information for the purpose of inferring characteristics about you.
+We only collect sensitive personal information, as defined by applicable privacy laws or the purposes allowed by law or with your consent. You may have the right to limit the use or disclosure of your sensitive personal information. We do not collect or process sensitive personal information for the purpose of inferring characteristics about you.
 
 We will use and retain the collected personal information as needed to provide the Services or for as long as the user has an account with us.
 
@@ -200,9 +205,9 @@ Learn more about the sources of personal information we collect in ["WHAT INFORM
 Learn more about how we use your personal information in the section, ["HOW DO WE PROCESS YOUR INFORMATION?"](#2-how-do-we-process-your-information).
 
 **Will your information be shared with anyone else?**  
-We may use your personal information for our own purposes, such as for undertaking internal research for technological development and demonstration. However, this is not considered to be "selling" of your personal information.
+We may use your personal information solely for the purpose of providing or improving user-facing features of the application. This is not considered to be "selling" of your personal information.
 
-We have not disclosed, sold, or shared any personal information to third parties for a business or commercial purpose in the preceding twelve (12) months. We will not sell or share personal information in the future belonging to website visitors, users, and other consumers.
+We have not disclosed, sold, or shared any personal information to third parties in the preceding twelve (12) months. We will not sell or share personal information in the future belonging to users of the application.
 
 ### Your Rights
 
@@ -214,14 +219,10 @@ You have rights under certain US state data protection laws. However, these righ
 - **Right to request** the deletion of your personal data
 - **Right to obtain a copy** of the personal data you previously shared with us
 - **Right to non-discrimination** for exercising your rights
-- **Right to opt out** of the processing of your personal data if it is used for targeted advertising (or sharing as defined under California’s privacy law), the sale of personal data, or profiling in furtherance of decisions that produce legal or similarly significant effects ("profiling")
 
 Depending upon the state where you live, you may also have the following rights:
 
 - Right to access the categories of personal data being processed (as permitted by applicable law, including the privacy law in Minnesota)
-- Right to obtain a list of the categories of third parties to which we have disclosed personal data (as permitted by applicable law, including the privacy law in California, Delaware, and Maryland)
-- Right to obtain a list of specific third parties to which we have disclosed personal data (as permitted by applicable law, including the privacy law in Minnesota and Oregon)
-- Right to obtain a list of third parties to which we have sold personal data (as permitted by applicable law, including the privacy law in Connecticut)
 - Right to review, understand, question, and depending on where you live, correct how personal data has been profiled (as permitted by applicable law, including the privacy law in Connecticut and Minnesota)
 - Right to limit use and disclosure of sensitive personal data (as permitted by applicable law, including the privacy law in California)
 - Right to opt out of the collection of sensitive data and personal data collected through the operation of a voice or facial recognition feature (as permitted by applicable law, including the privacy law in Florida)

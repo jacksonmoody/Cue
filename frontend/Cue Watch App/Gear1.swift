@@ -17,12 +17,20 @@ struct Gear1: View {
     @State private var opacity: Double = 0
     @State private var fetchedOptions: Bool = false
     @State private var showLoading: Bool = false
+    @State private var readyToShowOptions: Bool = false
 
     var body: some View {
         ZStack {
             if currentPhase == 0 {
+                Text("Let's take a moment to reflect...")
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .opacity(opacity)
+                    .padding(.horizontal)
+            }
+            if currentPhase == 1 {
                 VStack {
-                    Text("Let's take a moment to reflect...")
+                    Text("What may have triggered this response?")
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
                         .opacity(opacity)
@@ -35,25 +43,22 @@ struct Gear1: View {
                     }
                 }
             }
-            if currentPhase == 1 {
+            if currentPhase == 2 {
                 List {
-                    Section(header: Text("What may have triggered this response?").padding(.leading, -5).padding(.bottom, 10).padding(.trailing, -10)) {
-                        ForEach(reflectionManager.gear1Options) { option in
-                            ListButton(option.text, image: option.icon) {
-                                gear1Selection(option)
-                            }
+                    ForEach(reflectionManager.gear1Options) { option in
+                        ListButton(option.text, image: option.icon) {
+                            gear1Selection(option)
                         }
-                        ListButton("Not Sure", image: "questionmark") {
-                            gear1Selection(GearOption(text: "Not Sure", icon: "questionmark"))
-                        }
-                        ListButton("Other", image: "ellipsis.circle") {
-                            gear1Selection(GearOption(text: "Other", icon: "ellipsis.circle"))
-                        }
-                        Text("You can edit your response in the \"Reflect\" tab of the Cue iOS app.")
-                            .font(.system(size: 12))
-                            .listRowBackground(Color.clear)
                     }
-                    .headerProminence(.increased)
+                    ListButton("Not Sure", image: "questionmark") {
+                        gear1Selection(GearOption(text: "Not Sure", icon: "questionmark"))
+                    }
+                    ListButton("Other", image: "ellipsis.circle") {
+                        gear1Selection(GearOption(text: "Other", icon: "ellipsis.circle"))
+                    }
+                    Text("You can edit your response in the \"Reflect\" tab of the Cue iOS app.")
+                        .font(.system(size: 12))
+                        .listRowBackground(Color.clear)
                 }
                 .opacity(opacity)
                 .scrollIndicators(.hidden)
@@ -61,17 +66,31 @@ struct Gear1: View {
             }
         }
         .onAppear {
-            withAnimation(.easeInOut(duration: 2.5)) {
+            withAnimation(.easeInOut(duration: 1.5)) {
                 opacity = 1.0
             }
-        }
-        .task {
-            await setupReflection()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                withAnimation(.easeInOut(duration: 1.5)) {
+                    opacity = 0
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) {
+                currentPhase = 1
+                withAnimation(.easeInOut(duration: 1.5)) {
+                    opacity = 1
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 7.5) {
+                readyToShowOptions = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
                 withAnimation {
                     showLoading = true
                 }
             }
+        }
+        .task {
+            await setupReflection()
         }
         .onChange(of: locationService.mostRecentLocation) { oldValue, newValue in
             if let location = newValue, !fetchedOptions {
@@ -84,17 +103,10 @@ struct Gear1: View {
         }
         .onChange(of: reflectionManager.gear1Options) {
             oldOptions, newOptions in
-            if !newOptions.isEmpty {
-                withAnimation(.easeInOut(duration: 1.5)) {
-                    opacity = 0
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    currentPhase = 1
-                    withAnimation(.easeInOut(duration: 1.5)) {
-                        opacity = 1
-                    }
-                }
-            }
+            showOptions(newOptions)
+        }
+        .onChange(of: readyToShowOptions) {
+            showOptions(reflectionManager.gear1Options)
         }
     }
     
@@ -107,6 +119,20 @@ struct Gear1: View {
     private func gear1Selection(_ option: GearOption) {
         reflectionManager.logGearSelection(option, forGear: 1, atDate: .now)
         router.navigateToGear2()
+    }
+    
+    private func showOptions(_ options: [GearOption]) {
+        if !options.isEmpty && readyToShowOptions {
+            withAnimation(.easeInOut(duration: 1.5)) {
+                opacity = 0
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                currentPhase = 2
+                withAnimation(.easeInOut(duration: 1.5)) {
+                    opacity = 1
+                }
+            }
+        }
     }
 }
 

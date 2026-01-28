@@ -30,7 +30,7 @@ struct SessionDetailView: View {
                 }
             }
         }
-        .navigationTitle("Session Details")
+        .navigationTitle("Reflection Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
@@ -270,10 +270,13 @@ struct HeartRateGraph: View {
     }
     
     private func loadHRData() async {
+        guard let endDate = session.endDate else {
+            return
+        }
         do {
             let store = HKHealthStore()
             let hrType = HKQuantityType(.heartRate)
-            let datePredicate = HKQuery.predicateForSamples(withStart: session.startDate, end: session.endDate, options: [])
+            let datePredicate = HKQuery.predicateForSamples(withStart: session.startDate, end: endDate, options: [])
             let descriptor = HKSampleQueryDescriptor(
                 predicates: [.quantitySample(type: hrType, predicate: datePredicate)],
                 sortDescriptors: [SortDescriptor(\.endDate, order: .reverse)])

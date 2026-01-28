@@ -103,7 +103,7 @@ export default function Home() {
             <GearCard
               step={3}
               title="Substitution"
-              description="Substitute a better reward. Use breathing exercises to restore balance and calm."
+              description="Substitute a better reward. Use guided exercises to restore balance and calm."
               Icon={Wind}
             />
           </div>

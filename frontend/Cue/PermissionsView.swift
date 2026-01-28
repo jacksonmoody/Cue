@@ -61,7 +61,7 @@ struct PermissionsView: View {
                     PermissionCard(
                         title: "Health Permissions",
                         icon: "heart.fill",
-                        description: "Access to health data for biometric tracking.",
+                        description: "Access to health data for tracking your physiological state.",
                         isAuthorized: isHealthAuthorized,
                         action: handleHealthPermissions
                     )
@@ -82,23 +82,22 @@ struct PermissionsView: View {
                         action: handleLocationPermissions
                     )
                     
-                    VStack(spacing: 20) {
-                        Text("Sign in with Google to personalize your reflection experience with events from your Google Calendar:")
-                            .font(.system(size: 16))
-                            .fontWeight(.semibold)
-                        GoogleSignInButton {
-                            handleGoogleSignIn()
-                        }
-                    }
-                    .padding(.horizontal)
+                    PermissionCard(
+                        title: "Google Calendar",
+                        icon: "calendar",
+                        description: "Used to personalize your reflection experience. Sign in with your most-used account for calendar events.",
+                        isAuthorized: isCalendarAuthorized,
+                        action: handleGoogleSignIn
+                    )
                     
-//                    PermissionCard(
-//                        title: "Google Calendar",
-//                        icon: "calendar",
-//                        description: "Used to personalize your reflection experience. Please sign in with your most-used account for calendar events.",
-//                        isAuthorized: isCalendarAuthorized,
-//                        action: handleGoogleSignIn
-//                    )
+//                    VStack(spacing: 20) {
+//                        Text("Sign in with Google to personalize your reflection experience with events from your Google Calendar:")
+//                            .font(.system(size: 16))
+//                            .fontWeight(.semibold)
+//                        GoogleSignInButton {
+//                            handleGoogleSignIn()
+//                        }
+//                    }
                 }
                 
                 Button(action: handleNext) {
