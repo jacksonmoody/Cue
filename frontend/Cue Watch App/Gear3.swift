@@ -19,7 +19,7 @@ struct Gear3: View {
     @State private var reflectionViewOpacity: Double = 0
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
         (fadeIn: 1.5, display: 1.5, fadeOut: 1.5),
-        (fadeIn: 1.5, display: 0, fadeOut: 0),
+        (fadeIn: 1.5, display: 73.5, fadeOut: 0),
     ]
 
     var body: some View {
@@ -52,9 +52,11 @@ struct Gear3: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Cancel", systemImage: "xmark") {
-                    completeReflection(canceled: true)
+            if showReflectionView {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Cancel", systemImage: "xmark") {
+                        completeReflection(canceled: true)
+                    }
                 }
             }
         }
@@ -117,7 +119,9 @@ struct Gear3: View {
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            showReflectionView = true
+            withAnimation {
+                showReflectionView = true
+            }
             reflectionViewOpacity = 0.0
             withAnimation(.easeInOut(duration: 0.5)) {
                 reflectionViewOpacity = 1.0
@@ -129,19 +133,15 @@ struct Gear3: View {
     private func reflectionView(for option: GearOption) -> some View {
         switch option {
         case GearOption(text: "Mindful Breaths", icon: "apple.meditate"):
-            Breathe()
+            Breathe(completeReflection: completeReflection)
         case GearOption(text: "Cross Body Taps", icon: "hand.tap"):
-            Text("Cross Body Taps")
-                .fontWeight(.bold)
+            Taps(completeReflection: completeReflection)
         case GearOption(text: "Visualization", icon: "photo"):
-            Text("Visualization")
-                .fontWeight(.bold)
+            Visualization(completeReflection: completeReflection)
         case GearOption(text: "Exercise", icon: "figure.run.treadmill"):
-            Text("Exercise")
-                .fontWeight(.bold)
+            DefaultReflect(title: "Exercise", icon: "figure.run.treadmill", playAudio: false, completeReflection: completeReflection)
         default:
-            Text(option.text)
-                .fontWeight(.bold)
+            DefaultReflect(title: option.text, icon: option.icon, completeReflection: completeReflection)
         }
     }
 }

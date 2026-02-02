@@ -8,6 +8,11 @@
 import Foundation
 import Combine
 
+struct SessionCountResponse: Decodable {
+    let sessionCount: Int
+    let reflectionCount: Int
+}
+
 class SessionManager: ObservableObject {
     private let userDefaults = UserDefaults.standard
     private let backendService = BackendService.shared
@@ -15,6 +20,7 @@ class SessionManager: ObservableObject {
     var variantManager: VariantManager?
     
     @Published var sessionCount: Int?
+    @Published var reflectionCount: Int?
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     
@@ -39,7 +45,8 @@ class SessionManager: ObservableObject {
                 path: "/sessions/\(encodedUserId)/count",
                 responseType: SessionCountResponse.self
             )
-            sessionCount = response.count
+            sessionCount = response.sessionCount
+            reflectionCount = response.reflectionCount
         } catch {
             errorMessage = error.localizedDescription
         }

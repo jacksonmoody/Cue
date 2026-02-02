@@ -18,6 +18,7 @@ struct Gear1: View {
     @State private var fetchedOptions: Bool = false
     @State private var showLoading: Bool = false
     @State private var readyToShowOptions: Bool = false
+    @State private var showErrorAlert: Bool = false
 
     var body: some View {
         ZStack {
@@ -107,6 +108,20 @@ struct Gear1: View {
         }
         .onChange(of: readyToShowOptions) {
             showOptions(reflectionManager.gear1Options)
+        }
+        .onChange(of: reflectionManager.errorMessage) { _, newValue in
+            showErrorAlert = (newValue != nil)
+        }
+        .alert("Reflection Error", isPresented: $showErrorAlert) {
+            Button("OK") {
+                reflectionManager.errorMessage = nil
+                router.navigateHome()
+            }
+        } message: {
+            if let message = reflectionManager.errorMessage {
+                Text(message)
+                    .font(.caption)
+            }
         }
     }
     

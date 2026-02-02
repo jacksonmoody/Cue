@@ -84,6 +84,9 @@ class ReflectionManager: ObservableObject {
         do {
             currentSession = Session(startDate: Date())
             guard let userId = variantManager?.appleUserId else {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Failed to start reflection. Please check your Internet connection and try again."
+                }
                 return
             }
             let reflectionData = try JSONEncoder().encode(currentSession)
@@ -101,6 +104,9 @@ class ReflectionManager: ObservableObject {
                     return
                 case .failure(let error):
                     print("Failed to record session: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        self.errorMessage = "Failed to start reflection. Please check your Internet connection and try again."
+                    }
                 }
             }
         } catch {
@@ -218,10 +224,15 @@ class ReflectionManager: ObservableObject {
                 body: userData,
                 responseType: [GearOption].self
             )
-            gear1Options = response
-            errorMessage = nil
+            await MainActor.run {
+                gear1Options = response
+                errorMessage = nil
+            }
         } catch {
             print("Failed to fetch gear 1 options: \(error.localizedDescription)")
+            await MainActor.run {
+                errorMessage = "Unable to load options. Please check your Internet connection and try again."
+            }
         }
     }
     
@@ -248,10 +259,10 @@ class ReflectionManager: ObservableObject {
                 userDefaults.set(encoded, forKey: reflectionsKey)
             }
             sessions = response
-            errorMessage = nil
+            await MainActor.run { errorMessage = nil }
         } catch {
             print("Unexpected error: \(error.localizedDescription)")
-            errorMessage = "Failed to fetch reflections."
+            await MainActor.run { errorMessage = "Failed to fetch reflections." }
         }
     }
     
@@ -279,10 +290,10 @@ class ReflectionManager: ObservableObject {
                 userDefaults.set(encoded, forKey: preferencesKey)
             }
             preferences = response
-            errorMessage = nil
+            await MainActor.run { errorMessage = nil }
         } catch {
             print("Unexpected error: \(error.localizedDescription)")
-            errorMessage = "Failed to fetch preferences."
+            await MainActor.run { errorMessage = "Failed to fetch preferences." }
         }
     }
     
@@ -323,10 +334,10 @@ class ReflectionManager: ObservableObject {
                     userDefaults.set(encoded, forKey: preferencesKey)
                 }
             }
-            errorMessage = nil
+            await MainActor.run { errorMessage = nil }
         } catch {
             print("Error saving gear2 preferences: \(error.localizedDescription)")
-            errorMessage = "Failed to save preferences."
+            await MainActor.run { errorMessage = "Failed to save preferences." }
         }
     }
     
@@ -367,10 +378,10 @@ class ReflectionManager: ObservableObject {
                     userDefaults.set(encoded, forKey: preferencesKey)
                 }
             }
-            errorMessage = nil
+            await MainActor.run { errorMessage = nil }
         } catch {
             print("Error saving gear3 preferences: \(error.localizedDescription)")
-            errorMessage = "Failed to save preferences."
+            await MainActor.run { errorMessage = "Failed to save preferences." }
         }
     }
 }

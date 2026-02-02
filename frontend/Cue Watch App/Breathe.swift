@@ -10,6 +10,8 @@ import Combine
 import AVFoundation
 
 struct Breathe: View {
+    let completeReflection: (Bool) -> Void
+    
     enum BreathingPhase: CaseIterable {
         case inhale, hold, exhale
         
@@ -35,21 +37,29 @@ struct Breathe: View {
     private var totalCycleDuration: TimeInterval {
         BreathingPhase.allCases.reduce(0) { $0 + $1.duration }
     }
+    @State private var opacity = 1.0
     
     var body: some View {
-        TimelineView(BreatheTimelineSchedule(from: startDate)) { context in
+        TimelineView(ReflectTimelineSchedule(from: startDate)) { context in
             let elapsed = context.date.timeIntervalSince(startDate)
             let cycleElapsed = elapsed.truncatingRemainder(dividingBy: totalCycleDuration)
             let (phase, phaseElapsed) = calculatePhase(cycleElapsed: cycleElapsed)
             BreatheVisuals(
                 date: context.date,
                 phase: phase,
-                phaseElapsed: phaseElapsed
+                phaseElapsed: phaseElapsed,
+                opacity: opacity
             )
         }
         .onAppear {
             startDate = Date()
             playAudio()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 73.5) {
+                withAnimation(.easeInOut(duration: 2.5)) {
+                    opacity = 0
+                }
+                completeReflection(false)
+            }
         }
         .onDisappear {
             audioPlayer?.stop()
@@ -84,6 +94,7 @@ struct BreatheVisuals: View {
     let date: Date
     let phase: Breathe.BreathingPhase
     let phaseElapsed: TimeInterval
+    let opacity: Double
     
     var body: some View {
         let circleScale = calculateScale()
@@ -91,6 +102,7 @@ struct BreatheVisuals: View {
         let pulseOpacity = calculatePulse()
         
         ZStack {
+            Color.black.ignoresSafeArea(.all)
             Circle()
                 .stroke(Color.white.opacity(0.2), lineWidth: 2)
                 .scaleEffect(1.0)
@@ -119,6 +131,7 @@ struct BreatheVisuals: View {
         .onChange(of: phase) {
             WKInterfaceDevice.current().play(.click)
         }
+        .opacity(opacity)
     }
     
     func calculateScale() -> CGFloat {
@@ -147,20 +160,6 @@ struct BreatheVisuals: View {
         let progress = phaseElapsed.truncatingRemainder(dividingBy: pulseDuration) / pulseDuration
         let val = cos(progress * 2 * .pi)
         return 0.1 + 0.9 * ((val + 1) / 2)
-    }
-}
-
-// Ensure that view continues updating frequently even with Always On Display
-struct BreatheTimelineSchedule: TimelineSchedule {
-    var startDate: Date
-
-    init(from startDate: Date) {
-        self.startDate = startDate
-    }
-
-    func entries(from startDate: Date, mode: TimelineScheduleMode) -> PeriodicTimelineSchedule.Entries {
-        PeriodicTimelineSchedule(from: self.startDate, by: 1.0 / 30.0)
-            .entries(from: startDate, mode: mode)
     }
 }
 
@@ -205,6 +204,6 @@ struct SwirlingOrb: View {
 }
 
 #Preview {
-    Breathe()
+    Breathe(completeReflection: {_ in })
 }
 

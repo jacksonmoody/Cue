@@ -7,10 +7,6 @@
 
 import Foundation
 
-struct SessionCountResponse: Decodable {
-    let count: Int
-}
-
 enum BackendError: Error {
     case invalidURL
     case invalidResponse
@@ -85,6 +81,7 @@ class BackendService {
         } catch let error as BackendError {
             throw error
         } catch {
+
             throw BackendError.networkError(error)
         }
     }

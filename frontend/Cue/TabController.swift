@@ -16,7 +16,7 @@ enum TabItem {
 }
 
 class TabController: ObservableObject {
-    @Published var activeTab = TabItem.manage
+    @Published var activeTab = TabItem.reflect
 
     func open(_ tab: TabItem) {
         activeTab = tab

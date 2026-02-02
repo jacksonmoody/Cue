@@ -57,14 +57,20 @@ router.get("/:userId/count", async function (req, res) {
 
   try {
     var sessions = db.collection("sessions");
+    var reflections = db.collection("reflections");
     // 5 hours = 5 * 60 * 60 = 18000 seconds
     var fiveHoursInSeconds = 18000;
-    var count = await sessions.countDocuments({
-      userId: userId,
-      duration: { $gte: fiveHoursInSeconds },
-    });
-
-    res.json({ count: count });
+    var [count, reflectionCount] = await Promise.all([
+      sessions.countDocuments({
+        userId: userId,
+        duration: { $gte: fiveHoursInSeconds },
+      }),
+      reflections.countDocuments({
+        userId: userId,
+        "reflection.endDate": { $exists: true, $ne: null },
+      }),
+    ]);
+    res.json({ sessionCount: count, reflectionCount: reflectionCount });
   } catch (err) {
     console.error("Error counting sessions", err);
     res.status(500).json({ error: "Failed to count sessions" });

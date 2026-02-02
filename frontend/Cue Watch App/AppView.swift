@@ -64,17 +64,18 @@ struct AppView: View {
                             showingInstructions = true
                         }
                     }
-                    if variant == 2 {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button("Settings", systemImage: "gear") {
-                                router.navigateToSettings()
-                            }
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Intervention", systemImage: "apple.meditate") {
+                            router.navigateToGear1()
                         }
                     }
-                    if variant == 3 {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button("Intervention", systemImage: "apple.meditate") {
-                                router.navigateToGear1()
+                    if variant == 2 {
+                        ToolbarItem(placement: .bottomBar) {
+                            Spacer()
+                        }
+                        ToolbarItem(placement: .bottomBar) {
+                            Button("Settings", systemImage: "gear") {
+                                router.navigateToSettings()
                             }
                         }
                     }

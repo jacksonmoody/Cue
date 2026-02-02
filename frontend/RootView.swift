@@ -47,6 +47,7 @@ struct RootView: View {
         .task {
             await variantManager.loadVariant()
             #if os(watchOS)
+            WatchDelegate.scheduleReflectionReminderIfNeeded()
             await checkOnboardingStatus()
             #endif
         }
