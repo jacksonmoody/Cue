@@ -11,6 +11,7 @@ import AuthenticationServices
 struct RootView: View {
     @EnvironmentObject var variantManager: VariantManager
     @AppStorage("instructionsNeeded") private var instructionsNeeded = true
+    @AppStorage("variantSwitchPending") private var variantSwitchPending = false
     @State private var watchOnboardingLoading = false
     #if os(watchOS)
     @AppStorage("phoneOnboardingCompleted") private var phoneOnboardingCompleted = false
@@ -22,7 +23,7 @@ struct RootView: View {
             if shouldShowApp {
                 AppView(variant: variantManager.variant!)
                     .sheet(isPresented: $instructionsNeeded) {
-                        InstructionsView(instructionsNeeded: $instructionsNeeded, refresher: false)
+                        InstructionsView(instructionsNeeded: $instructionsNeeded, refresher: false, variantSwitch: variantSwitchPending)
                             .toolbar(content: {
                                ToolbarItem(placement: .cancellationAction) {
                                   Text("")
@@ -115,4 +116,5 @@ struct OnboardingStatusResponse: Decodable {
 #Preview {
     RootView()
         .environmentObject(VariantManager())
+        .environmentObject(ReflectionManager())
 }

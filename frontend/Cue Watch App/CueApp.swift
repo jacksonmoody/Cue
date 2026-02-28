@@ -134,7 +134,7 @@ extension WatchDelegate {
     }
 }
 
-// Monitoring reminders at 9am and 10pm (all variants)
+// Monitoring reminders at 9am and 9pm (all variants)
 private extension WatchDelegate {
     static let disableMonitoringIdentifier = "cue.reminder.disableMonitoring"
     static let enableMonitoringIdentifier = "cue.reminder.enableMonitoring"
@@ -159,7 +159,7 @@ private extension WatchDelegate {
             trigger: enableTrigger
         ))
 
-        components.hour = 22
+        components.hour = 21
         let disableContent = UNMutableNotificationContent()
         disableContent.title = "Disable Monitoring"
         disableContent.body = "Heading to bed? Consider disabling Cue monitoring to conserve battery."

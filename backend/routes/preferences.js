@@ -147,7 +147,7 @@ function getDefaultGear3Preferences() {
     },
     {
       id: crypto.randomUUID(),
-      text: "Cross Body Taps",
+      text: "Cross-Body Taps",
       icon: "hand.tap",
     },
     {

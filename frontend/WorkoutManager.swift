@@ -8,6 +8,16 @@
 import Foundation
 import HealthKit
 import Combine
+import UserNotifications
+
+struct SessionResponse: Decodable {
+    let userId: String
+    let duration: Double
+    let variantSwitched: Bool
+    let newVariant: Int?
+    let newPhase: Int?
+    let hoursLogged: Double?
+}
 
 class WorkoutManager: NSObject, ObservableObject {
     let healthStore = HKHealthStore()
@@ -155,22 +165,49 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
             return
         }
         
-        let sessionData: [String: Any] = [
+        var sessionData: [String: Any] = [
             "userId": userId,
             "duration": duration,
             "timestamp": ISO8601DateFormatter().string(from: Date())
         ]
         
-        backendService.post(path: "/sessions", body: sessionData) { result in
+        if let variant = variantManager?.variant {
+            sessionData["variant"] = variant
+        }
+        
+        backendService.postWithResponse(path: "/sessions", body: sessionData, responseType: SessionResponse.self) { result in
             switch result {
-            case .success:
+            case .success(let response):
                 WatchConnectivityManager.shared.notifySessionRecorded()
+                if response.variantSwitched, let newVariant = response.newVariant, let newPhase = response.newPhase {
+                    DispatchQueue.main.async {
+                        self.variantManager?.switchVariant(newVariant: newVariant, newPhase: newPhase)
+                        UserDefaults.standard.set(true, forKey: "instructionsNeeded")
+                        UserDefaults.standard.set(true, forKey: "variantSwitchPending")
+                    }
+                    self.fireVariantSwitchNotification()
+                    WatchConnectivityManager.shared.notifyVariantSwitched(newVariant: newVariant, newPhase: newPhase)
+                }
                 self.session?.stopActivity(with: nil)
             case .failure(let error):
                 print("Failed to record session: \(error.localizedDescription)")
                 self.session?.stopActivity(with: nil)
             }
         }
+    }
+    
+    private func fireVariantSwitchNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Variant Switched"
+        content.body = "You've been moved to a new experimental variant. Open the Cue app to see your updated instructions."
+        content.sound = .default
+        content.interruptionLevel = .timeSensitive
+        let request = UNNotificationRequest(
+            identifier: "cue.variantSwitched.\(UUID().uuidString)",
+            content: content,
+            trigger: nil
+        )
+        UNUserNotificationCenter.current().add(request)
     }
 }
 

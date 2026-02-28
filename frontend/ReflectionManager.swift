@@ -94,10 +94,13 @@ class ReflectionManager: ObservableObject {
                 print("Failed to convert reflection to dictionary")
                 return
             }
-            let sessionData: [String: Any] = [
+            var sessionData: [String: Any] = [
                 "userId": userId,
                 "reflection": reflectionDict
             ]
+            if let variant = variantManager?.variant {
+                sessionData["variant"] = variant
+            }
             backendService.post(path: "/reflections", body: sessionData) { result in
                 switch result {
                 case .success:

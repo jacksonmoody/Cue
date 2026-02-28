@@ -9,26 +9,49 @@ import Foundation
 import Combine
 
 struct SessionCountResponse: Decodable {
-    let sessionCount: Int
+    let currentPhase: Int
+    let hoursLogged: Double
+    let hoursRequired: Double
+    let experimentComplete: Bool
     let reflectionCount: Int
+    let reflectionsComplete: Bool?
 }
 
 class SessionManager: ObservableObject {
     private let userDefaults = UserDefaults.standard
     private let backendService = BackendService.shared
-    private let sessionCountKey = "sessionCount"
     var variantManager: VariantManager?
     
-    @Published var sessionCount: Int?
+    @Published var currentPhase: Int?
+    @Published var hoursLogged: Double?
+    @Published var hoursRequired: Double?
+    @Published var experimentComplete: Bool?
     @Published var reflectionCount: Int?
+    @Published var reflectionsComplete: Bool?
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     
-    var sessionsRemaining: Int? {
-        if let sessionCount {
-            return max(5 - sessionCount, 0)
-        }
-        return nil
+    var hoursLoggedDisplay: Double {
+        guard let hoursLogged else { return 0 }
+        return hoursLogged / 3600.0
+    }
+    
+    var hoursRequiredDisplay: Double {
+        guard let hoursRequired else { return 8.0 }
+        return hoursRequired / 3600.0
+    }
+    
+    var hoursRemaining: Double {
+        guard let hoursLogged, let hoursRequired else { return 8.0 }
+        return max(0, (hoursRequired - hoursLogged) / 3600.0)
+    }
+    
+    var isExperimentComplete: Bool {
+        experimentComplete ?? false
+    }
+    
+    var hasCurrentPhaseReflection: Bool {
+        (reflectionCount ?? 0) >= 1
     }
     
     func loadSessionCount() async {
@@ -45,8 +68,12 @@ class SessionManager: ObservableObject {
                 path: "/sessions/\(encodedUserId)/count",
                 responseType: SessionCountResponse.self
             )
-            sessionCount = response.sessionCount
+            currentPhase = response.currentPhase
+            hoursLogged = response.hoursLogged
+            hoursRequired = response.hoursRequired
+            experimentComplete = response.experimentComplete
             reflectionCount = response.reflectionCount
+            reflectionsComplete = response.reflectionsComplete
         } catch {
             errorMessage = error.localizedDescription
         }

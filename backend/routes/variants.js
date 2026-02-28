@@ -2,6 +2,15 @@ var express = require('express');
 
 var router = express.Router();
 
+var PERMUTATIONS = [
+  [1, 2, 3],
+  [1, 3, 2],
+  [2, 1, 3],
+  [2, 3, 1],
+  [3, 1, 2],
+  [3, 2, 1]
+];
+
 router.post('/', async function(req, res) {
   var db = req.db;
   var userId = req.body && req.body.userId;
@@ -14,43 +23,62 @@ router.post('/', async function(req, res) {
     var assignments = db.collection('assignments');
     var existing = await assignments.findOne({ userId: trimmedUserId });
     if (existing) {
+      var currentPhase = existing.currentPhase || 0;
+      var order = existing.order || [existing.variant];
+      var variant = order[currentPhase] || existing.variant;
       return res.json({
         userId: existing.userId,
-        variant: existing.variant,
+        variant: variant,
+        order: order,
+        currentPhase: currentPhase,
         assignedAt: existing.assignedAt
       });
     }
 
-    var counts = { 1: 0, 2: 0, 3: 0 };
+    var counts = {};
+    for (var i = 0; i < PERMUTATIONS.length; i++) {
+      counts[i] = 0;
+    }
+
     var aggregation = await assignments.aggregate([
-      { $group: { _id: '$variant', count: { $sum: 1 } } }
+      { $group: { _id: '$order', count: { $sum: 1 } } }
     ]).toArray();
 
     aggregation.forEach(function(doc) {
-      if (counts.hasOwnProperty(doc._id)) {
-        counts[doc._id] = doc.count;
+      if (doc._id && Array.isArray(doc._id)) {
+        for (var i = 0; i < PERMUTATIONS.length; i++) {
+          if (JSON.stringify(PERMUTATIONS[i]) === JSON.stringify(doc._id)) {
+            counts[i] = doc.count;
+            break;
+          }
+        }
       }
     });
 
-    var minCount = Math.min(counts[1], counts[2], counts[3]);
+    var minCount = Math.min.apply(null, Object.values(counts));
     var candidates = Object.keys(counts).filter(function(key) {
       return counts[key] === minCount;
     });
-    var chosenVariant = parseInt(
+    var chosenIndex = parseInt(
       candidates[Math.floor(Math.random() * candidates.length)],
       10
     );
+    var chosenOrder = PERMUTATIONS[chosenIndex];
 
     var now = new Date();
     await assignments.insertOne({
       userId: trimmedUserId,
-      variant: chosenVariant,
+      order: chosenOrder,
+      currentPhase: 0,
+      variant: chosenOrder[0],
       assignedAt: now
     });
 
     res.status(201).json({
       userId: trimmedUserId,
-      variant: chosenVariant,
+      variant: chosenOrder[0],
+      order: chosenOrder,
+      currentPhase: 0,
       assignedAt: now
     });
   } catch (err) {
@@ -74,9 +102,15 @@ router.get('/:userId', async function(req, res) {
       return res.status(404).json({ error: 'Variant not found for user' });
     }
 
+    var currentPhase = existing.currentPhase || 0;
+    var order = existing.order || [existing.variant];
+    var variant = order[currentPhase] || existing.variant;
+
     res.json({
       userId: existing.userId,
-      variant: existing.variant,
+      variant: variant,
+      order: order,
+      currentPhase: currentPhase,
       assignedAt: existing.assignedAt
     });
   } catch (err) {
@@ -86,4 +120,3 @@ router.get('/:userId', async function(req, res) {
 });
 
 module.exports = router;
-

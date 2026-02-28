@@ -38,4 +38,5 @@ struct AppView: View {
     AppView(variant: 3)
         .environmentObject(SessionManager())
         .environmentObject(VariantManager())
+        .environmentObject(ReflectionManager())
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D519D2172F480A8B008B0C78 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = D519D2162F480A8B008B0C78 /* SwiftSoup */; };
 		D51A5BF32EFA8496001AD612 /* breathe.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D51A5BF22EFA8496001AD612 /* breathe.mp3 */; };
 		D52A6D442EFB3E9F0092DE7E /* App Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */; };
 		D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
@@ -176,6 +177,7 @@
 			files = (
 				D57A47B82F020E74002722F6 /* GoogleSignIn in Frameworks */,
 				D57A47BA2F020E74002722F6 /* GoogleSignInSwift in Frameworks */,
+				D519D2172F480A8B008B0C78 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +275,7 @@
 			packageProductDependencies = (
 				D57A47B72F020E74002722F6 /* GoogleSignIn */,
 				D57A47B92F020E74002722F6 /* GoogleSignInSwift */,
+				D519D2162F480A8B008B0C78 /* SwiftSoup */,
 			);
 			productName = Cue;
 			productReference = D583BBA42EEFA1BD006CDC9B /* Cue.app */;
@@ -354,6 +357,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D57A47B62F020E74002722F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				D519D2152F480A8B008B0C78 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D583BBA52EEFA1BD006CDC9B /* Products */;
@@ -880,6 +884,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D519D2152F480A8B008B0C78 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.11.3;
+			};
+		};
 		D57A47B62F020E74002722F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -891,6 +903,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D519D2162F480A8B008B0C78 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D519D2152F480A8B008B0C78 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
 		D57A47B72F020E74002722F6 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D57A47B62F020E74002722F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;

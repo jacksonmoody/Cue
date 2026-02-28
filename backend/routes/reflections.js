@@ -6,6 +6,7 @@ router.post("/", async function (req, res) {
     var db = req.db;
     var userId = req.body && req.body.userId;
     var reflection = req.body && req.body.reflection;
+    var variant = req.body && req.body.variant;
 
     if (!userId || typeof userId !== "string" || !userId.trim()) {
         return res.status(400).json({ error: "userId (string) is required" });
@@ -22,6 +23,7 @@ router.post("/", async function (req, res) {
         var reflectionDoc = {
             userId: trimmedUserId,
             reflection: reflection,
+            variant: variant || null,
         };
         await reflections.insertOne(reflectionDoc);
         res.status(200).json({

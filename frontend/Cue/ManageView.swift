@@ -63,11 +63,17 @@ struct ManageView: View {
                 Spacer()
                 VStack {
                     Text("Variant: \(variant)")
-                    if let sessionsCount = sessionManager.sessionCount, let sessionsRemaining = sessionManager.sessionsRemaining, sessionsRemaining > 0 {
-                        Text("^[\(sessionsCount) Valid Sessions](inflect: true) Recorded")
-                        Text("\(sessionsRemaining) More Needed to Unlock Survey")
+                    if let phase = sessionManager.currentPhase {
+                        Text("Phase \(phase + 1) of 3")
                     }
-                    if let sessionsRemaining = sessionManager.sessionsRemaining, sessionsRemaining == 0 {
+                    if sessionManager.hoursLogged != nil {
+                        Text(String(format: "%.1f / %.1f hours logged", sessionManager.hoursLoggedDisplay, sessionManager.hoursRequiredDisplay))
+                    }
+                    if !sessionManager.hasCurrentPhaseReflection {
+                        Text("1 more reflection needed in this phase.")
+                            .font(.caption)
+                    }
+                    if sessionManager.isExperimentComplete {
                         Button("Take Survey") {
                             tabController.open(.survey)
                         }
