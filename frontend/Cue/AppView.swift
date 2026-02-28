@@ -11,13 +11,22 @@ struct AppView: View {
     @StateObject private var tabController = TabController()
     @EnvironmentObject var sessionManager: SessionManager
     let variant: Int
+    @ObservedObject private var connectivityManager = WatchConnectivityManager.shared
     
+    var manageLabel: String {
+        if connectivityManager.isSessionActive {
+            "End Monitoring"
+        } else {
+            "Start Monitoring"
+        }
+    }
+
     var body: some View {
         TabView(selection: $tabController.activeTab) {
             Tab("Reflect", systemImage: "apple.meditate", value: TabItem.reflect) {
                 ReflectView()
             }
-            Tab("Manage", systemImage: "applewatch.side.right", value: TabItem.manage) {
+            Tab(manageLabel, systemImage: "applewatch.side.right", value: TabItem.manage) {
                 ManageView(variant: variant)
             }
             Tab("Survey", systemImage: "pencil.and.list.clipboard", value: TabItem.survey) {

@@ -16,7 +16,7 @@ struct SessionResponse: Decodable {
     let variantSwitched: Bool
     let newVariant: Int?
     let newPhase: Int?
-    let hoursLogged: Double?
+    let secondsLogged: Double?
 }
 
 class WorkoutManager: NSObject, ObservableObject {

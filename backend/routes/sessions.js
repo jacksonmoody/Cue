@@ -49,15 +49,18 @@ router.post("/", async function (req, res) {
     };
 
     if (variant) {
-      var totalResult = await sessions.aggregate([
-        { $match: { userId: trimmedUserId, variant: variant } },
-        { $group: { _id: null, total: { $sum: "$duration" } } }
-      ]).toArray();
+      var totalResult = await sessions
+        .aggregate([
+          { $match: { userId: trimmedUserId, variant: variant } },
+          { $group: { _id: null, total: { $sum: "$duration" } } },
+        ])
+        .toArray();
 
       var totalDuration = totalResult.length > 0 ? totalResult[0].total : 0;
-      responseData.hoursLogged = totalDuration;
+      responseData.secondsLogged = totalDuration;
 
-      if (totalDuration >= EIGHT_HOURS_IN_SECONDS) {
+      if (totalDuration >= 60) {
+        // if (totalDuration >= EIGHT_HOURS_IN_SECONDS) {
         var assignments = db.collection("assignments");
         var assignment = await assignments.findOne({ userId: trimmedUserId });
 
@@ -67,7 +70,7 @@ router.post("/", async function (req, res) {
 
           await assignments.updateOne(
             { userId: trimmedUserId },
-            { $set: { currentPhase: newPhase, variant: newVariant } }
+            { $set: { currentPhase: newPhase, variant: newVariant } },
           );
 
           responseData.variantSwitched = true;
@@ -105,7 +108,7 @@ router.get("/:userId/count", async function (req, res) {
       });
       return res.json({
         currentPhase: 0,
-        hoursLogged: 0,
+        secondsLogged: 0,
         hoursRequired: EIGHT_HOURS_IN_SECONDS,
         experimentComplete: false,
         reflectionCount: totalReflections,
@@ -118,44 +121,56 @@ router.get("/:userId/count", async function (req, res) {
     var currentVariant = order[currentPhase] || assignment.variant;
 
     var [totalResult, perVariantReflections] = await Promise.all([
-      sessions.aggregate([
-        { $match: { userId: userId, variant: currentVariant } },
-        { $group: { _id: null, total: { $sum: "$duration" } } }
-      ]).toArray(),
-      reflections.aggregate([
-        {
-          $match: {
-            userId: userId,
-            "reflection.endDate": { $exists: true, $ne: null },
-            variant: { $in: order }
-          }
-        },
-        { $group: { _id: "$variant", count: { $sum: 1 } } }
-      ]).toArray()
+      sessions
+        .aggregate([
+          { $match: { userId: userId, variant: currentVariant } },
+          { $group: { _id: null, total: { $sum: "$duration" } } },
+        ])
+        .toArray(),
+      reflections
+        .aggregate([
+          {
+            $match: {
+              userId: userId,
+              "reflection.endDate": { $exists: true, $ne: null },
+              variant: { $in: order },
+            },
+          },
+          { $group: { _id: "$variant", count: { $sum: 1 } } },
+        ])
+        .toArray(),
     ]);
 
-    var hoursLogged = totalResult.length > 0 ? totalResult[0].total : 0;
+    var secondsLogged = totalResult.length > 0 ? totalResult[0].total : 0;
 
     var variantsWithReflections = new Set(
-      perVariantReflections.map(function(doc) { return doc._id; })
+      perVariantReflections.map(function (doc) {
+        return doc._id;
+      }),
     );
-    var reflectionsComplete = order.every(function(v) {
+    var reflectionsComplete = order.every(function (v) {
       return variantsWithReflections.has(v);
     });
 
-    var currentVariantReflections = perVariantReflections.find(function(doc) {
+    var currentVariantReflections = perVariantReflections.find(function (doc) {
       return doc._id === currentVariant;
     });
-    var reflectionCount = currentVariantReflections ? currentVariantReflections.count : 0;
+    var reflectionCount = currentVariantReflections
+      ? currentVariantReflections.count
+      : 0;
 
     var experimentComplete = false;
-    if (currentPhase === 2 && hoursLogged >= EIGHT_HOURS_IN_SECONDS && reflectionsComplete) {
+    if (
+      currentPhase === 2 &&
+      secondsLogged >= EIGHT_HOURS_IN_SECONDS &&
+      reflectionsComplete
+    ) {
       experimentComplete = true;
     }
 
     res.json({
       currentPhase: currentPhase,
-      hoursLogged: hoursLogged,
+      secondsLogged: secondsLogged,
       hoursRequired: EIGHT_HOURS_IN_SECONDS,
       experimentComplete: experimentComplete,
       reflectionCount: reflectionCount,
