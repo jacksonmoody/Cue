@@ -58,7 +58,7 @@ class WatchDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDe
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         if response.actionIdentifier == Self.reflectionReminderOpenActionIdentifier {
             DispatchQueue.main.async { [weak self] in
-                self?.navigationRouter?.navigateToGear1()
+                self?.navigationRouter?.navigateToGear1(trigger: .notification)
             }
         }
         completionHandler()

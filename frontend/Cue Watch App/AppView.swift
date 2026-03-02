@@ -69,7 +69,7 @@ struct AppView: View {
                     }
                     ToolbarItem(placement: .topBarLeading) {
                         Button("Intervention", systemImage: "apple.meditate") {
-                            router.navigateToGear1()
+                            router.navigateToGear1(trigger: .manual)
                         }
                     }
                     if variant == 2 {
@@ -93,8 +93,8 @@ struct AppView: View {
                 }
                 .navigationDestination(for: Route.self) { route in
                     switch route {
-                    case .gear1:
-                        Gear1()
+                    case .gear1(let trigger):
+                        Gear1(trigger: trigger)
                     case .gear2:
                         Gear2()
                     case .gear3:

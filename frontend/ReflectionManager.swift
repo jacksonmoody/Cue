@@ -10,9 +10,17 @@ import Combine
 import UserNotifications
 internal import CoreLocation
 
+enum ReflectionTrigger: String, Codable {
+    case notification = "Notification"
+    case manual = "Manual"
+}
+
 struct Session: Identifiable, Hashable, Codable {
     let id: UUID
     let startDate: Date
+    let variant: Int
+    let trigger: ReflectionTrigger
+    
     var gear1Finished: Date?
     var gear2Finished: Date?
     var gear3Started: Date?
@@ -28,9 +36,12 @@ struct Session: Identifiable, Hashable, Codable {
     var gear3: GearOption?
     var title: String?
     
-    init(startDate: Date) {
+    init(startDate: Date, variant: Int, trigger: ReflectionTrigger) {
         id = UUID()
         self.startDate = startDate
+        self.variant = variant
+        self.trigger = trigger
+        
         self.gear1Finished = nil
         self.gear2Finished = nil
         self.gear3Started = nil
@@ -90,15 +101,15 @@ class ReflectionManager: ObservableObject {
     let reflectionsKey = "reflections"
     let preferencesKey = "preferences"
     
-    func startNewSession() {
+    func startNewSession(trigger: ReflectionTrigger) {
         do {
-            currentSession = Session(startDate: Date())
-            guard let userId = variantManager?.appleUserId else {
+            guard let userId = variantManager?.appleUserId, let variant = variantManager?.variant else {
                 DispatchQueue.main.async {
                     self.errorMessage = "Failed to start reflection. Please check your Internet connection and try again."
                 }
                 return
             }
+            currentSession = Session(startDate: Date(), variant: variant, trigger: trigger)
             let reflectionData = try JSONEncoder().encode(currentSession)
             guard let reflectionDict = try JSONSerialization.jsonObject(with: reflectionData) as? [String: Any] else {
                 print("Failed to convert reflection to dictionary")

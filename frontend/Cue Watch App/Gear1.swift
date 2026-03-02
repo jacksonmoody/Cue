@@ -10,6 +10,7 @@
 import SwiftUI
 
 struct Gear1: View {
+    let trigger: ReflectionTrigger
     @Environment(NavigationRouter.self) private var router
     @EnvironmentObject var reflectionManager: ReflectionManager
     @EnvironmentObject var locationService: LocationService
@@ -91,7 +92,7 @@ struct Gear1: View {
             }
         }
         .task {
-            await setupReflection()
+            await setupReflection(trigger: trigger)
         }
         .onChange(of: locationService.mostRecentLocation) { oldValue, newValue in
             if let location = newValue, !fetchedOptions {
@@ -125,9 +126,9 @@ struct Gear1: View {
         }
     }
     
-    private func setupReflection() async {
+    private func setupReflection(trigger: ReflectionTrigger) async {
         locationService.requestCurrentLocation()
-        reflectionManager.startNewSession()
+        reflectionManager.startNewSession(trigger: trigger)
         await reflectionManager.loadPreferences()
     }
     
@@ -176,7 +177,7 @@ struct ListButton: View {
 }
 
 #Preview {
-    Gear1()
+    Gear1(trigger: .manual)
         .environment(NavigationRouter())
         .environmentObject(ReflectionManager())
         .environmentObject(LocationService())
