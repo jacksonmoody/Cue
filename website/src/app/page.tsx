@@ -18,7 +18,7 @@ export default function Home() {
     window.open(
       "https://forms.gle/CW8xGCD5WiE7J2cs7",
       "_blank",
-      "noopener,noreferrer"
+      "noopener,noreferrer",
     );
   };
 
@@ -41,7 +41,7 @@ export default function Home() {
               <Image src={Logo} alt="Cue Logo" width={100} height={100} />
             </div>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-              Micro-reflections, <br />
+              Personalized reflections, <br />
               <span className="text-gradient">right on your wrist.</span>
             </h1>
             <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">

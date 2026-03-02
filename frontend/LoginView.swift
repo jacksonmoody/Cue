@@ -17,7 +17,7 @@ struct LoginView: View {
             Text("Welcome to Cue!")
                 .font(.title)
                 .fontWeight(.bold)
-            Text("Micro-reflections, right on your wrist.")
+            Text("Personalized reflections, right on your wrist.")
                 .font(.title2)
                 .multilineTextAlignment(.center)
             signInButton

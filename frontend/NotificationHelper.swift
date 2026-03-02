@@ -45,7 +45,7 @@ enum NotificationHelper {
         components.minute = 0
         let enableContent = UNMutableNotificationContent()
         enableContent.title = "Enable Monitoring"
-        enableContent.body = "Remember to enable Cue monitoring before beginning your day!"
+        enableContent.body = "Remember to enable Cue monitoring before beginning your day."
         enableContent.sound = .default
         enableContent.interruptionLevel = .timeSensitive
         enableContent.relevanceScore = 1.0
@@ -60,7 +60,7 @@ enum NotificationHelper {
         components.hour = 21
         let disableContent = UNMutableNotificationContent()
         disableContent.title = "Disable Monitoring"
-        disableContent.body = "Heading to bed? Consider disabling Cue monitoring to conserve battery."
+        disableContent.body = "Winding down for the day? Consider disabling monitoring to conserve battery."
         disableContent.sound = .default
         disableContent.interruptionLevel = .timeSensitive
         disableContent.relevanceScore = 1.0

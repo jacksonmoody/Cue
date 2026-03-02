@@ -309,7 +309,7 @@ fileprivate func formatDuration(_ duration: TimeInterval) -> String {
 
 #Preview {
     NavigationStack {
-        SessionDetailView(session: Session(startDate: Date()))
+        SessionDetailView(session: Session(startDate: Date(), variant: 0, trigger: .manual))
     }
 }
 

@@ -9,7 +9,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "Cue",
-  description: "Micro-reflections, right on your wrist.",
+  description: "Personalized reflections, right on your wrist.",
 };
 
 export default function RootLayout({

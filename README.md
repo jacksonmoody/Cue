@@ -1,5 +1,5 @@
 # Cue
-**The Wearable Micro-Reflection System for Emotional Regulation** 
+**The Wearable Reflection System for Emotional Regulation** 
 
 Cue is a watchOS intervention designed to support in-the-moment emotional regulation. The `/frontend` folder contains all of the iOS and watchOS code (written in Swift and SwiftUI), and the `/backend` folder contains all of the backend code (written in Express and Node.js).
 
