@@ -174,7 +174,7 @@ class ReflectionManager: ObservableObject {
                             UserDefaults.standard.set(true, forKey: "instructionsNeeded")
                             UserDefaults.standard.set(true, forKey: "variantSwitchPending")
                         }
-                        self.fireVariantSwitchNotification()
+                        NotificationHelper.fireVariantSwitchNotification()
                         WatchConnectivityManager.shared.notifyVariantSwitched(newVariant: newVariant, newPhase: newPhase)
                     }
                     if response.experimentComplete == true {
@@ -190,20 +190,6 @@ class ReflectionManager: ObservableObject {
             print("Error encoding session: \(error.localizedDescription)")
             self.currentSession = nil
         }
-    }
-    
-    private func fireVariantSwitchNotification() {
-        let content = UNMutableNotificationContent()
-        content.title = "Variant Switched"
-        content.body = "You've been moved to a new experimental variant. Open the Cue app to see your updated instructions."
-        content.sound = .default
-        content.interruptionLevel = .timeSensitive
-        let request = UNNotificationRequest(
-            identifier: "cue.variantSwitched.\(UUID().uuidString)",
-            content: content,
-            trigger: nil
-        )
-        UNUserNotificationCenter.current().add(request)
     }
     
     func updateSession(_ session: Session) {
@@ -299,7 +285,6 @@ class ReflectionManager: ObservableObject {
             await MainActor.run { errorMessage = nil }
         } catch {
             print("Unexpected error: \(error.localizedDescription)")
-            await MainActor.run { errorMessage = "Failed to fetch reflections." }
         }
     }
     

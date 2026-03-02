@@ -186,7 +186,7 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
                         UserDefaults.standard.set(true, forKey: "instructionsNeeded")
                         UserDefaults.standard.set(true, forKey: "variantSwitchPending")
                     }
-                    self.fireVariantSwitchNotification()
+                    NotificationHelper.fireVariantSwitchNotification()
                     WatchConnectivityManager.shared.notifyVariantSwitched(newVariant: newVariant, newPhase: newPhase)
                 }
                 if response.experimentComplete == true {
@@ -200,18 +200,5 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
         }
     }
     
-    private func fireVariantSwitchNotification() {
-        let content = UNMutableNotificationContent()
-        content.title = "Variant Switched"
-        content.body = "You've been moved to a new experimental variant. Open the Cue app to see your updated instructions."
-        content.sound = .default
-        content.interruptionLevel = .timeSensitive
-        let request = UNNotificationRequest(
-            identifier: "cue.variantSwitched.\(UUID().uuidString)",
-            content: content,
-            trigger: nil
-        )
-        UNUserNotificationCenter.current().add(request)
-    }
 }
 

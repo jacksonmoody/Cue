@@ -29,6 +29,7 @@ struct CueApp: App {
                 .environmentObject(reflectionManager)
                 .environmentObject(tabController)
                 .onAppear {
+                    appDelegate.tabController = tabController
                     workoutManager.variantManager = variantManager
                     sessionManager.variantManager = variantManager
                     reflectionManager.variantManager = variantManager
@@ -47,14 +48,14 @@ struct CueApp: App {
                         Task {
                             await sessionManager.loadSessionCount()
                         }
-                        CueApp.fireVariantSwitchNotification()
+                        NotificationHelper.fireVariantSwitchNotification()
                     }
                     WatchConnectivityManager.shared.onExperimentComplete = {
                         Task {
                             await sessionManager.loadSessionCount()
                         }
                         tabController.open(.survey)
-                        CueApp.fireSurveyUnlockedNotification()
+                        NotificationHelper.fireSurveyUnlockedNotification()
                     }
                 }
                 .onOpenURL { url in
@@ -64,37 +65,9 @@ struct CueApp: App {
     }
 }
 
-extension CueApp {
-    static func fireVariantSwitchNotification() {
-        let content = UNMutableNotificationContent()
-        content.title = "Variant Switched"
-        content.body = "You've been moved to a new experimental variant. Open the Cue app to see your updated instructions."
-        content.sound = .default
-        content.interruptionLevel = .timeSensitive
-        let request = UNNotificationRequest(
-            identifier: "cue.variantSwitched.\(UUID().uuidString)",
-            content: content,
-            trigger: nil
-        )
-        UNUserNotificationCenter.current().add(request)
-    }
-    
-    static func fireSurveyUnlockedNotification() {
-        let content = UNMutableNotificationContent()
-        content.title = "Survey Unlocked"
-        content.body = "You've completed the experiment! Open the Cue app to take the survey."
-        content.sound = .default
-        content.interruptionLevel = .timeSensitive
-        let request = UNNotificationRequest(
-            identifier: "cue.surveyUnlocked.\(UUID().uuidString)",
-            content: content,
-            trigger: nil
-        )
-        UNUserNotificationCenter.current().add(request)
-    }
-}
-
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    weak var tabController: TabController?
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         _ = WatchConnectivityManager.shared
         UNUserNotificationCenter.current().delegate = self
@@ -103,5 +76,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound, .badge, .list])
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if response.notification.request.content.categoryIdentifier == NotificationHelper.surveyUnlockedCategoryIdentifier {
+            DispatchQueue.main.async { [weak self] in
+                self?.tabController?.open(.survey)
+            }
+        }
+        completionHandler()
     }
 }

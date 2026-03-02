@@ -89,7 +89,6 @@ router.get("/:userId/count", async function (req, res) {
         hoursRequired: EIGHT_HOURS_IN_SECONDS,
         experimentComplete: false,
         reflectionCount: totalReflections,
-        reflectionsComplete: false,
       });
     }
 
@@ -151,7 +150,6 @@ router.get("/:userId/count", async function (req, res) {
       hoursRequired: EIGHT_HOURS_IN_SECONDS,
       experimentComplete: experimentComplete,
       reflectionCount: reflectionCount,
-      reflectionsComplete: reflectionsComplete,
     });
   } catch (err) {
     console.error("Error counting sessions", err);

@@ -134,7 +134,7 @@ struct Gear3: View {
         switch option {
         case GearOption(text: "Mindful Breaths", icon: "apple.meditate"):
             Breathe(completeReflection: completeReflection)
-        case GearOption(text: "Cross Body Taps", icon: "hand.tap"):
+        case GearOption(text: "Cross-Body Taps", icon: "hand.tap"):
             Taps(completeReflection: completeReflection)
         case GearOption(text: "Visualization", icon: "photo"):
             Visualization(completeReflection: completeReflection)

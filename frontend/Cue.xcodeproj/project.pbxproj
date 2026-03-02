@@ -48,6 +48,8 @@
 		D5B7ED562EF67A3200422DA2 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */; };
 		D5B7ED572EF67A3200422DA2 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */; };
 		D5B7ED582EF67D6200422DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D58D5DF12EEFDF2B00E4D1DB /* Assets.xcassets */; };
+		D5D74DF32F55387500696C76 /* NotificationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D74DF22F55387500696C76 /* NotificationHelper.swift */; };
+		D5D74DF42F55387500696C76 /* NotificationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D74DF22F55387500696C76 /* NotificationHelper.swift */; };
 		D5FDCE872F1F1572003186CC /* ReflectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FDCE862F1F1572003186CC /* ReflectionManager.swift */; };
 		D5FDCE882F1F1572003186CC /* ReflectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FDCE862F1F1572003186CC /* ReflectionManager.swift */; };
 /* End PBXBuildFile section */
@@ -118,6 +120,7 @@
 		D5B7ED552EF67A3200422DA2 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		D5CF98BF2EF66B9D008535C3 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = /System/Library/Frameworks/WidgetKit.framework; sourceTree = "<absolute>"; };
 		D5CF98C12EF66B9D008535C3 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = /System/Library/Frameworks/SwiftUI.framework; sourceTree = "<absolute>"; };
+		D5D74DF22F55387500696C76 /* NotificationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHelper.swift; sourceTree = "<group>"; };
 		D5FDCE862F1F1572003186CC /* ReflectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectionManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -209,6 +212,7 @@
 				D55EB3852EF5FE520077F3B4 /* BackendService.swift */,
 				D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */,
 				D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */,
+				D5D74DF22F55387500696C76 /* NotificationHelper.swift */,
 				D58A97A62EF60A950078459A /* SessionManager.swift */,
 				D57A498A2F02254D002722F6 /* LocationManager.swift */,
 				D5FDCE862F1F1572003186CC /* ReflectionManager.swift */,
@@ -415,6 +419,7 @@
 				D5B7ED562EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
 				D58D5E2D2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */,
 				D57A498C2F02254D002722F6 /* LocationManager.swift in Sources */,
+				D5D74DF42F55387500696C76 /* NotificationHelper.swift in Sources */,
 				D58D5DF42EEFDF2B00E4D1DB /* RootView.swift in Sources */,
 				D58D5E172EF093DF00E4D1DB /* LoginView.swift in Sources */,
 				D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */,
@@ -434,6 +439,7 @@
 				D58D5E162EF093DF00E4D1DB /* LoginView.swift in Sources */,
 				D5A969772EF3AEE700782283 /* ElapsedTimeView.swift in Sources */,
 				D58A97A72EF60A950078459A /* SessionManager.swift in Sources */,
+				D5D74DF32F55387500696C76 /* NotificationHelper.swift in Sources */,
 				D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */,
 				D57A498B2F02254D002722F6 /* LocationManager.swift in Sources */,
 				D5B7ED572EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,

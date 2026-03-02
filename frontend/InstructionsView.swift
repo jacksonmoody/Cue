@@ -37,6 +37,14 @@ struct InstructionsView: View {
         }
     }
     
+    private var stackAlignment: HorizontalAlignment {
+        #if os(watchOS)
+        .center
+        #else
+        .leading
+        #endif
+    }
+    
     private var headerText: String {
         if variantSwitch {
             return variantSwitchIntroText
@@ -51,9 +59,9 @@ struct InstructionsView: View {
         NavigationStack {
             ZStack {
                 ScrollView {
-                    VStack(alignment:.leading, spacing: 30) {
+                    VStack(alignment: stackAlignment, spacing: 30) {
 #if os(iOS)
-                        Text(variantSwitch ? "New Instructions" : "Instructions")
+                        Text(variantSwitch ? "Updated Instructions" : "Instructions")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .padding(.top, 40)
@@ -61,7 +69,7 @@ struct InstructionsView: View {
                         Text("\(headerText)\(instructionText ?? "")")
 #if os(iOS)
                         if variantSwitch {
-                            Button("Got It") {
+                            Button("Continue") {
                                 UserDefaults.standard.set(false, forKey: "variantSwitchPending")
                                 instructionsNeeded = false
                                 dismiss()
@@ -91,7 +99,7 @@ struct InstructionsView: View {
 #endif
 #if os(watchOS)
                         if variantSwitch {
-                            Button("Got It") {
+                            Button("Continue") {
                                 UserDefaults.standard.set(false, forKey: "variantSwitchPending")
                                 instructionsNeeded = false
                                 dismiss()

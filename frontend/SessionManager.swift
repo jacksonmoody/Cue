@@ -14,7 +14,6 @@ struct SessionCountResponse: Decodable {
     let hoursRequired: Double
     let experimentComplete: Bool
     let reflectionCount: Int
-    let reflectionsComplete: Bool?
 }
 
 class SessionManager: ObservableObject {
@@ -27,7 +26,6 @@ class SessionManager: ObservableObject {
     @Published var hoursRequired: Double?
     @Published var experimentComplete: Bool?
     @Published var reflectionCount: Int?
-    @Published var reflectionsComplete: Bool?
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     
@@ -73,7 +71,6 @@ class SessionManager: ObservableObject {
             hoursRequired = response.hoursRequired
             experimentComplete = response.experimentComplete
             reflectionCount = response.reflectionCount
-            reflectionsComplete = response.reflectionsComplete
         } catch {
             errorMessage = error.localizedDescription
         }

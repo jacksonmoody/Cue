@@ -1,4 +1,5 @@
-var EIGHT_HOURS_IN_SECONDS = 28800;
+// const EIGHT_HOURS_IN_SECONDS = 28800;
+const EIGHT_HOURS_IN_SECONDS = 10;
 
 async function tryAdvancePhase(db, userId, variant) {
   var sessions = db.collection("sessions");
@@ -34,8 +35,7 @@ async function tryAdvancePhase(db, userId, variant) {
     return result;
   }
 
-  var durationMet = totalDuration >= 10;
-  // var durationMet = totalDuration >= EIGHT_HOURS_IN_SECONDS;
+  var durationMet = totalDuration >= EIGHT_HOURS_IN_SECONDS;
   var reflectionMet = reflectionCount >= 1;
 
   // Advance to next phase requirements are met
