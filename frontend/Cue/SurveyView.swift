@@ -74,7 +74,7 @@ struct Survey: View {
                 .font(.title)
                 .fontWeight(.bold)
             if !(surveyComplete ?? false) {
-                Text("Before beginning, please ensure that both your iOS Cue App and watchOS Cue App report that you are in Variant \(String(variantManager.variant ?? 0)) and  Phase \(String((variantManager.currentPhase ?? 0) + 1)). If they do not agree, report the issue via the \"Feedback\" tab and do not complete the survey.")
+                Text("Before beginning the survey, please ensure that both your iOS Cue App and watchOS Cue App report that you are in Phase \(String((variantManager.currentPhase ?? 2) + 1)). If they do not agree, report the issue via the \"Feedback\" tab and do not complete the survey.")
                     .fontWeight(.semibold)
                 Button("Open Survey") {
                     webViewOpen.toggle()
@@ -83,7 +83,7 @@ struct Survey: View {
                 .padding()
                 .glassEffect(.regular.tint(.blue).interactive())
             } else {
-                Text("Thank you for your time spent completing the survey. If you have not already booked a slot for your post-experiment interview, you may do so here:")
+                Text("Thank you for completing the survey. If you are interested in participating in an interview about your experiences, please book a time here:")
                     .fontWeight(.semibold)
                 Button("Book an Interview Time") {
                     calendarWebViewOpen = true

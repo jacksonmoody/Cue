@@ -39,28 +39,39 @@ struct ReflectView: View {
                         .padding(.top, -30)
                         .foregroundStyle(.white)
                     } else {
-                        List(sortedSessions, id: \.id) { session in
-                            NavigationLink {
-                                SessionDetailView(session: session)
-                            } label: {
-                                HStack(spacing: 16) {
-                                    Image(systemName: session.gear1?.icon ?? "apple.meditate")
-                                        .font(.title2)
-                                        .foregroundStyle(.white)
-                                        .frame(width: 40)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(session.gear1?.text ?? "Reflection Session")
+                        List {
+                            ForEach(sortedSessions, id: \.id) { session in
+                                NavigationLink {
+                                    SessionDetailView(session: session)
+                                } label: {
+                                    HStack(spacing: 16) {
+                                        Image(systemName: session.gear1?.icon ?? "apple.meditate")
+                                            .font(.title2)
                                             .foregroundStyle(.white)
-                                            .font(.headline)
-                                        Text(formatDate(session.startDate))
-                                            .font(.subheadline)
-                                            .foregroundStyle(.white.opacity(0.8))
+                                            .frame(width: 40)
+                                        
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(session.title ?? session.gear1?.text ?? "Reflection Session")
+                                                .foregroundStyle(.white)
+                                                .font(.headline)
+                                            Text(formatDate(session.startDate))
+                                                .font(.subheadline)
+                                                .foregroundStyle(.white.opacity(0.8))
+                                        }
+                                    }
+                                    .padding(.vertical, 8)
+                                }
+                                .listRowBackground(Color.white.opacity(0.1))
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        Task {
+                                            await reflectionManager.deleteReflection(session)
+                                        }
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
                                     }
                                 }
-                                .padding(.vertical, 8)
                             }
-                            .listRowBackground(Color.white.opacity(0.1))
                         }
                         .refreshable {
                             await reflectionManager.loadReflections()

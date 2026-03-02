@@ -9,6 +9,69 @@ import UserNotifications
 
 enum NotificationHelper {
     static let surveyUnlockedCategoryIdentifier = "SURVEY_UNLOCKED"
+    static let monitoringReminderCategoryIdentifier = "MONITORING_REMINDER"
+    private static let monitoringReminderOpenActionIdentifier = "OPEN_MONITORING"
+    private static let enableMonitoringIdentifier = "cue.reminder.enableMonitoring"
+    private static let disableMonitoringIdentifier = "cue.reminder.disableMonitoring"
+
+    static func registerMonitoringReminderCategory() {
+        let openAction = UNNotificationAction(
+            identifier: monitoringReminderOpenActionIdentifier,
+            title: "Open Cue",
+            options: [.foreground]
+        )
+        let category = UNNotificationCategory(
+            identifier: monitoringReminderCategoryIdentifier,
+            actions: [openAction],
+            intentIdentifiers: [],
+            options: []
+        )
+        let existing = UNUserNotificationCenter.current()
+        existing.getNotificationCategories { categories in
+            var updated = categories
+            updated.insert(category)
+            existing.setNotificationCategories(updated)
+        }
+    }
+
+    static func scheduleMonitoringReminders() {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(
+            withIdentifiers: [enableMonitoringIdentifier, disableMonitoringIdentifier]
+        )
+
+        var components = DateComponents()
+        components.hour = 9
+        components.minute = 0
+        let enableContent = UNMutableNotificationContent()
+        enableContent.title = "Enable Monitoring"
+        enableContent.body = "Remember to enable Cue monitoring before beginning your day!"
+        enableContent.sound = .default
+        enableContent.interruptionLevel = .timeSensitive
+        enableContent.relevanceScore = 1.0
+        enableContent.categoryIdentifier = monitoringReminderCategoryIdentifier
+        let enableTrigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        center.add(UNNotificationRequest(
+            identifier: enableMonitoringIdentifier,
+            content: enableContent,
+            trigger: enableTrigger
+        ))
+
+        components.hour = 21
+        let disableContent = UNMutableNotificationContent()
+        disableContent.title = "Disable Monitoring"
+        disableContent.body = "Heading to bed? Consider disabling Cue monitoring to conserve battery."
+        disableContent.sound = .default
+        disableContent.interruptionLevel = .timeSensitive
+        disableContent.relevanceScore = 1.0
+        disableContent.categoryIdentifier = monitoringReminderCategoryIdentifier
+        let disableTrigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        center.add(UNNotificationRequest(
+            identifier: disableMonitoringIdentifier,
+            content: disableContent,
+            trigger: disableTrigger
+        ))
+    }
 
     static func fireVariantSwitchNotification() {
         let content = UNMutableNotificationContent()

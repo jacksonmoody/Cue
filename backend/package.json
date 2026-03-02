@@ -6,7 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.71.2",
+    "@anthropic-ai/sdk": "^0.78.0",
     "cookie-parser": "^1.4.7",
     "debug": "^4.4.3",
     "dotenv": "^17.2.3",

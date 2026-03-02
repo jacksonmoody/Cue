@@ -71,6 +71,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         _ = WatchConnectivityManager.shared
         UNUserNotificationCenter.current().delegate = self
+        NotificationHelper.registerMonitoringReminderCategory()
+        NotificationHelper.scheduleMonitoringReminders()
         return true
     }
     
@@ -79,9 +81,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        if response.notification.request.content.categoryIdentifier == NotificationHelper.surveyUnlockedCategoryIdentifier {
+        let categoryId = response.notification.request.content.categoryIdentifier
+        if categoryId == NotificationHelper.surveyUnlockedCategoryIdentifier {
             DispatchQueue.main.async { [weak self] in
                 self?.tabController?.open(.survey)
+            }
+        } else if categoryId == NotificationHelper.monitoringReminderCategoryIdentifier {
+            DispatchQueue.main.async { [weak self] in
+                self?.tabController?.open(.manage)
             }
         }
         completionHandler()

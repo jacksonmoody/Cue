@@ -1,5 +1,4 @@
-// const EIGHT_HOURS_IN_SECONDS = 28800;
-const EIGHT_HOURS_IN_SECONDS = 10;
+const EIGHT_HOURS_IN_SECONDS = 28800;
 
 async function tryAdvancePhase(db, userId, variant) {
   var sessions = db.collection("sessions");

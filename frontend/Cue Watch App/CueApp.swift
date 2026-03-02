@@ -46,9 +46,9 @@ class WatchDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDe
         _ = WatchConnectivityManager.shared
         UNUserNotificationCenter.current().delegate = self
         WatchDelegate.registerReflectionReminderCategory()
-        scheduleMonitoringNotifications()
+        NotificationHelper.registerMonitoringReminderCategory()
+        NotificationHelper.scheduleMonitoringReminders()
         Self.scheduleReflectionReminderIfNeeded()
-        debugNotifications()
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -63,15 +63,6 @@ class WatchDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDe
         }
         completionHandler()
     }
-
-    private func debugNotifications() {
-        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
-            print("Pending local notifications (\(requests.count)):")
-            for req in requests {
-                print("  - id: \(req.identifier), title: \(req.content.title), body: \(req.content.body), trigger: \(String(describing: req.trigger))")
-            }
-        }
-    }
     
     func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
         Task {
@@ -82,21 +73,24 @@ class WatchDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDe
 
 }
 
-// Variant 2 scheduled reflection reminders
 extension WatchDelegate {
     static let scheduledReflectionIdentifier = "cue.reminder.scheduledReflection"
     static let reflectionReminderCategoryIdentifier = "REFLECTION_REMINDER"
     static let reflectionReminderOpenActionIdentifier = "OPEN_REFLECTION"
-
     static func registerReflectionReminderCategory() {
-        let action = UNNotificationAction(identifier: reflectionReminderOpenActionIdentifier, title: "Reflect", options: [.foreground])
-        let category = UNNotificationCategory(
+        let reflectAction = UNNotificationAction(identifier: reflectionReminderOpenActionIdentifier, title: "Reflect", options: [.foreground])
+        let reflectionCategory = UNNotificationCategory(
             identifier: reflectionReminderCategoryIdentifier,
-            actions: [action],
+            actions: [reflectAction],
             intentIdentifiers: [],
             options: []
         )
-        UNUserNotificationCenter.current().setNotificationCategories([category])
+        let existing = UNUserNotificationCenter.current()
+        existing.getNotificationCategories { categories in
+            var updated = categories
+            updated.insert(reflectionCategory)
+            existing.setNotificationCategories(updated)
+        }
     }
 
     static func scheduleReflectionReminderIfNeeded() {
@@ -134,42 +128,4 @@ extension WatchDelegate {
     }
 }
 
-// Monitoring reminders at 9am and 9pm (all variants)
-private extension WatchDelegate {
-    static let disableMonitoringIdentifier = "cue.reminder.disableMonitoring"
-    static let enableMonitoringIdentifier = "cue.reminder.enableMonitoring"
-
-    func scheduleMonitoringNotifications() {
-        let center = UNUserNotificationCenter.current()
-        center.removePendingNotificationRequests(
-            withIdentifiers: [Self.enableMonitoringIdentifier, Self.disableMonitoringIdentifier]
-        )
-
-        var components = DateComponents()
-        components.hour = 9
-        components.minute = 0
-        let enableContent = UNMutableNotificationContent()
-        enableContent.title = "Enable Monitoring"
-        enableContent.body = "Remember to enable Cue monitoring before beginning your day!"
-        enableContent.interruptionLevel = .timeSensitive
-        let enableTrigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
-        center.add(UNNotificationRequest(
-            identifier: Self.enableMonitoringIdentifier,
-            content: enableContent,
-            trigger: enableTrigger
-        ))
-
-        components.hour = 21
-        let disableContent = UNMutableNotificationContent()
-        disableContent.title = "Disable Monitoring"
-        disableContent.body = "Heading to bed? Consider disabling Cue monitoring to conserve battery."
-        disableContent.interruptionLevel = .timeSensitive
-        let disableTrigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
-        center.add(UNNotificationRequest(
-            identifier: Self.disableMonitoringIdentifier,
-            content: disableContent,
-            trigger: disableTrigger
-        ))
-    }
-}
 

@@ -26,6 +26,7 @@ struct Session: Identifiable, Hashable, Codable {
     var gear1: GearOption?
     var gear2: GearOption?
     var gear3: GearOption?
+    var title: String?
     
     init(startDate: Date) {
         id = UUID()
@@ -38,6 +39,7 @@ struct Session: Identifiable, Hashable, Codable {
         self.gear1 = nil
         self.gear2 = nil
         self.gear3 = nil
+        self.title = nil
     }
 }
 
@@ -259,6 +261,30 @@ class ReflectionManager: ObservableObject {
         }
     }
     
+    func deleteReflection(_ session: Session) async {
+        guard let userId = variantManager?.appleUserId else {
+            await MainActor.run { errorMessage = "Unable to delete reflection. Please try again." }
+            return
+        }
+
+        let body: [String: Any] = [
+            "userId": userId,
+            "reflectionId": session.id.uuidString
+        ]
+
+        do {
+            try await backendService.delete(path: "/reflections", body: body)
+            await MainActor.run {
+                sessions.removeAll { $0.id == session.id }
+                if let encoded = try? JSONEncoder().encode(sessions) {
+                    userDefaults.set(encoded, forKey: reflectionsKey)
+                }
+            }
+        } catch {
+            await MainActor.run { errorMessage = "Failed to delete reflection. Please try again." }
+        }
+    }
+
     func loadReflections() async {
         guard let userId = variantManager?.appleUserId else {
             return
