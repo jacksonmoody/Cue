@@ -66,9 +66,9 @@ struct ManageView: View {
                         Text("Phase \(phase + 1) of 3")
                     }
                     if sessionManager.secondsLogged != nil {
-                        Text(String(format: "%.1f / %.1f hours logged", sessionManager.hoursLoggedDisplay, sessionManager.hoursRequiredDisplay))
+                        Text(String(format: "%.2f / %.2f hours logged", sessionManager.hoursLoggedDisplay, sessionManager.hoursRequiredDisplay))
                     }
-                    if !sessionManager.hasCurrentPhaseReflection {
+                    if sessionManager.currentPhase != nil &&  !sessionManager.hasCurrentPhaseReflection {
                         Text("1 more reflection needed in this phase.")
                     }
                     if sessionManager.isExperimentComplete {

@@ -8,16 +8,24 @@
 import SwiftUI
 
 struct AppView: View {
-    @StateObject private var tabController = TabController()
+    @EnvironmentObject var tabController: TabController
     @EnvironmentObject var sessionManager: SessionManager
     let variant: Int
     @ObservedObject private var connectivityManager = WatchConnectivityManager.shared
     
-    var manageLabel: String {
+    private var manageLabel: String {
         if connectivityManager.isSessionActive {
             "End Monitoring"
         } else {
             "Start Monitoring"
+        }
+    }
+    
+    private var manageIcon: String {
+        if connectivityManager.isSessionActive {
+            "stop.circle"
+        } else {
+            "play.circle"
         }
     }
 
@@ -26,7 +34,7 @@ struct AppView: View {
             Tab("Reflect", systemImage: "apple.meditate", value: TabItem.reflect) {
                 ReflectView()
             }
-            Tab(manageLabel, systemImage: "applewatch.side.right", value: TabItem.manage) {
+            Tab(manageLabel, systemImage: manageIcon, value: TabItem.manage) {
                 ManageView(variant: variant)
             }
             Tab("Survey", systemImage: "pencil.and.list.clipboard", value: TabItem.survey) {
@@ -45,6 +53,7 @@ struct AppView: View {
 
 #Preview {
     AppView(variant: 3)
+        .environmentObject(TabController())
         .environmentObject(SessionManager())
         .environmentObject(VariantManager())
         .environmentObject(ReflectionManager())

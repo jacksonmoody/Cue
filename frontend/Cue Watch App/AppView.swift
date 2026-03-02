@@ -12,6 +12,7 @@ import Combine
 struct AppView: View {
     @ObservedObject private var connectivityManager = WatchConnectivityManager.shared
     @EnvironmentObject var workoutManager: WorkoutManager
+    @EnvironmentObject var variantManager: VariantManager
     @Environment(NavigationRouter.self) private var router
     @State private var showingInstructions = false
     let variant: Int
@@ -55,7 +56,9 @@ struct AppView: View {
                             ElapsedTimeView(elapsedTime: workoutManager.builder?.elapsedTime ?? 0, showSubseconds: context.cadence == .live)
                         }
                     }
-                    Text("Variant: \(variant)")
+                    if let phase = variantManager.currentPhase {
+                        Text("Phase \(phase + 1) of 3")
+                    }
                 }
                 .animation(.default, value: connectivityManager.isSessionActive)
                 .toolbar {
@@ -131,5 +134,6 @@ struct AppView: View {
 #Preview {
     AppView(variant: 3)
         .environmentObject(WorkoutManager())
+        .environmentObject(VariantManager())
         .environment(NavigationRouter())
 }

@@ -23,7 +23,7 @@ struct InstructionsView: View {
     let introText = "Thank you for participating in this experiment! To get started, please read through the following instructions carefully:\n\n"
     #endif
     
-    let variantSwitchIntroText = "You've completed 8 hours with your previous variant and have been switched to a new experimental condition. Here are your updated instructions:\n\n"
+    let variantSwitchIntroText = "You've completed 8 hours in the previous variant and have been switched to a new experimental condition. Here are your updated instructions:\n\n"
     
     var instructionText: String? {
         if let variant = variantManager.variant, variant == 1 {
@@ -53,7 +53,7 @@ struct InstructionsView: View {
                 ScrollView {
                     VStack(alignment:.leading, spacing: 30) {
 #if os(iOS)
-                        Text(variantSwitch ? "New Variant" : "Instructions")
+                        Text(variantSwitch ? "New Instructions" : "Instructions")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .padding(.top, 40)

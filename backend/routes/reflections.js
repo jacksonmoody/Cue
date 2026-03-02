@@ -2,6 +2,8 @@ var express = require("express");
 
 var router = express.Router();
 
+var { tryAdvancePhase } = require("../utils/advancePhase");
+
 router.post("/", async function (req, res) {
     var db = req.db;
     var userId = req.body && req.body.userId;
@@ -62,9 +64,27 @@ router.post("/update", async function (req, res) {
             return res.status(404).json({ error: "Reflection not found" });
         }
         
-        res.status(200).json({
+        var responseData = {
             reflection: reflection,
-        });
+            variantSwitched: false,
+        };
+
+        if (reflection.endDate) {
+            var doc = await reflections.findOne({
+                userId: trimmedUserId,
+                "reflection.id": reflection.id,
+            });
+            var variant = doc && doc.variant;
+            if (variant) {
+                var advanceResult = await tryAdvancePhase(db, trimmedUserId, variant);
+                responseData.variantSwitched = advanceResult.variantSwitched;
+                responseData.newVariant = advanceResult.newVariant;
+                responseData.newPhase = advanceResult.newPhase;
+                responseData.experimentComplete = advanceResult.experimentComplete;
+            }
+        }
+
+        res.status(200).json(responseData);
     }
     catch (err) {
         console.error("Error updating reflection", err);

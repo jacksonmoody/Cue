@@ -17,6 +17,7 @@ struct CueApp: App {
     @StateObject private var sessionManager = SessionManager()
     @StateObject private var locationService = LocationService()
     @StateObject private var reflectionManager = ReflectionManager()
+    @StateObject private var tabController = TabController()
     
     var body: some Scene {
         WindowGroup {
@@ -26,6 +27,7 @@ struct CueApp: App {
                 .environmentObject(sessionManager)
                 .environmentObject(locationService)
                 .environmentObject(reflectionManager)
+                .environmentObject(tabController)
                 .onAppear {
                     workoutManager.variantManager = variantManager
                     sessionManager.variantManager = variantManager
@@ -47,6 +49,13 @@ struct CueApp: App {
                         }
                         CueApp.fireVariantSwitchNotification()
                     }
+                    WatchConnectivityManager.shared.onExperimentComplete = {
+                        Task {
+                            await sessionManager.loadSessionCount()
+                        }
+                        tabController.open(.survey)
+                        CueApp.fireSurveyUnlockedNotification()
+                    }
                 }
                 .onOpenURL { url in
                   GIDSignIn.sharedInstance.handle(url)
@@ -64,6 +73,20 @@ extension CueApp {
         content.interruptionLevel = .timeSensitive
         let request = UNNotificationRequest(
             identifier: "cue.variantSwitched.\(UUID().uuidString)",
+            content: content,
+            trigger: nil
+        )
+        UNUserNotificationCenter.current().add(request)
+    }
+    
+    static func fireSurveyUnlockedNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Survey Unlocked"
+        content.body = "You've completed the experiment! Open the Cue app to take the survey."
+        content.sound = .default
+        content.interruptionLevel = .timeSensitive
+        let request = UNNotificationRequest(
+            identifier: "cue.surveyUnlocked.\(UUID().uuidString)",
             content: content,
             trigger: nil
         )

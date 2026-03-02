@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import UserNotifications
 internal import CoreLocation
 
 struct Session: Identifiable, Hashable, Codable {
@@ -64,6 +65,13 @@ struct Preferences: Codable, Equatable {
         case gear2Options = "gear2"
         case gear3Options = "gear3"
     }
+}
+
+struct ReflectionUpdateResponse: Decodable {
+    let variantSwitched: Bool
+    let newVariant: Int?
+    let newPhase: Int?
+    let experimentComplete: Bool?
 }
 
 class ReflectionManager: ObservableObject {
@@ -157,9 +165,21 @@ class ReflectionManager: ObservableObject {
                 "userId": userId,
                 "reflection": reflectionDict
             ]
-            backendService.post(path: "/reflections/update", body: sessionData) { result in
+            backendService.postWithResponse(path: "/reflections/update", body: sessionData, responseType: ReflectionUpdateResponse.self) { result in
                 switch result {
-                case .success:
+                case .success(let response):
+                    if response.variantSwitched, let newVariant = response.newVariant, let newPhase = response.newPhase {
+                        DispatchQueue.main.async {
+                            self.variantManager?.switchVariant(newVariant: newVariant, newPhase: newPhase)
+                            UserDefaults.standard.set(true, forKey: "instructionsNeeded")
+                            UserDefaults.standard.set(true, forKey: "variantSwitchPending")
+                        }
+                        self.fireVariantSwitchNotification()
+                        WatchConnectivityManager.shared.notifyVariantSwitched(newVariant: newVariant, newPhase: newPhase)
+                    }
+                    if response.experimentComplete == true {
+                        WatchConnectivityManager.shared.notifyExperimentComplete()
+                    }
                     self.currentSession = nil
                 case .failure(let error):
                     print("Failed to record session: \(error.localizedDescription)")
@@ -170,6 +190,20 @@ class ReflectionManager: ObservableObject {
             print("Error encoding session: \(error.localizedDescription)")
             self.currentSession = nil
         }
+    }
+    
+    private func fireVariantSwitchNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Variant Switched"
+        content.body = "You've been moved to a new experimental variant. Open the Cue app to see your updated instructions."
+        content.sound = .default
+        content.interruptionLevel = .timeSensitive
+        let request = UNNotificationRequest(
+            identifier: "cue.variantSwitched.\(UUID().uuidString)",
+            content: content,
+            trigger: nil
+        )
+        UNUserNotificationCenter.current().add(request)
     }
     
     func updateSession(_ session: Session) {

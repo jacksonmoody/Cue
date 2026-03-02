@@ -2,7 +2,7 @@ var express = require("express");
 
 var router = express.Router();
 
-var EIGHT_HOURS_IN_SECONDS = 28800;
+var { tryAdvancePhase, EIGHT_HOURS_IN_SECONDS } = require("../utils/advancePhase");
 
 router.post("/", async function (req, res) {
   var db = req.db;
@@ -49,35 +49,12 @@ router.post("/", async function (req, res) {
     };
 
     if (variant) {
-      var totalResult = await sessions
-        .aggregate([
-          { $match: { userId: trimmedUserId, variant: variant } },
-          { $group: { _id: null, total: { $sum: "$duration" } } },
-        ])
-        .toArray();
-
-      var totalDuration = totalResult.length > 0 ? totalResult[0].total : 0;
-      responseData.secondsLogged = totalDuration;
-
-      if (totalDuration >= 60) {
-        // if (totalDuration >= EIGHT_HOURS_IN_SECONDS) {
-        var assignments = db.collection("assignments");
-        var assignment = await assignments.findOne({ userId: trimmedUserId });
-
-        if (assignment && assignment.order && assignment.currentPhase < 2) {
-          var newPhase = assignment.currentPhase + 1;
-          var newVariant = assignment.order[newPhase];
-
-          await assignments.updateOne(
-            { userId: trimmedUserId },
-            { $set: { currentPhase: newPhase, variant: newVariant } },
-          );
-
-          responseData.variantSwitched = true;
-          responseData.newVariant = newVariant;
-          responseData.newPhase = newPhase;
-        }
-      }
+      var advanceResult = await tryAdvancePhase(db, trimmedUserId, variant);
+      responseData.secondsLogged = advanceResult.secondsLogged;
+      responseData.variantSwitched = advanceResult.variantSwitched;
+      responseData.newVariant = advanceResult.newVariant;
+      responseData.newPhase = advanceResult.newPhase;
+      responseData.experimentComplete = advanceResult.experimentComplete;
     }
 
     res.status(201).json(responseData);

@@ -34,6 +34,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     // Callback when variant is switched (newVariant, newPhase)
     var onVariantSwitched: ((Int, Int) -> Void)?
     
+    // Callback when the experiment is complete (all phases done)
+    var onExperimentComplete: (() -> Void)?
+    
     private override init() {
         super.init()
         setupSession()
@@ -217,6 +220,36 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         )
     }
     
+    func notifyExperimentComplete() {
+        guard let session = session, session.activationState == .activated else {
+            return
+        }
+        
+        let message = ["experimentComplete": true]
+        
+        guard session.isReachable else {
+            do {
+                try session.updateApplicationContext(message)
+            } catch {
+                print("Error updating application context: \(error.localizedDescription)")
+            }
+            return
+        }
+        
+        session.sendMessage(
+            message,
+            replyHandler: nil,
+            errorHandler: { error in
+                print("Error sending experiment complete message: \(error.localizedDescription)")
+                do {
+                    try session.updateApplicationContext(message)
+                } catch {
+                    print("Error updating application context as fallback: \(error.localizedDescription)")
+                }
+            }
+        )
+    }
+    
     private func requestCurrentSessionState() {
         #if os(iOS)
         guard let session = session, session.activationState == .activated, session.isReachable else {
@@ -348,6 +381,12 @@ extension WatchConnectivityManager: WCSessionDelegate {
                 self.onVariantSwitched?(newVariant, newPhase)
             }
         }
+        
+        if let _ = message["experimentComplete"] as? Bool {
+            DispatchQueue.main.async {
+                self.onExperimentComplete?()
+            }
+        }
     }
     
     #if os(watchOS)
@@ -390,6 +429,12 @@ extension WatchConnectivityManager: WCSessionDelegate {
            let newPhase = applicationContext["newPhase"] as? Int {
             DispatchQueue.main.async {
                 self.onVariantSwitched?(newVariant, newPhase)
+            }
+        }
+        
+        if let _ = applicationContext["experimentComplete"] as? Bool {
+            DispatchQueue.main.async {
+                self.onExperimentComplete?()
             }
         }
     }

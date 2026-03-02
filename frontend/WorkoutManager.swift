@@ -17,6 +17,7 @@ struct SessionResponse: Decodable {
     let newVariant: Int?
     let newPhase: Int?
     let secondsLogged: Double?
+    let experimentComplete: Bool?
 }
 
 class WorkoutManager: NSObject, ObservableObject {
@@ -187,6 +188,9 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
                     }
                     self.fireVariantSwitchNotification()
                     WatchConnectivityManager.shared.notifyVariantSwitched(newVariant: newVariant, newPhase: newPhase)
+                }
+                if response.experimentComplete == true {
+                    WatchConnectivityManager.shared.notifyExperimentComplete()
                 }
                 self.session?.stopActivity(with: nil)
             case .failure(let error):
