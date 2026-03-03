@@ -32,15 +32,16 @@ class WorkoutManager: NSObject, ObservableObject {
     var variantManager: VariantManager?
     private let backendService = BackendService.shared
     var currentPurpose: WorkoutPurpose = .monitoring
-
-    // Track whether to resume monitoring after a reflection 
     var resumeMonitoring = false
 
-    // Whether to start a reflection workout after a monitoring workout ends
-    private var pendingReflectionStart = false
+    private enum PendingStopAction {
+        case monitoringStop // Stop monitoring workout
+        case transitionToReflection(monitoringDuration: TimeInterval) // Stop monitoring workout and start reflection workout
+        case saveReflection // Save reflection workout
+        case discardReflection // Discard reflection workout
+    }
 
-    private var pendingMonitoringDuration: TimeInterval = 0
-    private var shouldSaveWorkout = false
+    private var pendingStopAction: PendingStopAction = .monitoringStop
 
     func startWorkout(purpose: WorkoutPurpose = .monitoring) {
         currentPurpose = purpose
@@ -83,8 +84,7 @@ class WorkoutManager: NSObject, ObservableObject {
     func startReflectionWorkout() {
         if session != nil {
             resumeMonitoring = true
-            pendingReflectionStart = true
-            pendingMonitoringDuration = builder?.elapsedTime ?? 0
+            pendingStopAction = .transitionToReflection(monitoringDuration: builder?.elapsedTime ?? 0)
             session?.stopActivity(with: nil)
         } else {
             resumeMonitoring = false
@@ -94,7 +94,13 @@ class WorkoutManager: NSObject, ObservableObject {
 
     func endReflectionWorkout() {
         guard session != nil, currentPurpose == .reflection else { return }
-        shouldSaveWorkout = true
+        pendingStopAction = .saveReflection
+        session?.stopActivity(with: nil)
+    }
+
+    func cancelReflectionWorkout() {
+        guard session != nil, currentPurpose == .reflection else { return }
+        pendingStopAction = .discardReflection
         session?.stopActivity(with: nil)
     }
     
@@ -123,6 +129,7 @@ class WorkoutManager: NSObject, ObservableObject {
         // If currently in a reflection workout, don't resume monitoring workout after it ends
         if currentPurpose == .reflection {
             resumeMonitoring = false
+            WatchConnectivityManager.shared.updateSessionState(false)
             return
         }
         recordSession(duration: builder?.elapsedTime ?? 0)
@@ -160,24 +167,17 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
         }
         
         if toState == .stopped {
-            // Starting reflection workout after monitoring workout ends
-            if pendingReflectionStart {
-                pendingReflectionStart = false
-                builder?.discardWorkout()
-                session?.end()
-                // Record monitoring workout duration without triggering variant switch logic
-                recordMonitoringDuration(pendingMonitoringDuration)
-                
-                DispatchQueue.main.async {
-                    self.builder = nil
-                    self.session = nil
-                    self.averageHeartRate = 0
-                    self.heartRate = 0
+            let action = pendingStopAction
+            pendingStopAction = .monitoringStop // Default to stopping monitoring workout
+
+            switch action {
+            case .transitionToReflection(let duration):
+                cleanupWorkoutSession {
                     self.startWorkout(purpose: .reflection)
                 }
-            // Saving reflection workout
-            } else if shouldSaveWorkout {
-                shouldSaveWorkout = false
+                recordMonitoringDuration(duration)
+
+            case .saveReflection:
                 builder?.endCollection(withEnd: Date()) { success, error in
                     if let error = error {
                         print("Failed to end workout collection: \(error.localizedDescription)")
@@ -200,18 +200,19 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
                         }
                     }
                 }
-            // Monitoring workout ended
-            } else { 
-                WatchConnectivityManager.shared.updateSessionState(false)
-                builder?.discardWorkout()
-                session?.end()
-                
-                DispatchQueue.main.async {
-                    self.builder = nil
-                    self.session = nil
-                    self.averageHeartRate = 0
-                    self.heartRate = 0
+
+            case .discardReflection:
+                cleanupWorkoutSession {
+                    self.currentPurpose = .monitoring
+                    if self.resumeMonitoring {
+                        self.resumeMonitoring = false
+                        self.startWorkout(purpose: .monitoring)
+                    }
                 }
+
+            case .monitoringStop:
+                WatchConnectivityManager.shared.updateSessionState(false)
+                cleanupWorkoutSession()
             }
         }
     }
@@ -219,11 +220,22 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
         print("HKWorkoutSessionDelegate: workoutSession(_:didFailWithError:) \(error.localizedDescription)")
         DispatchQueue.main.async {
-            self.pendingReflectionStart = false
-            self.shouldSaveWorkout = false
+            self.pendingStopAction = .monitoringStop
             self.builder = nil
             self.session = nil
             WatchConnectivityManager.shared.updateSessionState(false)
+        }
+    }
+
+    private func cleanupWorkoutSession(then completion: (() -> Void)? = nil) {
+        builder?.discardWorkout()
+        session?.end()
+        DispatchQueue.main.async {
+            self.builder = nil
+            self.session = nil
+            self.averageHeartRate = 0
+            self.heartRate = 0
+            completion?()
         }
     }
 }

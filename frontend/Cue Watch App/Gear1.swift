@@ -92,6 +92,16 @@ struct Gear1: View {
                 }
             }
         }
+        // Canceled reflection from back button
+        .onDisappear {
+            if router.path.count == 0, reflectionManager.currentSession != nil {
+                workoutManager.cancelReflectionWorkout()
+                if let session = reflectionManager.currentSession {
+                    Task { await reflectionManager.deleteReflection(session) }
+                }
+                reflectionManager.currentSession = nil
+            }
+        }
         .task {
             await setupReflection(trigger: trigger)
         }
