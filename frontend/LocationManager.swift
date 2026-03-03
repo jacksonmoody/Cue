@@ -11,6 +11,7 @@ import Combine
 class LocationService: NSObject, CLLocationManagerDelegate, ObservableObject {
 
     @Published var mostRecentLocation: CLLocation?
+    @Published var locationFailed: Bool = false
     let locationManager: CLLocationManager
     var onAuthorizationChange: ((CLAuthorizationStatus) -> Void)?
 
@@ -67,5 +68,8 @@ class LocationService: NSObject, CLLocationManagerDelegate, ObservableObject {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         print("Error obtaining location: \(error.localizedDescription)")
+        DispatchQueue.main.async {
+            self.locationFailed = true
+        }
     }
 }

@@ -229,7 +229,7 @@ class ReflectionManager: ObservableObject {
         }
     }
     
-    func fetchGear1Options(currentLocation: CLLocation) async {
+    func fetchGear1Options(currentLocation: CLLocation?) async {
         guard let userId = variantManager?.appleUserId else {
             return
         }
@@ -242,13 +242,16 @@ class ReflectionManager: ObservableObject {
         let weekdayIndex = Calendar.current.component(.weekday, from: now)
         let weekdayName = formatter.weekdaySymbols[weekdayIndex - 1]
         
-        let userData: [String: Any] = [
+        var userData: [String: Any] = [
             "idToken": userId,
-            "latitude": currentLocation.coordinate.latitude.formatted(),
-            "longitude": currentLocation.coordinate.longitude.formatted(),
             "timeOfDay": hourString,
             "dayOfWeek": weekdayName
         ]
+        
+        if let location = currentLocation {
+            userData["latitude"] = location.coordinate.latitude.formatted()
+            userData["longitude"] = location.coordinate.longitude.formatted()
+        }
 
         do {
             let response = try await backendService.post(
@@ -263,7 +266,7 @@ class ReflectionManager: ObservableObject {
         } catch {
             print("Failed to fetch gear 1 options: \(error.localizedDescription)")
             await MainActor.run {
-                errorMessage = "Unable to load options. Please check your Internet connection and try again."
+                errorMessage = "Unable to start reflection. Please check your Internet connection and try again."
             }
         }
     }

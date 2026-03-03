@@ -48,7 +48,7 @@ struct Gear1: View {
             if currentPhase == 2 {
                 List {
                     ForEach(reflectionManager.gear1Options) { option in
-                        ListButton(option.text, image: option.icon) {
+                        ListButton(option.text.localizedCapitalized, image: option.icon) {
                             gear1Selection(option)
                         }
                     }
@@ -94,12 +94,21 @@ struct Gear1: View {
         .task {
             await setupReflection(trigger: trigger)
         }
-        .onChange(of: locationService.mostRecentLocation) { oldValue, newValue in
+        .onChange(of: locationService.mostRecentLocation) { _, newValue in
             if let location = newValue, !fetchedOptions {
                 fetchedOptions = true
                 locationService.mostRecentLocation = nil
                 Task {
                     await reflectionManager.fetchGear1Options(currentLocation: location)
+                }
+            }
+        }
+        .onChange(of: locationService.locationFailed) { _, newValue in
+            if newValue, !fetchedOptions {
+                fetchedOptions = true
+                locationService.locationFailed = false
+                Task {
+                    await reflectionManager.fetchGear1Options(currentLocation: nil)
                 }
             }
         }
