@@ -14,24 +14,23 @@ enum NotificationHelper {
     private static let enableMonitoringIdentifier = "cue.reminder.enableMonitoring"
     private static let disableMonitoringIdentifier = "cue.reminder.disableMonitoring"
 
-    static func registerMonitoringReminderCategory() {
+    static func monitoringReminderCategory() -> UNNotificationCategory {
         let openAction = UNNotificationAction(
             identifier: monitoringReminderOpenActionIdentifier,
             title: "Open Cue",
             options: [.foreground]
         )
-        let category = UNNotificationCategory(
+        return UNNotificationCategory(
             identifier: monitoringReminderCategoryIdentifier,
             actions: [openAction],
             intentIdentifiers: [],
             options: []
         )
-        let existing = UNUserNotificationCenter.current()
-        existing.getNotificationCategories { categories in
-            var updated = categories
-            updated.insert(category)
-            existing.setNotificationCategories(updated)
-        }
+    }
+
+    static func registerMonitoringReminderCategory() {
+        UNUserNotificationCenter.current()
+            .setNotificationCategories([monitoringReminderCategory()])
     }
 
     static func scheduleMonitoringReminders() {

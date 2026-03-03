@@ -13,6 +13,7 @@ struct Gear1: View {
     let trigger: ReflectionTrigger
     @Environment(NavigationRouter.self) private var router
     @EnvironmentObject var reflectionManager: ReflectionManager
+    @EnvironmentObject var workoutManager: WorkoutManager
     @EnvironmentObject var locationService: LocationService
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
@@ -137,6 +138,7 @@ struct Gear1: View {
     
     private func setupReflection(trigger: ReflectionTrigger) async {
         locationService.requestCurrentLocation()
+        workoutManager.startReflectionWorkout()
         reflectionManager.startNewSession(trigger: trigger)
         await reflectionManager.loadPreferences()
     }
@@ -189,5 +191,6 @@ struct ListButton: View {
     Gear1(trigger: .manual)
         .environment(NavigationRouter())
         .environmentObject(ReflectionManager())
+        .environmentObject(WorkoutManager())
         .environmentObject(LocationService())
 }

@@ -11,6 +11,7 @@ import SwiftUI
 struct Gear3: View {
     @Environment(NavigationRouter.self) private var router
     @EnvironmentObject var reflectionManager: ReflectionManager
+    @EnvironmentObject var workoutManager: WorkoutManager
     @State private var currentPhase: Int = 0
     @State private var opacity: Double = 0
     @State private var runtimeSession: WKExtendedRuntimeSession?
@@ -73,6 +74,7 @@ struct Gear3: View {
     }
     
     private func completeReflection(canceled: Bool) {
+        workoutManager.endReflectionWorkout()
         reflectionManager.endCurrentSession(atDate: .now)
         endExtendedRuntimeSession()
         router.navigateHome()
@@ -150,4 +152,5 @@ struct Gear3: View {
     Gear3()
         .environment(NavigationRouter())
         .environmentObject(ReflectionManager())
+        .environmentObject(WorkoutManager())
 }

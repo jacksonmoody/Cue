@@ -20,14 +20,30 @@ struct SessionResponse: Decodable {
     let experimentComplete: Bool?
 }
 
+enum WorkoutPurpose {
+    case monitoring
+    case reflection
+}
+
 class WorkoutManager: NSObject, ObservableObject {
     let healthStore = HKHealthStore()
     var session: HKWorkoutSession?
     var builder: HKLiveWorkoutBuilder?
     var variantManager: VariantManager?
     private let backendService = BackendService.shared
+    var currentPurpose: WorkoutPurpose = .monitoring
 
-    func startWorkout() {
+    // Track whether to resume monitoring after a reflection 
+    var resumeMonitoring = false
+
+    // Whether to start a reflection workout after a monitoring workout ends
+    private var pendingReflectionStart = false
+
+    private var pendingMonitoringDuration: TimeInterval = 0
+    private var shouldSaveWorkout = false
+
+    func startWorkout(purpose: WorkoutPurpose = .monitoring) {
+        currentPurpose = purpose
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .mindAndBody
 
@@ -63,6 +79,24 @@ class WorkoutManager: NSObject, ObservableObject {
             }
         }
     }
+
+    func startReflectionWorkout() {
+        if session != nil {
+            resumeMonitoring = true
+            pendingReflectionStart = true
+            pendingMonitoringDuration = builder?.elapsedTime ?? 0
+            session?.stopActivity(with: nil)
+        } else {
+            resumeMonitoring = false
+            startWorkout(purpose: .reflection)
+        }
+    }
+
+    func endReflectionWorkout() {
+        guard session != nil, currentPurpose == .reflection else { return }
+        shouldSaveWorkout = true
+        session?.stopActivity(with: nil)
+    }
     
     private func notifyWorkoutStartFailed() {
         WatchConnectivityManager.shared.updateSessionState(false)
@@ -86,6 +120,11 @@ class WorkoutManager: NSObject, ObservableObject {
 
     func stopWorkout() {
         guard session != nil else { return }
+        // If currently in a reflection workout, don't resume monitoring workout after it ends
+        if currentPurpose == .reflection {
+            resumeMonitoring = false
+            return
+        }
         recordSession(duration: builder?.elapsedTime ?? 0)
     }
 
@@ -116,21 +155,63 @@ class WorkoutManager: NSObject, ObservableObject {
 extension WorkoutManager: HKWorkoutSessionDelegate {
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState,
                         from fromState: HKWorkoutSessionState, date: Date) {
-        let isRunning = toState == .running
-        if isRunning {
+        if toState == .running && currentPurpose == .monitoring {
             WatchConnectivityManager.shared.updateSessionState(true)
         }
         
         if toState == .stopped {
-            WatchConnectivityManager.shared.updateSessionState(false)
-            builder?.discardWorkout()
-            session?.end()
-            
-            DispatchQueue.main.async {
-                self.builder = nil
-                self.session = nil
-                self.averageHeartRate = 0
-                self.heartRate = 0
+            // Starting reflection workout after monitoring workout ends
+            if pendingReflectionStart {
+                pendingReflectionStart = false
+                builder?.discardWorkout()
+                session?.end()
+                // Record monitoring workout duration without triggering variant switch logic
+                recordMonitoringDuration(pendingMonitoringDuration)
+                
+                DispatchQueue.main.async {
+                    self.builder = nil
+                    self.session = nil
+                    self.averageHeartRate = 0
+                    self.heartRate = 0
+                    self.startWorkout(purpose: .reflection)
+                }
+            // Saving reflection workout
+            } else if shouldSaveWorkout {
+                shouldSaveWorkout = false
+                builder?.endCollection(withEnd: Date()) { success, error in
+                    if let error = error {
+                        print("Failed to end workout collection: \(error.localizedDescription)")
+                    }
+                    self.builder?.finishWorkout { workout, error in
+                        if let error = error {
+                            print("Failed to finish workout: \(error.localizedDescription)")
+                        }
+                        self.session?.end()
+                        DispatchQueue.main.async {
+                            self.builder = nil
+                            self.session = nil
+                            self.averageHeartRate = 0
+                            self.heartRate = 0
+                            self.currentPurpose = .monitoring
+                            if self.resumeMonitoring {
+                                self.resumeMonitoring = false
+                                self.startWorkout(purpose: .monitoring)
+                            }
+                        }
+                    }
+                }
+            // Monitoring workout ended
+            } else { 
+                WatchConnectivityManager.shared.updateSessionState(false)
+                builder?.discardWorkout()
+                session?.end()
+                
+                DispatchQueue.main.async {
+                    self.builder = nil
+                    self.session = nil
+                    self.averageHeartRate = 0
+                    self.heartRate = 0
+                }
             }
         }
     }
@@ -138,6 +219,8 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
         print("HKWorkoutSessionDelegate: workoutSession(_:didFailWithError:) \(error.localizedDescription)")
         DispatchQueue.main.async {
+            self.pendingReflectionStart = false
+            self.shouldSaveWorkout = false
             self.builder = nil
             self.session = nil
             WatchConnectivityManager.shared.updateSessionState(false)
@@ -160,6 +243,19 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
         }
     }
     
+    private func recordMonitoringDuration(_ duration: TimeInterval) {
+        guard let userId = variantManager?.appleUserId else { return }
+        var sessionData: [String: Any] = [
+            "userId": userId,
+            "duration": duration,
+            "timestamp": ISO8601DateFormatter().string(from: Date())
+        ]
+        if let variant = variantManager?.variant {
+            sessionData["variant"] = variant
+        }
+        backendService.post(path: "/sessions", body: sessionData) { _ in }
+    }
+
     private func recordSession(duration: TimeInterval) {
         guard let userId = variantManager?.appleUserId else {
             print("Cannot record session: userId not available")

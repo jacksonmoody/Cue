@@ -116,7 +116,7 @@ struct AppView: View {
     private func setupManagerCallbacks() {
         connectivityManager.onSessionStateChanged = { isActive in
             if isActive {
-                workoutManager.startWorkout()
+                workoutManager.startWorkout(purpose: .monitoring)
             } else {
                 workoutManager.stopWorkout()
             }

@@ -30,7 +30,7 @@ struct SessionDetailView: View {
                 }
             }
         }
-        .navigationTitle("Reflection Details")
+        .navigationTitle(session.title ?? "Reflection Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }

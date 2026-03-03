@@ -45,8 +45,7 @@ class WatchDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDe
     func applicationDidFinishLaunching() {
         _ = WatchConnectivityManager.shared
         UNUserNotificationCenter.current().delegate = self
-        WatchDelegate.registerReflectionReminderCategory()
-        NotificationHelper.registerMonitoringReminderCategory()
+        Self.registerAllNotificationCategories()
         NotificationHelper.scheduleMonitoringReminders()
         Self.scheduleReflectionReminderIfNeeded()
     }
@@ -67,7 +66,7 @@ class WatchDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDe
     func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
         Task {
             try? await Task.sleep(for: .milliseconds(500))
-            workoutManager?.startWorkout()
+            workoutManager?.startWorkout(purpose: .monitoring)
         }
     }
 
@@ -77,7 +76,7 @@ extension WatchDelegate {
     static let scheduledReflectionIdentifier = "cue.reminder.scheduledReflection"
     static let reflectionReminderCategoryIdentifier = "REFLECTION_REMINDER"
     static let reflectionReminderOpenActionIdentifier = "OPEN_REFLECTION"
-    static func registerReflectionReminderCategory() {
+    static func registerAllNotificationCategories() {
         let reflectAction = UNNotificationAction(identifier: reflectionReminderOpenActionIdentifier, title: "Reflect", options: [.foreground])
         let reflectionCategory = UNNotificationCategory(
             identifier: reflectionReminderCategoryIdentifier,
@@ -85,12 +84,8 @@ extension WatchDelegate {
             intentIdentifiers: [],
             options: []
         )
-        let existing = UNUserNotificationCenter.current()
-        existing.getNotificationCategories { categories in
-            var updated = categories
-            updated.insert(reflectionCategory)
-            existing.setNotificationCategories(updated)
-        }
+        UNUserNotificationCenter.current()
+            .setNotificationCategories([reflectionCategory, NotificationHelper.monitoringReminderCategory()])
     }
 
     static func scheduleReflectionReminderIfNeeded() {
