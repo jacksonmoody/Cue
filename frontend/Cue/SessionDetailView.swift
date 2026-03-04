@@ -84,6 +84,7 @@ struct HeartRateGraph: View {
     @State private var part3Label: String = ""
     @State private var data: [DataPoint] = []
     @State private var loading: Bool = true
+    @State private var selectedDataPoint: DataPoint?
     
     @FocusState private var part1Focused: Bool
     @FocusState private var part2Focused: Bool
@@ -183,8 +184,24 @@ struct HeartRateGraph: View {
         }
     }
     
+    private func findNearestDataPoint(at locationX: CGFloat, proxy: ChartProxy, geometry: GeometryProxy) -> DataPoint? {
+        guard let plotFrameAnchor = proxy.plotFrame else { return nil }
+        let plotFrame = geometry[plotFrameAnchor]
+        let relativeX = locationX - plotFrame.minX
+        guard relativeX >= 0, relativeX <= plotFrame.width else { return nil }
+        guard let time: Double = proxy.value(atX: relativeX) else { return nil }
+        return data.min(by: { abs($0.time - time) < abs($1.time - time) })
+    }
+    
     private var graphView: some View {
         let maxHr = data.map(\.hr).max() ?? 200
+        let dataMinTime = data.map(\.time).min() ?? 0
+        let dataMaxTime = data.map(\.time).max() ?? 0
+        let gear1Time = session.gear1Finished?.timeIntervalSince(session.startDate)
+        let gear3Time = session.gear3Started?.timeIntervalSince(session.startDate)
+        let allTimes = [dataMinTime, dataMaxTime, gear1Time, gear3Time].compactMap { $0 }
+        let xMin: Double = 0
+        let xMax = (allTimes.max() ?? 0) + 5
         return Chart(data) { point in
             PointMark(
                 x: .value("Time", point.time),
@@ -192,9 +209,48 @@ struct HeartRateGraph: View {
             )
             .foregroundStyle(.red)
             .symbolSize(25)
+            
+            if let selected = selectedDataPoint, selected.id == point.id {
+                RuleMark(x: .value("Time", selected.time))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                    .annotation(position: .top, spacing: 8) {
+                        VStack(spacing: 4) {
+                            Text("\(Int(selected.hr)) BPM")
+                                .font(.caption.bold())
+                                .foregroundStyle(.white)
+                            Text(formatDuration(selected.time))
+                                .font(.caption2)
+                                .foregroundStyle(.white.opacity(0.8))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(.black, in: RoundedRectangle(cornerRadius: 8))
+                    }
+                
+                PointMark(
+                    x: .value("Time", selected.time),
+                    y: .value("Heart Rate", selected.hr)
+                )
+                .foregroundStyle(.white)
+                .symbolSize(60)
+            }
         }
         .chartOverlay { proxy in
             GeometryReader { geometry in
+                Rectangle()
+                    .fill(Color.clear)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                selectedDataPoint = findNearestDataPoint(at: value.location.x, proxy: proxy, geometry: geometry)
+                            }
+                            .onEnded { _ in
+                                selectedDataPoint = nil
+                            }
+                    )
+                
                 if let gear1Date = session.gear1Finished {
                     chartAnnotation(date: gear1Date, proxy: proxy, geometry: geometry, label: part1Label, startDate: session.startDate, offset: 20)
                 }
@@ -211,7 +267,7 @@ struct HeartRateGraph: View {
                     .foregroundStyle(.white.opacity(0.5))
                 AxisValueLabel {
                     if let seconds = value.as(Double.self) {
-                        Text(formatDuration(seconds))
+                        Text(formatChartTime(seconds))
                     }
                 }
                 .foregroundStyle(.white)
@@ -232,6 +288,7 @@ struct HeartRateGraph: View {
                 .font(Font.caption.bold())
                 .foregroundStyle(.white)
         }
+        .chartXScale(domain: xMin...xMax)
         .chartYScale(domain: [30, maxHr + 20])
         .chartXAxisLabel(alignment: .center) {
             Text("Time")
@@ -248,23 +305,38 @@ struct HeartRateGraph: View {
         let startDate: Date
         let offset: CGFloat
         
+        @State private var labelWidth: CGFloat = 0
+        
         var body: some View {
             let targetTime = date.timeIntervalSince(startDate)
             if let xPos = proxy.position(forX: targetTime),
                let plotFrameAnchor = proxy.plotFrame {
                 let plotFrame = geometry[plotFrameAnchor]
+                let lineX = plotFrame.minX + xPos
                 let lineHeight = plotFrame.height - offset - 10
-                VStack(spacing: 4) {
-                    Text(label)
-                        .font(.caption)
-                        .padding(3)
-                        .background(.white.opacity(0.5), in: RoundedRectangle(cornerRadius: 20))
+                let halfLabel = labelWidth / 2
+                let clampedLabelX = min(max(lineX, plotFrame.minX + halfLabel), plotFrame.maxX - halfLabel)
+                ZStack {
                     Line()
                         .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [2, 5]))
                         .foregroundStyle(.white)
                         .frame(width: 1.5, height: lineHeight)
+                        .position(x: lineX, y: plotFrame.minY + offset + 10 + lineHeight / 2)
+                    
+                    Text(label)
+                        .font(.caption)
+                        .lineLimit(1)
+                        .fixedSize()
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(.white.opacity(0.5), in: RoundedRectangle(cornerRadius: 20))
+                        .onGeometryChange(for: CGFloat.self) { geo in
+                            geo.size.width
+                        } action: { newWidth in
+                            labelWidth = newWidth
+                        }
+                        .position(x: clampedLabelX, y: plotFrame.minY + offset)
                 }
-                .position(x: plotFrame.minX + xPos, y: plotFrame.minY + offset + lineHeight / 2)
             }
         }
     }
@@ -298,6 +370,12 @@ struct HeartRateGraph: View {
         newSession.gear3 = GearOption(text: part3Label, icon: session.gear3?.icon ?? "")
         reflectionManager.updateSession(newSession)
     }
+}
+
+fileprivate func formatChartTime(_ duration: TimeInterval) -> String {
+    let minutes = Int(duration) / 60
+    let seconds = Int(duration) % 60
+    return String(format: "%d:%02d", minutes, seconds)
 }
 
 fileprivate func formatDuration(_ duration: TimeInterval) -> String {

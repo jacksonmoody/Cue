@@ -168,7 +168,7 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
         
         if toState == .stopped {
             let action = pendingStopAction
-            pendingStopAction = .monitoringStop // Default to stopping monitoring workout
+            pendingStopAction = .monitoringStop // Default back to stopping monitoring workout
 
             switch action {
             case .transitionToReflection(let duration):
