@@ -41,7 +41,7 @@ struct DefaultReflect: View {
                     Text(title)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
-                    Text("Press \"X\" when you feel done reflecting")
+                    Text("Press \"X\" when you are done reflecting.")
                         .multilineTextAlignment(.center)
                         .font(Font.caption)
                         .frame(maxWidth: 160)

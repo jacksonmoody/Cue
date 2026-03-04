@@ -76,7 +76,6 @@ struct Gear3: View {
     private func completeReflection(canceled: Bool) {
         let gear3Start = reflectionManager.currentSession?.gear3Started
         let endDate = Date()
-        router.navigateHome()
 
         workoutManager.endReflectionWorkout { [self] in
             Task {
@@ -86,6 +85,9 @@ struct Gear3: View {
                 }
                 reflectionManager.endCurrentSession(atDate: endDate)
                 endExtendedRuntimeSession()
+                await MainActor.run {
+                    router.navigateHome()
+                }
             }
         }
     }
