@@ -12,8 +12,14 @@ router.post("/gear2", async function (req, res) {
     return res.status(400).json({ error: "userId (string) is required" });
   }
 
-  if (!gear2Preferences || !Array.isArray(gear2Preferences) || gear2Preferences.length === 0) {
-    return res.status(400).json({ error: "gear2Preferences (array) is required" });
+  if (
+    !gear2Preferences ||
+    !Array.isArray(gear2Preferences) ||
+    gear2Preferences.length === 0
+  ) {
+    return res
+      .status(400)
+      .json({ error: "gear2Preferences (array) is required" });
   }
 
   var trimmedUserId = userId.trim();
@@ -37,11 +43,9 @@ router.post("/gear2", async function (req, res) {
         createdAt: new Date(),
       },
     };
-    await preferences.updateOne(
-      { userId: trimmedUserId },
-      updateDoc,
-      { upsert: true }
-    );
+    await preferences.updateOne({ userId: trimmedUserId }, updateDoc, {
+      upsert: true,
+    });
 
     res.status(200).json({
       userId: trimmedUserId,
@@ -62,8 +66,14 @@ router.post("/gear3", async function (req, res) {
     return res.status(400).json({ error: "userId (string) is required" });
   }
 
-  if (!gear3Preferences || !Array.isArray(gear3Preferences) || gear3Preferences.length === 0) {
-    return res.status(400).json({ error: "gear3Preferences (array) is required" });
+  if (
+    !gear3Preferences ||
+    !Array.isArray(gear3Preferences) ||
+    gear3Preferences.length === 0
+  ) {
+    return res
+      .status(400)
+      .json({ error: "gear3Preferences (array) is required" });
   }
 
   var trimmedUserId = userId.trim();
@@ -87,11 +97,9 @@ router.post("/gear3", async function (req, res) {
         createdAt: new Date(),
       },
     };
-    await preferences.updateOne(
-      { userId: trimmedUserId },
-      updateDoc,
-      { upsert: true }
-    );
+    await preferences.updateOne({ userId: trimmedUserId }, updateDoc, {
+      upsert: true,
+    });
 
     res.status(200).json({
       userId: trimmedUserId,
@@ -173,6 +181,34 @@ function getDefaultGear3Preferences() {
   ];
 }
 
+function sortedGear3Options(gear3Options, hrStats) {
+  if (!hrStats || hrStats.length === 0) {
+    return gear3Options;
+  }
+
+  var declineMap = {};
+  hrStats.forEach(function (stat) {
+    declineMap[stat._id] = stat.avgDecline;
+  });
+
+  var withData = [];
+  var withoutData = [];
+  gear3Options.forEach(function (option) {
+    if (declineMap[option.text] !== undefined) {
+      withData.push(option);
+    } else {
+      withoutData.push(option);
+    }
+  });
+
+  withData.sort(function (a, b) {
+    return declineMap[b.text] - declineMap[a.text];
+  });
+
+  // Add HR options before options without HR data
+  return withData.concat(withoutData);
+}
+
 router.get("/:userId", async function (req, res) {
   var db = req.db;
   var userId = req.params.userId;
@@ -185,20 +221,41 @@ router.get("/:userId", async function (req, res) {
 
   try {
     var preferences = db.collection("preferences");
-    var userPreferences = await preferences.findOne({ userId: trimmedUserId });
+    var reflections = db.collection("reflections");
 
-    if (!userPreferences) {
-      return res.json({
-        gear2: getDefaultGear2Preferences(),
-        gear3: getDefaultGear3Preferences(),
-      });
-    }
-    
-    var response = {
-      gear2: userPreferences.gear2 || getDefaultGear2Preferences(),
-      gear3: userPreferences.gear3 || getDefaultGear3Preferences(),
-    };
-    res.json(response);
+    var [userPreferences, hrStats] = await Promise.all([
+      preferences.findOne({ userId: trimmedUserId }),
+      reflections
+        .aggregate([
+          {
+            $match: {
+              userId: trimmedUserId,
+              "reflection.heartRateDecline": { $exists: true, $ne: null },
+              "reflection.gear3.text": { $exists: true },
+              "reflection.endDate": { $exists: true, $ne: null },
+            },
+          },
+          {
+            $group: {
+              _id: "$reflection.gear3.text",
+              avgDecline: { $avg: "$reflection.heartRateDecline" },
+            },
+          },
+        ])
+        .toArray(),
+    ]);
+
+    var gear2 =
+      (userPreferences && userPreferences.gear2) ||
+      getDefaultGear2Preferences();
+    var gear3 =
+      (userPreferences && userPreferences.gear3) ||
+      getDefaultGear3Preferences();
+
+    res.json({
+      gear2: gear2,
+      gear3: sortedGear3Options(gear3, hrStats),
+    });
   } catch (err) {
     console.error("Error fetching preferences", err);
     res.status(500).json({ error: "Failed to fetch preferences" });

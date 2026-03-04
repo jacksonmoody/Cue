@@ -33,6 +33,7 @@ class WorkoutManager: NSObject, ObservableObject {
     private let backendService = BackendService.shared
     var currentPurpose: WorkoutPurpose = .monitoring
     var resumeMonitoring = false
+    private var reflectionCompletion: (() -> Void)?
 
     private enum PendingStopAction {
         case monitoringStop // Stop monitoring workout
@@ -92,8 +93,12 @@ class WorkoutManager: NSObject, ObservableObject {
         }
     }
 
-    func endReflectionWorkout() {
-        guard session != nil, currentPurpose == .reflection else { return }
+    func endReflectionWorkout(completion: @escaping () -> Void = {}) {
+        guard session != nil, currentPurpose == .reflection else {
+            completion()
+            return
+        }
+        reflectionCompletion = completion
         pendingStopAction = .saveReflection
         session?.stopActivity(with: nil)
     }
@@ -156,6 +161,20 @@ class WorkoutManager: NSObject, ObservableObject {
             }
         }
     }
+
+    func queryHeartRateDecline(from startDate: Date, to endDate: Date) async -> Double? {
+        let hrType = HKQuantityType(.heartRate)
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: [])
+        let descriptor = HKSampleQueryDescriptor(
+            predicates: [.quantitySample(type: hrType, predicate: predicate)],
+            sortDescriptors: [SortDescriptor(\.endDate)])
+        guard let results = try? await descriptor.result(for: healthStore),
+              let first = results.first, let last = results.last else {
+            return nil
+        }
+        let unit = HKUnit.count().unitDivided(by: .minute())
+        return first.quantity.doubleValue(for: unit) - last.quantity.doubleValue(for: unit)
+    }
 }
 
 // MARK: - HKWorkoutSessionDelegate
@@ -187,6 +206,9 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
                             print("Failed to finish workout: \(error.localizedDescription)")
                         }
                         self.session?.end()
+                        let completion = self.reflectionCompletion
+                        self.reflectionCompletion = nil
+                        completion?()
                         DispatchQueue.main.async {
                             self.builder = nil
                             self.session = nil

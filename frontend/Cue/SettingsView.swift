@@ -20,7 +20,6 @@ struct SettingsView: View {
     @State private var newGear3Text = ""
     @State private var newGear3Icon = "star"
     @State private var gear2EditMode: EditMode = .inactive
-    @State private var gear3EditMode: EditMode = .inactive
     @State private var showingError = false
     
     let commonPhysicalIcons = ["star", "heart", "brain", "lungs", "eye", "hand.raised", "cross", "dumbbell", "scalemass", "thermometer.variable", "blood.pressure.cuff", "questionmark", "circle.slash"]
@@ -163,25 +162,11 @@ struct SettingsView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 20) {
-                        HStack {
-                            Text("Reflection Options")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.white)
-                            Spacer()
-                            Button(gear3EditMode.isEditing ? "Done" : "Edit") {
-                                withAnimation {
-                                    if gear3EditMode.isEditing {
-                                        Task {
-                                            await reflectionManager.saveGear3Preferences(gear3Options)
-                                        }
-                                    }
-                                    gear3EditMode = gear3EditMode.isEditing ? .inactive : .active
-                                }
-                            }
+                        Text("Reflection Options")
+                            .font(.title2)
+                            .fontWeight(.bold)
                             .foregroundStyle(.white)
-                        }
-                        .padding(.horizontal)
+                            .padding(.horizontal)
                         
                         List {
                             ForEach(gear3Options) { option in
@@ -193,17 +178,12 @@ struct SettingsView: View {
                                         .foregroundStyle(.white)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .contentShape(.dragPreview, DragPreviewInsetRect(horizontal: 50, vertical: 15))
                                 .listRowBackground(Color.white.opacity(0.15))
-                            }
-                            .onMove { indices, newOffset in
-                                gear3Options.move(fromOffsets: indices, toOffset: newOffset)
                             }
                             .onDelete { indices in
                                 gear3Options.remove(atOffsets: indices)
                             }
                         }
-                        .environment(\.editMode, $gear3EditMode)
                         .listStyle(.insetGrouped)
                         .padding(.top, -35)
                         .scrollContentBackground(.hidden)
@@ -282,14 +262,13 @@ struct SettingsView: View {
                                     Image(systemName: "plus.circle.fill")
                                     Text("Add New Option")
                                 }
-                                .foregroundStyle(gear3EditMode == .active ? .white.opacity(0.4) : .white)
+                                .foregroundStyle(.white)
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(gear3EditMode == .active ? Color.gray.opacity(0.2) : Color.white.opacity(0.2))
+                                .background(Color.white.opacity(0.2))
                                 .cornerRadius(20)
                             }
                             .padding(.horizontal)
-                            .disabled(gear3EditMode == .active)
                         }
                     }
                     .padding(.bottom, 20)

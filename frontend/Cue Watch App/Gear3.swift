@@ -74,10 +74,20 @@ struct Gear3: View {
     }
     
     private func completeReflection(canceled: Bool) {
-        workoutManager.endReflectionWorkout()
-        reflectionManager.endCurrentSession(atDate: .now)
-        endExtendedRuntimeSession()
+        let gear3Start = reflectionManager.currentSession?.gear3Started
+        let endDate = Date()
         router.navigateHome()
+
+        workoutManager.endReflectionWorkout { [self] in
+            Task {
+                if !canceled, let gear3Start {
+                    reflectionManager.currentSession?.heartRateDecline =
+                        await workoutManager.queryHeartRateDecline(from: gear3Start, to: endDate)
+                }
+                reflectionManager.endCurrentSession(atDate: endDate)
+                endExtendedRuntimeSession()
+            }
+        }
     }
 
     private func startExtendedRuntimeSession() {

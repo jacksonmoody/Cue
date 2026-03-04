@@ -28,6 +28,7 @@ struct Session: Identifiable, Hashable, Codable {
     var gear2: GearOption?
     var gear3: GearOption?
     var title: String?
+    var heartRateDecline: Double?
     
     init(startDate: Date) {
         id = UUID()
@@ -41,6 +42,7 @@ struct Session: Identifiable, Hashable, Codable {
         self.gear2 = nil
         self.gear3 = nil
         self.title = nil
+        self.heartRateDecline = nil
     }
 }
 
