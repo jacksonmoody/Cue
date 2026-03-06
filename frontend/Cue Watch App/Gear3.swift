@@ -56,7 +56,7 @@ struct Gear3: View {
             if showReflectionView {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Cancel", systemImage: "xmark") {
-                        completeReflection(canceled: true)
+                        completeReflection()
                     }
                 }
             }
@@ -73,13 +73,12 @@ struct Gear3: View {
         transitionToReflectionView()
     }
     
-    private func completeReflection(canceled: Bool) {
+    private func completeReflection() {
         let gear3Start = reflectionManager.currentSession?.gear3Started
         let endDate = Date()
-
         workoutManager.endReflectionWorkout { [self] in
             Task {
-                if !canceled, let gear3Start {
+                if let gear3Start {
                     reflectionManager.currentSession?.heartRateDecline =
                         await workoutManager.queryHeartRateDecline(from: gear3Start, to: endDate)
                 }

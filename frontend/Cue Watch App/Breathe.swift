@@ -10,7 +10,7 @@ import Combine
 import AVFoundation
 
 struct Breathe: View {
-    let completeReflection: (Bool) -> Void
+    let completeReflection: () -> Void
     
     enum BreathingPhase: CaseIterable {
         case inhale, hold, exhale
@@ -58,7 +58,7 @@ struct Breathe: View {
                 withAnimation(.easeInOut(duration: 2.5)) {
                     opacity = 0
                 }
-                completeReflection(false)
+                completeReflection()
             }
         }
         .onDisappear {
@@ -204,6 +204,6 @@ struct SwirlingOrb: View {
 }
 
 #Preview {
-    Breathe(completeReflection: {_ in })
+    Breathe(completeReflection: {})
 }
 

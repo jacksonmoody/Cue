@@ -10,7 +10,7 @@ import AVFoundation
 import WatchKit
 
 struct Taps: View {
-    let completeReflection: (Bool) -> Void
+    let completeReflection: () -> Void
     let startDate = Date()
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
         (fadeIn: 1.5, display: 3.5, fadeOut: 1.5),
@@ -116,7 +116,7 @@ struct Taps: View {
                 if phase < 3 {
                     animatePhase(phase: phase + 1)
                 } else {
-                    completeReflection(false)
+                    completeReflection()
                 }
             }
         }
@@ -151,5 +151,5 @@ struct Taps: View {
 }
 
 #Preview {
-    Taps(completeReflection: { _ in })
+    Taps(completeReflection: {})
 }

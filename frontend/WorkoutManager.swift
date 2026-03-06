@@ -95,7 +95,6 @@ class WorkoutManager: NSObject, ObservableObject {
 
     func endReflectionWorkout(completion: @escaping () -> Void = {}) {
         guard session != nil, currentPurpose == .reflection else {
-            completion()
             return
         }
         reflectionCompletion = completion
@@ -168,12 +167,23 @@ class WorkoutManager: NSObject, ObservableObject {
         let descriptor = HKSampleQueryDescriptor(
             predicates: [.quantitySample(type: hrType, predicate: predicate)],
             sortDescriptors: [SortDescriptor(\.endDate)])
-        guard let results = try? await descriptor.result(for: healthStore),
-              let first = results.first, let last = results.last else {
+        
+        let results: [HKQuantitySample]
+        do {
+            results = try await descriptor.result(for: healthStore)
+        } catch {
+            print("Heart rate query failed: \(error)")
             return nil
         }
         let unit = HKUnit.count().unitDivided(by: .minute())
-        return first.quantity.doubleValue(for: unit) - last.quantity.doubleValue(for: unit)
+        guard let first = results.first, let last = results.last else {
+            print("No heart rate samples found in range \(startDate) to \(endDate)")
+            return nil
+        }
+        let firstHR = first.quantity.doubleValue(for: unit)
+        let lastHR = last.quantity.doubleValue(for: unit)
+        let decline = firstHR - lastHR
+        return decline
     }
 }
 

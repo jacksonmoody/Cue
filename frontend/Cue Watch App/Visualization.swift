@@ -18,7 +18,7 @@ private final class VisualizationAudioDelegate: NSObject, AVAudioPlayerDelegate 
 }
 
 struct Visualization: View {
-    let completeReflection: (Bool) -> Void
+    let completeReflection: () -> Void
     private static let symbols = ["tree.circle", "eye", "ear", "wind", "apple.meditate.circle"]
     private static let audioFiles = ["part1", "part2", "part3", "part4", "part5"]
     private static let fadeDuration: Double = 1
@@ -51,7 +51,7 @@ struct Visualization: View {
                 withAnimation(.easeInOut(duration: 2.5)) {
                     opacity = 0
                 }
-                completeReflection(false)
+                completeReflection()
             }
         }
         .onDisappear {
@@ -117,5 +117,5 @@ struct Visualization: View {
 }
 
 #Preview {
-    Visualization(completeReflection: { _ in })
+    Visualization(completeReflection: {})
 }

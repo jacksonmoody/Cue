@@ -12,13 +12,13 @@ import AVFoundation
 struct DefaultReflect: View {
     let title: String
     let icon: String
-    let completeReflection: (Bool) -> Void
+    let completeReflection: () -> Void
     let randomOption: String
     let shouldPlayAudio: Bool
     let startDate: Date
     static let backgroundOptions = ["lines", "silk", "waves"]
     
-    init(title: String, icon: String, playAudio: Bool = true, completeReflection: @escaping (Bool) -> Void) {
+    init(title: String, icon: String, playAudio: Bool = true, completeReflection: @escaping () -> Void) {
         self.title = title
         self.icon = icon
         self.completeReflection = completeReflection
@@ -90,5 +90,5 @@ struct ReflectTimelineSchedule: TimelineSchedule {
 }
 
 #Preview {
-    DefaultReflect(title: "Exercise", icon: "figure.run.treadmill", playAudio: false, completeReflection: { _ in })
+    DefaultReflect(title: "Exercise", icon: "figure.run.treadmill", playAudio: false, completeReflection: {})
 }
