@@ -41,6 +41,7 @@ struct Visualization: View {
                     .symbolRenderingMode(.hierarchical)
                     .foregroundStyle(.white)
                     .opacity(symbolOpacity)
+                    .offset(y: -5)
             }
             .opacity(opacity)
         }

@@ -140,7 +140,7 @@ function getDefaultGear2Preferences() {
     },
     {
       id: crypto.randomUUID(),
-      text: "No Change",
+      text: "No Sensation",
       icon: "circle.slash",
     },
   ];

@@ -54,7 +54,7 @@ struct ManageView: View {
                     .animation(.default, value: connectivityManager.isSessionActive)
                     .animation(.default, value: connectivityManager.isUpdatingSession)
                 }
-                Text(connectivityManager.isSessionActive ? "Your session is running. Feel free to leave the app." : "Press Start to Begin Monitoring")
+                Text(connectivityManager.isSessionActive ? "Monitoring is now running. Feel free to leave the app." : "Press Start to Begin Monitoring")
                     .font(.title2.bold())
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -89,7 +89,7 @@ struct ManageView: View {
         .alert("Apple Watch Not Reachable", isPresented: $connectivityManager.showError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Open the Cue app on your Apple Watch to manage the session.")
+            Text("Open the Cue app on your Apple Watch to manage monitoring.")
         }
     }
 }

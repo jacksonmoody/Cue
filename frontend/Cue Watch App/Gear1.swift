@@ -33,7 +33,7 @@ struct Gear1: View {
             }
             if currentPhase == 1 {
                 VStack {
-                    Text("What may have triggered this response?")
+                    Text("What may have triggered this reflection?")
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
                         .opacity(opacity)

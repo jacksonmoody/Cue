@@ -18,8 +18,8 @@ struct Gear2: View {
     @State private var vibrationTimer: Timer?
     @State private var isMuted: Bool = false
     private let phaseTimings: [(fadeIn: Double, display: Double, fadeOut: Double)] = [
-        (fadeIn: 1.5, display: 3.0, fadeOut: 1.5),
-        (fadeIn: 1.5, display: 4.0, fadeOut: 1.5),
+        (fadeIn: 1.5, display: 2.0, fadeOut: 1.5),
+        (fadeIn: 1.5, display: 2.0, fadeOut: 1.5),
         (fadeIn: 2.0, display: 0.0, fadeOut: 0.0)
     ]
     
@@ -35,7 +35,7 @@ struct Gear2: View {
             }
             
             if currentPhase == 1 {
-                Text("If you were to follow your body's usual response, what might you feel here?")
+                Text("How are you feeling in your body right now?")
                     .fontWeight(.bold)
                     .opacity(opacity)
                     .multilineTextAlignment(.center)
