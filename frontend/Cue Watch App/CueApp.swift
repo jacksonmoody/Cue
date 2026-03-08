@@ -25,6 +25,7 @@ struct Cue_Watch_AppApp: App {
                 .onAppear {
                     workoutManager.variantManager = variantManager
                     reflectionManager.variantManager = variantManager
+                    reflectionManager.stressDetector = workoutManager.stressDetector
                     delegate.workoutManager = workoutManager
                     delegate.navigationRouter = navigationRouter
                 }
@@ -55,7 +56,11 @@ class WatchDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDe
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        if response.actionIdentifier == Self.reflectionReminderOpenActionIdentifier {
+        let actionId = response.actionIdentifier
+        let categoryId = response.notification.request.content.categoryIdentifier
+
+        if actionId == Self.reflectionReminderOpenActionIdentifier
+            || categoryId == NotificationHelper.stressTriggerCategoryIdentifier {
             DispatchQueue.main.async { [weak self] in
                 self?.navigationRouter?.navigateToGear1(trigger: .notification)
             }
@@ -85,7 +90,11 @@ extension WatchDelegate {
             options: []
         )
         UNUserNotificationCenter.current()
-            .setNotificationCategories([reflectionCategory, NotificationHelper.monitoringReminderCategory()])
+            .setNotificationCategories([
+                reflectionCategory,
+                NotificationHelper.monitoringReminderCategory(),
+                NotificationHelper.stressTriggerCategory()
+            ])
     }
 
     static func scheduleReflectionReminderIfNeeded() {

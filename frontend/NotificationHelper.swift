@@ -86,6 +86,39 @@ enum NotificationHelper {
         UNUserNotificationCenter.current().add(request)
     }
 
+    static let stressTriggerCategoryIdentifier = "STRESS_TRIGGER"
+    private static let stressTriggerOpenActionIdentifier = "OPEN_STRESS_REFLECTION"
+
+    static func stressTriggerCategory() -> UNNotificationCategory {
+        let reflectAction = UNNotificationAction(
+            identifier: stressTriggerOpenActionIdentifier,
+            title: "Reflect",
+            options: [.foreground]
+        )
+        return UNNotificationCategory(
+            identifier: stressTriggerCategoryIdentifier,
+            actions: [reflectAction],
+            intentIdentifiers: [],
+            options: []
+        )
+    }
+
+    static func fireStressTriggerNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Time to Reflect"
+        content.body = "Cue has detected elevated stress. Take a moment to reflect."
+        content.sound = .default
+        content.interruptionLevel = .timeSensitive
+        content.relevanceScore = 1.0
+        content.categoryIdentifier = stressTriggerCategoryIdentifier
+        let request = UNNotificationRequest(
+            identifier: "cue.stressTrigger.\(UUID().uuidString)",
+            content: content,
+            trigger: nil
+        )
+        UNUserNotificationCenter.current().add(request)
+    }
+
     static func fireSurveyUnlockedNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Survey Unlocked"

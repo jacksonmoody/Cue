@@ -10,6 +10,8 @@
 		D519D2172F480A8B008B0C78 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = D519D2162F480A8B008B0C78 /* SwiftSoup */; };
 		D51A5BF32EFA8496001AD612 /* breathe.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D51A5BF22EFA8496001AD612 /* breathe.mp3 */; };
 		D52A6D442EFB3E9F0092DE7E /* App Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D58D5E0D2EF08D6200E4D1DB /* App Icon.icon */; };
+		D52D3AEC2F5E21DF00B3635F /* StressDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52D3AEB2F5E21DF00B3635F /* StressDetector.swift */; };
+		D52D3AED2F5E21DF00B3635F /* StressDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52D3AEB2F5E21DF00B3635F /* StressDetector.swift */; };
 		D55EB3862EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EB3852EF5FE520077F3B4 /* BackendService.swift */; };
 		D57A47B82F020E74002722F6 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D57A47B72F020E74002722F6 /* GoogleSignIn */; };
@@ -98,6 +100,7 @@
 
 /* Begin PBXFileReference section */
 		D51A5BF22EFA8496001AD612 /* breathe.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = breathe.mp3; sourceTree = "<group>"; };
+		D52D3AEB2F5E21DF00B3635F /* StressDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressDetector.swift; sourceTree = "<group>"; };
 		D55EB3852EF5FE520077F3B4 /* BackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendService.swift; sourceTree = "<group>"; };
 		D57A47BD2F0212F9002722F6 /* Cue-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Cue-Watch-App-Info.plist"; sourceTree = "<group>"; };
 		D57A498A2F02254D002722F6 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -212,6 +215,7 @@
 				D55EB3852EF5FE520077F3B4 /* BackendService.swift */,
 				D58D5DFF2EEFE21800E4D1DB /* VariantManager.swift */,
 				D58D5E322EF0DA0E00E4D1DB /* WorkoutManager.swift */,
+				D52D3AEB2F5E21DF00B3635F /* StressDetector.swift */,
 				D5D74DF22F55387500696C76 /* NotificationHelper.swift */,
 				D58A97A62EF60A950078459A /* SessionManager.swift */,
 				D57A498A2F02254D002722F6 /* LocationManager.swift */,
@@ -337,7 +341,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2620;
-				LastUpgradeCheck = 2620;
+				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					D583BBA32EEFA1BD006CDC9B = {
 						CreatedOnToolsVersion = 26.2;
@@ -415,6 +419,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D58D5E362EF0DDBF00E4D1DB /* InstructionsView.swift in Sources */,
+				D52D3AEC2F5E21DF00B3635F /* StressDetector.swift in Sources */,
 				D5A969762EF3AEE700782283 /* ElapsedTimeView.swift in Sources */,
 				D5B7ED562EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
 				D58D5E2D2EF0C3E100E4D1DB /* SwirlingRing.swift in Sources */,
@@ -440,6 +445,7 @@
 				D5A969772EF3AEE700782283 /* ElapsedTimeView.swift in Sources */,
 				D58A97A72EF60A950078459A /* SessionManager.swift in Sources */,
 				D5D74DF32F55387500696C76 /* NotificationHelper.swift in Sources */,
+				D52D3AED2F5E21DF00B3635F /* StressDetector.swift in Sources */,
 				D55EB3872EF5FE520077F3B4 /* BackendService.swift in Sources */,
 				D57A498B2F02254D002722F6 /* LocationManager.swift in Sources */,
 				D5B7ED572EF67A3200422DA2 /* LiveActivityManager.swift in Sources */,
@@ -509,6 +515,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 723WRFQY27;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -532,6 +539,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
@@ -572,6 +580,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 723WRFQY27;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -588,6 +597,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
@@ -610,6 +620,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to read your location in order to function properly.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app needs to read your location in order to function properly.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Cue uses your motion information in order to personalize your reflection triggers.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.jacksonmoody.Cue;
@@ -650,6 +661,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to save your health data in order to function properly.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to read your location in order to function properly.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app needs to read your location in order to function properly.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Cue uses your motion information in order to personalize your reflection triggers.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.jacksonmoody.Cue;
@@ -694,6 +706,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
 				INFOPLIST_KEY_NSLocationUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Cue uses your motion information in order to personalize your reflection triggers.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -747,6 +760,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
 				INFOPLIST_KEY_NSLocationUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cue uses your location information in order to personalize your reflection sessions.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Cue uses your motion information in order to personalize your reflection triggers.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

@@ -9,6 +9,7 @@ import SwiftUI
 import GoogleSignInSwift
 import GoogleSignIn
 internal import CoreLocation
+import CoreMotion
 
 struct PermissionsView: View {
     @AppStorage("occupation") var occupation: String = ""
@@ -22,11 +23,12 @@ struct PermissionsView: View {
     @State private var isNotificationAuthorized: Bool = false
     @State private var isCalendarAuthorized: Bool = false
     @State private var isLocationAuthorized: Bool = false
+    @State private var isMotionAuthorized: Bool = false
     
     @State private var showError: Bool = false
     
     var canContinue: Bool {
-        isHealthAuthorized && isNotificationAuthorized && isCalendarAuthorized && isLocationAuthorized && !occupation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        isHealthAuthorized && isNotificationAuthorized && isCalendarAuthorized && isLocationAuthorized && isMotionAuthorized && !occupation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     let center = UNUserNotificationCenter.current()
@@ -83,21 +85,20 @@ struct PermissionsView: View {
                     )
                     
                     PermissionCard(
+                        title: "Motion & Activity",
+                        icon: "figure.walk",
+                        description: "Used to detect when you are stationary for accurate reflection reminders.",
+                        isAuthorized: isMotionAuthorized,
+                        action: handleMotionPermissions
+                    )
+                    
+                    PermissionCard(
                         title: "Google Calendar",
                         icon: "calendar",
                         description: "Used to personalize your reflection experience. Sign in with your most-used account for calendar events.",
                         isAuthorized: isCalendarAuthorized,
                         action: handleGoogleSignIn
                     )
-                    
-//                    VStack(spacing: 20) {
-//                        Text("Sign in with Google to personalize your reflection experience with events from your Google Calendar:")
-//                            .font(.system(size: 16))
-//                            .fontWeight(.semibold)
-//                        GoogleSignInButton {
-//                            handleGoogleSignIn()
-//                        }
-//                    }
                 }
                 
                 Button(action: handleNext) {
@@ -127,6 +128,7 @@ struct PermissionsView: View {
             Text("Ensure that you are connected to the Internet and try again.")
         }
         .onAppear {
+            isMotionAuthorized = CMMotionActivityManager.authorizationStatus() == .authorized
             checkLocationStatus()
             locationService.onAuthorizationChange = { status in
                 DispatchQueue.main.async {
@@ -149,6 +151,15 @@ struct PermissionsView: View {
     
     func handleLocationPermissions() {
         locationService.requestAuthorization()
+    }
+    
+    func handleMotionPermissions() {
+        let manager = CMMotionActivityManager()
+        manager.queryActivityStarting(from: Date(), to: Date(), to: .main) { _, _ in
+            DispatchQueue.main.async {
+                isMotionAuthorized = CMMotionActivityManager.authorizationStatus() == .authorized
+            }
+        }
     }
     
     func handleNotificationPermissions() {

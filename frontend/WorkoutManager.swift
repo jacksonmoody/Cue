@@ -29,7 +29,10 @@ class WorkoutManager: NSObject, ObservableObject {
     let healthStore = HKHealthStore()
     var session: HKWorkoutSession?
     var builder: HKLiveWorkoutBuilder?
-    var variantManager: VariantManager?
+    var variantManager: VariantManager? {
+        didSet { stressDetector.variantManager = variantManager }
+    }
+    let stressDetector = StressDetector()
     private let backendService = BackendService.shared
     var currentPurpose: WorkoutPurpose = .monitoring
     var resumeMonitoring = false
@@ -46,6 +49,9 @@ class WorkoutManager: NSObject, ObservableObject {
 
     func startWorkout(purpose: WorkoutPurpose = .monitoring) {
         currentPurpose = purpose
+        if purpose == .monitoring {
+            stressDetector.startMonitoring()
+        }
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .mindAndBody
 
@@ -243,6 +249,7 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
                 }
 
             case .monitoringStop:
+                stressDetector.stopMonitoring()
                 WatchConnectivityManager.shared.updateSessionState(false)
                 cleanupWorkoutSession()
             }
@@ -251,6 +258,7 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
         print("HKWorkoutSessionDelegate: workoutSession(_:didFailWithError:) \(error.localizedDescription)")
+        stressDetector.stopMonitoring()
         DispatchQueue.main.async {
             self.pendingStopAction = .monitoringStop
             self.builder = nil
@@ -284,6 +292,10 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
 
             let statistics = workoutBuilder.statistics(for: quantityType)
             updateForStatistics(statistics)
+        }
+
+        if currentPurpose == .monitoring, heartRate > 0 {
+            stressDetector.processHeartRateUpdate(currentHR: heartRate)
         }
     }
     

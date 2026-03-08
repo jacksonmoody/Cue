@@ -94,6 +94,7 @@ class ReflectionManager: ObservableObject {
     private let backendService = BackendService.shared
     private let userDefaults = UserDefaults.standard
     var variantManager: VariantManager?
+    weak var stressDetector: StressDetector?
     
     let reflectionsKey = "reflections"
     let preferencesKey = "preferences"
@@ -157,6 +158,7 @@ class ReflectionManager: ObservableObject {
     func endCurrentSession(atDate date: Date) {
         guard var currentSession else { return }
         currentSession.endDate = date
+        stressDetector?.recordSessionCompletion()
         
         guard let userId = variantManager?.appleUserId else {
             print("Cannot record session: userId not available")
