@@ -239,7 +239,7 @@ private struct InteractiveNormalizedChart: View {
                     .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
             }
             .chartForegroundStyleScale(
-                domain: seriesNames, range: chartColors(count: seriesNames.count))
+                domain: seriesNames, range: colorsForSeries(seriesNames))
         } else {
             Chart {
                 ForEach(data) { point in
@@ -336,18 +336,25 @@ private struct InteractiveNormalizedChart: View {
     }
 
     private func colorForSeries(_ series: String) -> Color {
-        let colors = chartColors(count: seriesNames.count)
+        let colors = colorsForSeries(seriesNames)
         guard let index = seriesNames.firstIndex(of: series), index < colors.count else {
             return .white
         }
         return colors[index]
     }
 
-    private func chartColors(count: Int) -> [Color] {
-        let palette: [Color] = [
-            .red, .cyan, .yellow, .green, .orange, .pink, .mint, .indigo, .purple, .teal
-        ]
-        return Array(palette.prefix(max(count, 1)))
+    private func colorsForSeries(_ names: [String]) -> [Color] {
+        let otherPalette: [Color] = [.cyan, .yellow, .green, .orange, .pink, .mint, .indigo, .purple, .teal]
+        var otherIndex = 0
+        return names.map { name in
+            if name == "Average" {
+                return .red
+            } else {
+                let color = otherPalette[otherIndex % otherPalette.count]
+                otherIndex += 1
+                return color
+            }
+        }
     }
 }
 
@@ -356,10 +363,17 @@ private struct ChartLegend: View {
 
     private var seriesNames: [String] { Array(Set(data.map(\.series))).sorted() }
     private var colors: [Color] {
-        let palette: [Color] = [
-            .red, .cyan, .yellow, .green, .orange, .pink, .mint, .indigo, .purple, .teal
-        ]
-        return Array(palette.prefix(max(seriesNames.count, 1)))
+        let otherPalette: [Color] = [.cyan, .yellow, .green, .orange, .pink, .mint, .indigo, .purple, .teal]
+        var otherIndex = 0
+        return seriesNames.map { name in
+            if name == "Average" {
+                return .red
+            } else {
+                let color = otherPalette[otherIndex % otherPalette.count]
+                otherIndex += 1
+                return color
+            }
+        }
     }
 
     var body: some View {
