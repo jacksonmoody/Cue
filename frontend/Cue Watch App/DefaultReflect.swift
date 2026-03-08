@@ -13,7 +13,6 @@ struct DefaultReflect: View {
     let title: String
     let icon: String
     let completeReflection: () -> Void
-    let randomOption: String
     let shouldPlayAudio: Bool
     let startDate: Date
     static let backgroundOptions = ["lines", "silk", "waves"]
@@ -22,11 +21,12 @@ struct DefaultReflect: View {
         self.title = title
         self.icon = icon
         self.completeReflection = completeReflection
-        self.randomOption = Self.backgroundOptions.randomElement() ?? "lines"
+        _randomOption = State(initialValue: Self.backgroundOptions.randomElement() ?? "lines")
         self.startDate = Date()
         self.shouldPlayAudio = playAudio
     }
     
+    @State private var randomOption: String
     @State private var audioPlayer: AVAudioPlayer?
     @State private var opacity = 1.0
     
