@@ -87,7 +87,7 @@ struct InstructionsView: View {
                             .glassEffect(.regular.tint(.blue).interactive())
                             .foregroundStyle(.white)
                         } else {
-                            Button("Log a Session") {
+                            Button("Start Monitoring Session") {
                                 dismiss()
                                 tabController.open(.manage)
                             }

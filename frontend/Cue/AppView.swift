@@ -15,7 +15,7 @@ struct AppView: View {
     
     private var manageLabel: String {
         if connectivityManager.isSessionActive {
-            "End Monitoring"
+            "Stop Monitoring"
         } else {
             "Start Monitoring"
         }

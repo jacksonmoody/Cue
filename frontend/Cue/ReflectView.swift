@@ -40,6 +40,10 @@ struct ReflectView: View {
                         .foregroundStyle(.white)
                     } else {
                         List {
+                            Section {
+                                HeartRateSummaryGraph(sessions: sortedSessions)
+                            }
+                            .listRowBackground(Color.white.opacity(0.1))
                             ForEach(sortedSessions, id: \.id) { session in
                                 NavigationLink {
                                     SessionDetailView(session: session)
@@ -80,7 +84,7 @@ struct ReflectView: View {
                         .padding(.top, -20)
                     }
                 }
-                .navigationTitle(!sortedSessions.isEmpty ? "Recent Reflections" : "")
+                .navigationTitle(!sortedSessions.isEmpty ? "Reflections" : "")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarColorScheme(.dark, for: .navigationBar)
                 .toolbar {
