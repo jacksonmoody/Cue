@@ -64,6 +64,7 @@ struct HeartRateDetailView: View {
         .navigationTitle("Reflection Trends")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .trackScreenTime("Detailed Trends")
         .task {
             await computeGraphData()
             loading = false

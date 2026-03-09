@@ -60,8 +60,7 @@ struct InstructionsView: View {
             ZStack {
                 ScrollView {
                     VStack(alignment: stackAlignment, spacing: 30) {
-#if os(iOS)
-                        Text(variantSwitch ? "Updated Instructions" : "Instructions")
+#if os(iOS)                        Text(variantSwitch ? "Updated Instructions" : "Instructions")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .padding(.top, 40)
@@ -115,6 +114,7 @@ struct InstructionsView: View {
                 }
             }
         }
+        .trackScreenTime("Instructions")
     }
 }
 

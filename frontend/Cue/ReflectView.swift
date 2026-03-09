@@ -116,6 +116,7 @@ struct ReflectView: View {
                 }
             }
         }
+        .trackScreenTime("Reflections Overview")
     }
     
     private func formatDate(_ date: Date) -> String {

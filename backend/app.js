@@ -12,6 +12,7 @@ var preferencesRouter = require("./routes/preferences");
 var reflectionsRouter = require("./routes/reflections");
 var groupTriggersRouter = require("./routes/groupTriggers");
 var triggersRouter = require("./routes/triggers");
+var screenTimeRouter = require("./routes/screenTime");
 
 require("dotenv").config();
 
@@ -82,6 +83,7 @@ app.use("/preferences", preferencesRouter);
 app.use("/gear1", gear1Router);
 app.use("/group-triggers", groupTriggersRouter);
 app.use("/triggers", triggersRouter);
+app.use("/screen-time", screenTimeRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));

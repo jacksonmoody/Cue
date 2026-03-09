@@ -297,6 +297,7 @@ struct SettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .trackScreenTime("Settings")
         .task {
             await reflectionManager.loadPreferences()
             if let prefs = reflectionManager.preferences {

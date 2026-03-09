@@ -33,6 +33,7 @@ struct SessionDetailView: View {
         .navigationTitle(session.title ?? "Reflection Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .trackScreenTime("Detailed Sessions")
     }
     
     private func formatDate(_ date: Date) -> String {

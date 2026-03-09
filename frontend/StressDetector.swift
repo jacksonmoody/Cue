@@ -24,25 +24,29 @@ class StressDetector {
 
     weak var variantManager: VariantManager?
 
+    // Take resting HR samples over the past week
     private let baselineWindow = 7
-    private let hrElevationAbsolute = 10.0
-    private let hrElevationPercent = 0.12
-    // 5 minutes of elevated heart rate and still for the stress trigger to be triggered
-    private let requiredElevatedDuration: TimeInterval = 5 * 60
-    // 15 minutes after the stress trigger is triggered, the stress trigger will not be triggered again
-    private let notificationCooldown: TimeInterval = 15 * 60
-    // 1 hour after a reflection session is completed, the stress trigger will not be triggered again
-    private let postSessionLockout: TimeInterval = 60 * 60
-    // 5 minutes of stillness for the stress trigger to be triggered
+    // HR needs to be 20 BPM above baseline to trigger notification
+    private let hrElevationAbsolute = 20.0
+    // Or HR needs to be elevated 30% above baseline
+    private let hrElevationPercent = 0.3
+    // Need 1 minute of elevated heart rate and stillness for the reflection notification to be triggered
+    private let requiredElevatedDuration: TimeInterval = 1 * 60
+    // Need 5 minutes of stillness for the reflection notification to be triggered
     private let motionWindowDuration: TimeInterval = 5 * 60
-    private let motionStillnessThreshold = 0.80
+    // 60% of motion events need to be still (with high confidence) to be classified as "still"
+    private let motionStillnessThreshold = 0.6
+    // For 15 minutes after the reflection notification is triggered, the notification will not be triggered again
+    private let notificationCooldown: TimeInterval = 15 * 60
+    // For 1 hour after a reflection session is completed, the notification will not be triggered again
+    private let postSessionLockout: TimeInterval = 60 * 60
 
-    @Published private(set) var detectorState: StressDetectionState = .idle
+    private(set) var detectorState: StressDetectionState = .idle
     private var baselineRestingHR: Double?
     private var lastBaselineUpdateDate: Date?
     private var lastNotificationAt: Date?
     private var lastSessionCompletedAt: Date?
-    private var recentMotionActivities: [(date: Date, stationary: Bool)] = []
+    private var recentMotionActivities: [(date: Date, isStationary: Bool)] = []
     private var isMonitoring = false
 
     private let stateKey = "stressDetectorState"
@@ -80,7 +84,7 @@ class StressDetector {
         let hrThreshold = max(baseline + hrElevationAbsolute, baseline * (1 + hrElevationPercent))
         let isElevated = currentHR >= hrThreshold
         let isStill = checkStillness()
-        print(isStill, currentHR, hrThreshold)
+        print(currentHR, hrThreshold, isStill)
 
         switch detectorState {
         case .idle:
@@ -102,7 +106,6 @@ class StressDetector {
                 if let lastSession = lastSessionCompletedAt, now.timeIntervalSince(lastSession) < postSessionLockout {
                     return
                 }
-
                 trigger(currentHR: currentHR, baseline: baseline, at: now)
             }
 
@@ -125,7 +128,8 @@ class StressDetector {
 
         logTriggerToBackend(currentHR: currentHR, baseline: baseline, triggeredAt: now)
 
-        if variantManager?.variant == 1 {
+        if true {
+//        if variantManager?.variant == 1 {
             NotificationHelper.fireStressTriggerNotification()
         }
     }
@@ -197,22 +201,20 @@ class StressDetector {
 
         motionActivityManager.startActivityUpdates(to: queue) { [weak self] activity in
             guard let self, let activity else { return }
-            let isStationary = activity.stationary
-            let hasActiveMotion = activity.walking || activity.running || activity.automotive
-            let stillness = isStationary && !hasActiveMotion
-
             DispatchQueue.main.async {
-                self.recentMotionActivities.append((date: activity.startDate, stationary: stillness))
+                self.recentMotionActivities.append((date: activity.startDate, isStationary: activity.stationary))
                 let cutoff = Date().addingTimeInterval(-self.motionWindowDuration)
                 self.recentMotionActivities.removeAll { $0.date < cutoff }
+                print(self.recentMotionActivities)
             }
         }
     }
 
     private func checkStillness() -> Bool {
         guard !recentMotionActivities.isEmpty else { return false }
-        let stationaryCount = recentMotionActivities.filter(\.stationary).count
+        let stationaryCount = recentMotionActivities.filter(\.isStationary).count
         let ratio = Double(stationaryCount) / Double(recentMotionActivities.count)
+        print("ratio: ", ratio)
         return ratio >= motionStillnessThreshold
     }
 

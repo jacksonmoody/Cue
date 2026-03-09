@@ -91,6 +91,7 @@ struct ManageView: View {
         } message: {
             Text("Open the Cue app on your Apple Watch to manage monitoring.")
         }
+        .trackScreenTime("Monitoring")
     }
 }
 
