@@ -149,6 +149,13 @@
 			);
 			target = D583BBA32EEFA1BD006CDC9B /* Cue */;
 		};
+		D5DF1C0E2F5FD8E400F9C3D8 /* Exceptions for "Cue" folder in "Cue Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ScreenTimeTracker.swift,
+			);
+			target = D583BBB02EEFA1BE006CDC9B /* Cue Watch App */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -156,6 +163,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				D591A84E2EF12D7A000E88F2 /* Exceptions for "Cue" folder in "Cue" target */,
+				D5DF1C0E2F5FD8E400F9C3D8 /* Exceptions for "Cue" folder in "Cue Watch App" target */,
 			);
 			path = Cue;
 			sourceTree = "<group>";

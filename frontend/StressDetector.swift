@@ -17,9 +17,10 @@ enum StressDetectionState: Codable {
     case cooldown(until: Date)
 }
 
+@MainActor
 class StressDetector {
     private let healthStore = HKHealthStore()
-    private let motionActivityManager = CMMotionActivityManager()
+    private let pedometer = CMPedometer()
     private let backendService = BackendService.shared
 
     weak var variantManager: VariantManager?
@@ -34,19 +35,26 @@ class StressDetector {
     private let requiredElevatedDuration: TimeInterval = 1 * 60
     // Need 5 minutes of stillness for the reflection notification to be triggered
     private let motionWindowDuration: TimeInterval = 5 * 60
-    // 60% of motion events need to be still (with high confidence) to be classified as "still"
-    private let motionStillnessThreshold = 0.6
-    // For 15 minutes after the reflection notification is triggered, the notification will not be triggered again
-    private let notificationCooldown: TimeInterval = 15 * 60
+    // Fewer than 20 steps in the motion window counts as still
+    private let pedometerStepThreshold = 20
+    // For 1 hour after the reflection notification is triggered, the notification will not be triggered again
+    private let notificationCooldown: TimeInterval = 60 * 60
     // For 1 hour after a reflection session is completed, the notification will not be triggered again
     private let postSessionLockout: TimeInterval = 60 * 60
+    // Fallback absolute HR threshold when no baseline is available
+    private let fallbackHRThreshold = 90.0
+    // Candidate state expires after 5 minutes with no confirming HR update
+    private let candidateTimeout: TimeInterval = 5 * 60
+    // Cache stillness result for 30 seconds to avoid excessive pedometer queries
+    private let stillnessCacheDuration: TimeInterval = 30
 
     private(set) var detectorState: StressDetectionState = .idle
     private var baselineRestingHR: Double?
     private var lastBaselineUpdateDate: Date?
     private var lastNotificationAt: Date?
     private var lastSessionCompletedAt: Date?
-    private var recentMotionActivities: [(date: Date, isStationary: Bool)] = []
+    private var cachedStillness: Bool?
+    private var lastStillnessCheckDate: Date?
     private var isMonitoring = false
 
     private let stateKey = "stressDetectorState"
@@ -59,32 +67,34 @@ class StressDetector {
         guard !isMonitoring else { return }
         isMonitoring = true
         loadPersistedState()
-        startMotionUpdates()
         Task { await updateBaselineIfNeeded() }
     }
 
     func stopMonitoring() {
         isMonitoring = false
-        motionActivityManager.stopActivityUpdates()
-        recentMotionActivities.removeAll()
         detectorState = .idle
         persistState()
     }
 
-    func processHeartRateUpdate(currentHR: Double) {
+    func processHeartRateUpdate(currentHR: Double) async {
         guard isMonitoring else { return }
-        guard let baseline = baselineRestingHR else { return }
 
         let now = Date()
+        let baseline = baselineRestingHR
 
         if case .cooldown(let until) = detectorState, now >= until {
             detectorState = .idle
         }
 
-        let hrThreshold = max(baseline + hrElevationAbsolute, baseline * (1 + hrElevationPercent))
+        let hrThreshold: Double
+        if let baseline {
+            hrThreshold = max(baseline + hrElevationAbsolute, baseline * (1 + hrElevationPercent))
+        } else {
+            hrThreshold = fallbackHRThreshold
+        }
+
         let isElevated = currentHR >= hrThreshold
-        let isStill = checkStillness()
-        print(currentHR, hrThreshold, isStill)
+        let isStill = await checkStillness()
 
         switch detectorState {
         case .idle:
@@ -93,20 +103,24 @@ class StressDetector {
             }
 
         case .candidate(let start):
+            if now.timeIntervalSince(start) > candidateTimeout {
+                detectorState = .idle
+                return
+            }
+
             if !(isElevated && isStill) {
                 detectorState = .idle
                 return
             }
 
             if now.timeIntervalSince(start) >= requiredElevatedDuration {
-                // Check cooldowns before triggering
                 if let lastNotif = lastNotificationAt, now.timeIntervalSince(lastNotif) < notificationCooldown {
                     return
                 }
                 if let lastSession = lastSessionCompletedAt, now.timeIntervalSince(lastSession) < postSessionLockout {
                     return
                 }
-                trigger(currentHR: currentHR, baseline: baseline, at: now)
+                trigger(currentHR: currentHR, baseline: baseline ?? fallbackHRThreshold, at: now)
             }
 
         case .cooldown:
@@ -128,8 +142,7 @@ class StressDetector {
 
         logTriggerToBackend(currentHR: currentHR, baseline: baseline, triggeredAt: now)
 
-        if true {
-//        if variantManager?.variant == 1 {
+        if variantManager?.variant == 1 {
             NotificationHelper.fireStressTriggerNotification()
         }
     }
@@ -193,29 +206,37 @@ class StressDetector {
         }
     }
 
-    private func startMotionUpdates() {
-        guard CMMotionActivityManager.isActivityAvailable() else { return }
-
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = 1
-
-        motionActivityManager.startActivityUpdates(to: queue) { [weak self] activity in
-            guard let self, let activity else { return }
-            DispatchQueue.main.async {
-                self.recentMotionActivities.append((date: activity.startDate, isStationary: activity.stationary))
-                let cutoff = Date().addingTimeInterval(-self.motionWindowDuration)
-                self.recentMotionActivities.removeAll { $0.date < cutoff }
-                print(self.recentMotionActivities)
-            }
+    private func checkStillness() async -> Bool {
+        let now = Date()
+        if let cached = cachedStillness,
+           let lastCheck = lastStillnessCheckDate,
+           now.timeIntervalSince(lastCheck) < stillnessCacheDuration {
+            return cached
         }
+
+        guard CMPedometer.isStepCountingAvailable() else { return false }
+        let steps = await queryRecentSteps()
+        guard let steps else { return false }
+
+        let result = steps < pedometerStepThreshold
+        cachedStillness = result
+        lastStillnessCheckDate = now
+        return result
     }
 
-    private func checkStillness() -> Bool {
-        guard !recentMotionActivities.isEmpty else { return false }
-        let stationaryCount = recentMotionActivities.filter(\.isStationary).count
-        let ratio = Double(stationaryCount) / Double(recentMotionActivities.count)
-        print("ratio: ", ratio)
-        return ratio >= motionStillnessThreshold
+    private func queryRecentSteps() async -> Int? {
+        let now = Date()
+        let start = now.addingTimeInterval(-motionWindowDuration)
+        return await withCheckedContinuation { continuation in
+            pedometer.queryPedometerData(from: start, to: now) { data, error in
+                if let error {
+                    print("Pedometer query failed: \(error.localizedDescription)")
+                    continuation.resume(returning: nil)
+                } else {
+                    continuation.resume(returning: data?.numberOfSteps.intValue ?? 0)
+                }
+            }
+        }
     }
 
     private func persistState() {

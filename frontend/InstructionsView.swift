@@ -6,11 +6,18 @@
 //
 
 import SwiftUI
+#if os(iOS)
+import AVKit
+import AVFoundation
+#endif
 
 struct InstructionsView: View {
     @EnvironmentObject var variantManager: VariantManager
     #if os(iOS)
     @EnvironmentObject var tabController: TabController
+    @State private var showTextInstructions = false
+    @State private var videoFinished = false
+    private let player = AVPlayer(url: Bundle.main.url(forResource: "instructions", withExtension: "m4v")!)
     #endif
     @Environment(\.dismiss) var dismiss
     @Binding var instructionsNeeded: Bool
@@ -27,11 +34,11 @@ struct InstructionsView: View {
     
     var instructionText: String? {
         if let variant = variantManager.variant, variant == 1 {
-            return "You will automatically receive notifications to reflect whenever a monitoring session is running. Feel free to accept or deny these notifications as you see fit. You can begin a reflection session manually by pressing the leaf icon in the upper-left corner of the Cue app on your Apple Watch. You must log 8 hours of monitoring and complete at least one reflection session during this phase of the experiment."
+            return "In this phase, you will automatically receive notifications to reflect whenever a monitoring session is running. Feel free to accept or deny these notifications as you see fit. You can begin a reflection session manually by pressing the leaf icon in the upper-left corner of the Cue app on your Apple Watch. You must log 8 hours of monitoring and complete at least one reflection session during this phase of the experiment."
         } else if let variant = variantManager.variant, variant == 2 {
-            return "You will receive a reminder to reflect at a set time every day. Feel free to accept or deny these reminders as you see fit. You can adjust the reflection time by clicking the gear icon in the bottom-right corner of the Cue app on your Apple Watch. You can also begin a reflection session manually by pressing the leaf icon in the upper-left corner of the app. You must log 8 hours of monitoring and complete at least one reflection session during this phase of the experiment."
+            return "In this phase, you will receive a reminder to reflect at a set time every day. Feel free to accept or deny these reminders as you see fit. You can adjust the reflection time by clicking the gear icon in the bottom-right corner of the Cue app on your Apple Watch. You can also begin a reflection session manually by pressing the leaf icon in the upper-left corner of the app. You must log 8 hours of monitoring and complete at least one reflection session during this phase of the experiment."
         } else if let variant = variantManager.variant, variant == 3 {
-            return "You must initiate reflection sessions manually by entering into the Cue app on your Apple Watch. To begin a reflection session, press the leaf icon in the upper-left corner of the app. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many of these sessions as you wish (though you must complete at least one). In addition to these reflections, you will need to log 8 hours of monitoring to complete this phase."
+            return "In this phase, you must initiate reflection sessions manually by entering into the Cue app on your Apple Watch. To begin a reflection session, press the leaf icon in the upper-left corner of the app. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many of these sessions as you wish (though you must complete at least one). In addition to these reflections, you will need to log 8 hours of monitoring to complete this phase."
         } else {
             return nil
         }
@@ -41,9 +48,22 @@ struct InstructionsView: View {
         #if os(watchOS)
         .center
         #else
-        .leading
+        if (!refresher && !variantSwitch && !showTextInstructions) {
+            .center
+        } else {
+            .leading
+        }
         #endif
     }
+    
+    #if os(iOS)
+    private var videoPlayer: some View {
+        VideoPlayer(player: player)
+            .aspectRatio(9/16, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.horizontal, !refresher ? 20 : 0)
+    }
+    #endif
     
     private var headerText: String {
         if variantSwitch {
@@ -60,43 +80,60 @@ struct InstructionsView: View {
             ZStack {
                 ScrollView {
                     VStack(alignment: stackAlignment, spacing: 30) {
-#if os(iOS)                        Text(variantSwitch ? "Updated Instructions" : "Instructions")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .padding(.top, 40)
-#endif
-                        Text("\(headerText)\(instructionText ?? "")")
 #if os(iOS)
-                        if variantSwitch {
+                        if !refresher && !variantSwitch && !showTextInstructions {
+                            Text("Welcome to Cue")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .padding(.top, 40)
+                            videoPlayer
                             Button("Continue") {
-                                UserDefaults.standard.set(false, forKey: "variantSwitchPending")
-                                instructionsNeeded = false
-                                dismiss()
+                                showTextInstructions = true
                             }
                             .padding()
                             .fontWeight(.bold)
-                            .glassEffect(.regular.tint(.blue).interactive())
-                            .foregroundStyle(.white)
-                        } else if !refresher {
-                            NavigationLink("Begin Setup") {
-                                PermissionsView(instructionsNeeded: $instructionsNeeded)
-                            }
-                            .padding()
-                            .fontWeight(.bold)
-                            .glassEffect(.regular.tint(.blue).interactive())
-                            .foregroundStyle(.white)
+                            .glassEffect(.regular.tint(!videoFinished ? .gray : .blue).interactive())
+                            .foregroundStyle(!videoFinished ? .gray : .white)
+                            .disabled(!videoFinished)
                         } else {
-                            Button("Start Monitoring Session") {
-                                dismiss()
-                                tabController.open(.manage)
+                            Text(variantSwitch ? "Updated Instructions" : "Instructions")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .padding(.top, 40)
+                            Text("\(headerText)\(instructionText ?? "")")
+                            
+                            if refresher {
+                                videoPlayer
+                                Button("Start Monitoring Session") {
+                                    dismiss()
+                                    tabController.open(.manage)
+                                }
+                                .padding()
+                                .fontWeight(.bold)
+                                .glassEffect(.regular.tint(.blue).interactive())
+                                .foregroundStyle(.white)
+                            } else if variantSwitch {
+                                Button("Continue") {
+                                    UserDefaults.standard.set(false, forKey: "variantSwitchPending")
+                                    instructionsNeeded = false
+                                    dismiss()
+                                }
+                                .padding()
+                                .fontWeight(.bold)
+                                .glassEffect(.regular.tint(.blue).interactive())
+                                .foregroundStyle(.white)
+                            } else {
+                                NavigationLink("Begin Setup") {
+                                    PermissionsView(instructionsNeeded: $instructionsNeeded)
+                                }
+                                .padding()
+                                .fontWeight(.bold)
+                                .glassEffect(.regular.tint(.blue).interactive())
+                                .foregroundStyle(.white)
                             }
-                            .padding()
-                            .fontWeight(.bold)
-                            .glassEffect(.regular.tint(.blue).interactive())
-                            .foregroundStyle(.white)
                         }
-#endif
-#if os(watchOS)
+#else
+                        Text("\(headerText)\(instructionText ?? "")")
                         if variantSwitch {
                             Button("Continue") {
                                 UserDefaults.standard.set(false, forKey: "variantSwitchPending")
@@ -115,6 +152,15 @@ struct InstructionsView: View {
             }
         }
         .trackScreenTime("Instructions")
+#if os(iOS)
+        .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)) { _ in
+            videoFinished = true
+        }
+        .onAppear {
+            try? AVAudioSession.sharedInstance().setCategory(.playback)
+            try? AVAudioSession.sharedInstance().setActive(true)
+        }
+#endif
     }
 }
 

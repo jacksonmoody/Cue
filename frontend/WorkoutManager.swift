@@ -295,7 +295,8 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
         }
 
         if currentPurpose == .monitoring, heartRate > 0 {
-            stressDetector.processHeartRateUpdate(currentHR: heartRate)
+            let hr = heartRate
+            Task { await stressDetector.processHeartRateUpdate(currentHR: hr) }
         }
     }
     
