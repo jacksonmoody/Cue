@@ -115,12 +115,12 @@ class StressDetector {
 
             if now.timeIntervalSince(start) >= requiredElevatedDuration {
                 if let lastNotif = lastNotificationAt, now.timeIntervalSince(lastNotif) < notificationCooldown {
-                    return
+                    detectorState = .idle
+                } else if let lastSession = lastSessionCompletedAt, now.timeIntervalSince(lastSession) < postSessionLockout {
+                    detectorState = .idle
+                } else {
+                    trigger(currentHR: currentHR, baseline: baseline ?? fallbackHRThreshold, at: now)
                 }
-                if let lastSession = lastSessionCompletedAt, now.timeIntervalSince(lastSession) < postSessionLockout {
-                    return
-                }
-                trigger(currentHR: currentHR, baseline: baseline ?? fallbackHRThreshold, at: now)
             }
 
         case .cooldown:
