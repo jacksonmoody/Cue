@@ -36,9 +36,9 @@ async function tryAdvancePhase(db, userId, variant) {
 
   var durationMet = totalDuration >= EIGHT_HOURS_IN_SECONDS;
   var reflectionMet = reflectionCount >= 1;
+  var isCurrentPhaseVariant = variant === assignment.order[assignment.currentPhase];
 
-  // Advance to next phase requirements are met
-  if (durationMet && reflectionMet && assignment.currentPhase < 2) {
+  if (durationMet && reflectionMet && isCurrentPhaseVariant && assignment.currentPhase < 2) {
     var newPhase = assignment.currentPhase + 1;
     var newVariant = assignment.order[newPhase];
 
