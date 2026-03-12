@@ -48,6 +48,10 @@ class WorkoutManager: NSObject, ObservableObject {
     private var pendingStopAction: PendingStopAction = .monitoringStop
 
     func startWorkout(purpose: WorkoutPurpose = .monitoring) {
+        guard session == nil else {
+            print("Workout session already active, ignoring duplicate start request")
+            return
+        }
         currentPurpose = purpose
         if purpose == .monitoring {
             stressDetector.startMonitoring()

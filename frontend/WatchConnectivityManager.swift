@@ -314,7 +314,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
             }
             #else
             let contextState = session.receivedApplicationContext["isSessionActive"] as? Bool
-            if let contextState = contextState {
+            if let contextState = contextState, !self.isSessionActive {
                 let previousState = self.isSessionActive
                 self.isSessionActive = contextState
                 if previousState != contextState {
@@ -392,8 +392,10 @@ extension WatchConnectivityManager: WCSessionDelegate {
     #if os(watchOS)
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         if let _ = message["requestSessionState"] as? Bool {
-            let reply = ["isSessionActive": self.isSessionActive]
-            replyHandler(reply)
+            DispatchQueue.main.async {
+                let reply: [String: Any] = ["isSessionActive": self.isSessionActive]
+                replyHandler(reply)
+            }
             return
         }
         self.session(session, didReceiveMessage: message)

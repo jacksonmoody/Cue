@@ -71,6 +71,9 @@ class WatchDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDe
     func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
         Task {
             try? await Task.sleep(for: .milliseconds(500))
+            await MainActor.run {
+                WatchConnectivityManager.shared.isSessionActive = true
+            }
             workoutManager?.startWorkout(purpose: .monitoring)
         }
     }
