@@ -34,14 +34,19 @@ struct InstructionsView: View {
     
     var instructionText: String? {
         if let variant = variantManager.variant, variant == 1 {
-            return "In this phase, you will automatically receive notifications to reflect whenever a monitoring session is running. Feel free to accept or deny these notifications as you see fit. You can begin a reflection session manually by pressing the leaf icon in the upper-left corner of the Cue app on your Apple Watch. You must log 8 hours of monitoring and complete at least one reflection session during this phase of the experiment."
+            return "In this phase, you will **automatically receive notifications to reflect** whenever a monitoring session is running. Feel free to accept or deny these notifications as you see fit. You can begin a reflection session manually by pressing the leaf icon in the upper-left corner of the Cue app on your Apple Watch. You must log 8 hours of monitoring and complete at least one reflection session during this phase of the experiment."
         } else if let variant = variantManager.variant, variant == 2 {
-            return "In this phase, you will receive a reminder to reflect at a set time every day. Feel free to accept or deny these reminders as you see fit. You can adjust the reflection time by clicking the gear icon in the bottom-right corner of the Cue app on your Apple Watch. You can also begin a reflection session manually by pressing the leaf icon in the upper-left corner of the app. You must log 8 hours of monitoring and complete at least one reflection session during this phase of the experiment."
+            return "In this phase, you will **receive a reminder to reflect at a set time every day**. Feel free to accept or deny these reminders as you see fit. You can adjust the reflection time by clicking the gear icon in the bottom-right corner of the Cue app on your Apple Watch. You can also begin a reflection session manually by pressing the leaf icon in the upper-left corner of the app. You must log 8 hours of monitoring and complete at least one reflection session during this phase of the experiment."
         } else if let variant = variantManager.variant, variant == 3 {
-            return "In this phase, you must initiate reflection sessions manually by entering into the Cue app on your Apple Watch. To begin a reflection session, press the leaf icon in the upper-left corner of the app. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many of these sessions as you wish (though you must complete at least one). In addition to these reflections, you will need to log 8 hours of monitoring to complete this phase."
+            return "In this phase, you must **initiate reflection sessions manually** by entering into the Cue app on your Apple Watch. To begin a reflection session, press the leaf icon in the upper-left corner of the app. You are encouraged to begin a session whenever you are feeling stressed or anxious, and you may complete as many of these sessions as you wish (though you must complete at least one). In addition to these reflections, you will need to log 8 hours of monitoring to complete this phase."
         } else {
             return nil
         }
+    }
+    
+    var fullInstructionText: AttributedString {
+        let raw = "\(headerText)\(instructionText ?? "")"
+        return (try? AttributedString(markdown: raw)) ?? AttributedString(raw)
     }
     
     private var stackAlignment: HorizontalAlignment {
@@ -100,7 +105,7 @@ struct InstructionsView: View {
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                                 .padding(.top, 40)
-                            Text("\(headerText)\(instructionText ?? "")")
+                            Text(fullInstructionText)
                             
                             if refresher {
                                 videoPlayer
@@ -133,7 +138,7 @@ struct InstructionsView: View {
                             }
                         }
 #else
-                        Text("\(headerText)\(instructionText ?? "")")
+                        Text(fullInstructionText)
                         if variantSwitch {
                             Button("Continue") {
                                 UserDefaults.standard.set(false, forKey: "variantSwitchPending")
