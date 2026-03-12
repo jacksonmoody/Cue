@@ -86,7 +86,8 @@ async function getUpcomingEvents(googleTokens) {
       description: event.description,
     }));
   } catch (error) {
-    throw error;
+    console.error("Failed to fetch upcoming events:", error.message);
+    return [];
   }
 }
 
